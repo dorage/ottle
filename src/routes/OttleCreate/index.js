@@ -1,14 +1,25 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
+import { IconButton } from '../../components/IconButton/IconButton';
 import { AB_HEIGHT, AB_WIDTH, CANVAS_ACTIONS } from '../../configs/vars';
 import { Canvas } from './Canvas';
+import { XIcon } from '@heroicons/react/outline';
 
+//#region styled-components
 const APP = styled.div`
     width: 100vw;
     height: 100vh;
 
     background-color: #eeeeee;
 `;
+
+const Header = styled.div`
+    height: 5rem;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+`;
+//#endregion
 
 const generateItem = () => ({
     size: { w: 200, h: 200 },
@@ -158,6 +169,9 @@ export const OttleCreate = () => {
             onMouseMove={onMouseMove}
             onMouseUp={onMouseUp}
         >
+            <Header>
+                <IconButton icon={<XIcon />} />
+            </Header>
             <Canvas />
         </APP>
     );
