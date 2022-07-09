@@ -1,9 +1,5 @@
-// artboard width and height
-export const AB_WIDTH = 500;
-export const AB_HEIGHT = 500;
-
-export const RENDERER_WIDTH = 1000;
-export const RENDERER_HEIGHT = 1000;
+export const RENDERER_WIDTH = 1500;
+export const RENDERER_HEIGHT = 1500;
 
 export const CANVAS_ACTIONS = {
     IDLE: 'idle',

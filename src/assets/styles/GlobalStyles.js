@@ -26,6 +26,12 @@ const GlobalStyles = createGlobalStyle`
             transition: 0.3s;
         }
     }
+    a{
+        &:active{
+            filter: blur(0.3rem);
+            transition: 0.3s;
+        }
+    }
 
     section {
         padding-left: 1.6rem;

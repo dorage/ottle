@@ -1,9 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { IconButton } from '../../components/IconButton/IconButton';
-import { AB_HEIGHT, AB_WIDTH, CANVAS_ACTIONS } from '../../configs/vars';
+import { CANVAS_ACTIONS } from '../../configs/vars';
 import { Canvas } from './Canvas';
 import { XIcon } from '@heroicons/react/outline';
+import {
+    onResizeArtboard,
+    selectArtboard,
+    updateScreenSize,
+} from '../../features/ottleMaker/artboardSlice';
+import { theme } from '../../assets/styles/GlobalStyles';
+import { selectOttleMaker } from '../../features/ottleMaker/ottleMakerSlice';
 
 //#region styled-components
 const APP = styled.div`
@@ -18,18 +26,11 @@ const Header = styled.div`
     display: flex;
     justify-content: flex-end;
     align-items: center;
+
+    border-bottom: 1px solid ${(props) => props.theme.color.black_600};
+    background-color: white;
 `;
 //#endregion
-
-const generateItem = () => ({
-    size: { w: 200, h: 200 },
-    position: { x: 0.5, y: 0.5 },
-    scale: 1.0,
-    rotation: 1.0,
-    src: 'https://picsum.photos/1000',
-    name: 'product',
-    id: '01',
-});
 
 const distance = (x1, y1, x2, y2) =>
     Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
@@ -44,14 +45,21 @@ const getRotation = (pivotX, pivotY, currX, currY) => {
     return degree / 360;
 };
 
-export const OttleCreate = () => {
-    const [items, setItems] = useState([generateItem()]);
+export const OttleMaker = () => {
+    const dispatch = useDispatch();
+    const { size: artboardSize } = useSelector(selectArtboard);
+    const { selected, items } = useSelector(selectOttleMaker);
+
     const [action, setAction] = useState(CANVAS_ACTIONS.IDLE);
-    const [selected, setSelected] = useState(0);
     const [startPointer, setStartPointer] = useState([0, 0]);
     const [movePivot, setMovePivot] = useState([0, 0]);
     const [rotatePivot, setRotatePivot] = useState(0);
     const [scalePivot, setScalePivot] = useState(0);
+
+    useEffect(() => {
+        dispatch(onResizeArtboard());
+        window.addEventListener('resize', () => dispatch(onResizeArtboard()));
+    }, []);
 
     /**
      * 마우스가 다운되었을 때 기록된 startPointer[clientX, clientY]를 기준으로
@@ -63,18 +71,20 @@ export const OttleCreate = () => {
     const move = (x, y) => {
         const [sx, sy] = startPointer;
         const [px, py] = movePivot;
-        const dx = (x - sx) / AB_WIDTH;
-        const dy = (y - sy) / AB_HEIGHT;
+        const dx = (x - sx) / artboardSize;
+        const dy = (y - sy) / artboardSize;
+
+        const position = {
+            x: clamp(px + dx, 0, 1),
+            y: clamp(py + dy, 0, 1),
+        };
 
         const item = {
             ...items[selected],
-            position: {
-                x: clamp(px + dx, 0, 1),
-                y: clamp(py + dy, 0, 1),
-            },
+            position,
         };
 
-        setItems([item]);
+        //setItems([item]);
     };
     /**
      * 마우스가 다운되었을 때 기록된 startPointer[clientX, clientY]를 기준으로
@@ -87,13 +97,18 @@ export const OttleCreate = () => {
         const [sx, sy] = startPointer;
         const p = scalePivot;
         const sign = x > sx && y > sy ? -1 : 1;
-        const dist = clamp((sign * distance(sx, sy, x, y)) / AB_WIDTH, -1, 10);
+        const dist = clamp(
+            (sign * distance(sx, sy, x, y)) / artboardSize,
+            -1,
+            10
+        );
+        const scale = Math.max(p + dist, 0.1);
 
         const item = {
             ...items[selected],
-            scale: Math.max(p + dist, 0.1),
+            scale,
         };
-        setItems([item]);
+        //setItems([item]);
     };
     /**
      *
@@ -108,7 +123,7 @@ export const OttleCreate = () => {
             getRotation(px, py, x, y) - getRotation(px, py, sx, sy);
 
         const item = { ...items[selected], rotation };
-        setItems([item]);
+        //setItems([item]);
     };
 
     //#region event

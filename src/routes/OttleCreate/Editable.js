@@ -1,7 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { AB_HEIGHT, AB_WIDTH, CANVAS_ACTIONS } from '../../configs/vars';
+import { CANVAS_ACTIONS } from '../../configs/vars';
+import { selectArtboard } from '../../features/ottleMaker/artboardSlice';
+import { selectOttleMaker } from '../../features/ottleMaker/ottleMakerSlice';
+
+//#region styled-component
 
 const Rect = styled.div`
     position: absolute;
@@ -12,7 +17,6 @@ const Rect = styled.div`
     }
     transform: scale(${(props) => props.currScale})
         rotate(${(props) => `${props.currRotation}turn`});
-    border: 1px solid gray;
 `;
 
 const Button = styled.div`
@@ -64,17 +68,30 @@ const Image = styled.div`
     ${(props) => (props.selected ? 'cursor: pointer;' : '')}
 `;
 
+//#endregion
+
 export const Editable = ({
-    item: { src, position, size, scale, rotation },
     selected,
-    editableRef,
+    item: { src, position, size, scale, rotation },
     setAction,
 }) => {
-    useEffect(() => {}, []);
+    const { size: artboardSize, ratio: artboardRatio } = useSelector(
+        selectArtboard
+    );
+
+    useEffect(() => {
+        console.log(getW(), getH(), getX(), getY());
+    }, []);
+
+    const getW = () => size.w * artboardRatio;
+    const getH = () => size.h * artboardRatio;
+    const getX = () => artboardSize * position.x - getW() / 2;
+    const getY = () => artboardSize * position.y - getH() / 2;
+
     return (
         <Rect
-            currX={AB_WIDTH * position.x - size.w / 2}
-            currY={AB_HEIGHT * position.y - size.h / 2}
+            currX={getX()}
+            currY={getY()}
             currScale={scale}
             currRotation={rotation}
         >
@@ -114,8 +131,8 @@ export const Editable = ({
                 id={selected && CANVAS_ACTIONS.MOVE}
                 selected={selected}
                 imgSrc={src}
-                width={size.w}
-                height={size.h}
+                width={getW()}
+                height={getH()}
                 alt='hello'
             ></Image>
         </Rect>

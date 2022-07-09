@@ -1,8 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
-import counterReducer from '../features/counter/counterSlice';
+import artboardReducer from '../features/ottleMaker/artboardSlice';
+import ottleMakerReducer from '../features/ottleMaker/ottleMakerSlice';
 
 export const store = configureStore({
     reducer: {
-        counter: counterReducer,
+        artboard: artboardReducer,
+        ottleMaker: ottleMakerReducer,
     },
 });

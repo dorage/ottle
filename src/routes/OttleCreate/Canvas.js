@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { ReceiptRefundIcon } from '@heroicons/react/outline';
 import { Editable } from './Editable';
-import { AB_HEIGHT, AB_WIDTH } from '../../configs/vars';
+import { selectArtboard } from '../../features/ottleMaker/artboardSlice';
+import { selectOttleMaker } from '../../features/ottleMaker/ottleMakerSlice';
 
 const [multipleMin, multipleMax] = [0.5, 2.5];
 
@@ -15,10 +17,9 @@ const getHeight = (ref) => {
 };
 
 //#region styled-component
-const CanvasSection = styled.section`
+const Container = styled.section`
     position: relative;
-    padding-top: 0.8rem;
-    margin: 0;
+    margin: 0.4rem 0;
 
     overflow: hidden;
     background-color: #eeeeee;
@@ -37,12 +38,16 @@ const Artboard = styled.div`
 
     z-index: 2;
 `;
+
 //#endregion
 
-export const Canvas = ({ items, setAction, selected }) => {
+export const Canvas = ({ setAction }) => {
     const [x, setX] = useState(0);
     const [y, setY] = useState(0);
     const [multiple, setMultiple] = useState(1.0);
+
+    const { size: artboardSize } = useSelector(selectArtboard);
+    const { selected, items } = useSelector(selectOttleMaker);
 
     const canvasRef = useRef();
     const artboardRef = useRef();
@@ -62,7 +67,11 @@ export const Canvas = ({ items, setAction, selected }) => {
         artboardRef.current.style.transform = `scale(${multiple}, ${multiple})`;
     };
 
-    useEffect(() => {}, []);
+    useEffect(() => {
+        document.addEventListener('resize', () => {
+            //
+        });
+    }, []);
 
     useEffect(() => {
         updateArtboardPosition();
@@ -73,27 +82,20 @@ export const Canvas = ({ items, setAction, selected }) => {
     }, [multiple]);
 
     return (
-        <div>
-            <CanvasSection ref={canvasRef}>
-                <Artboard
-                    AB_WIDTH={AB_WIDTH}
-                    AB_HEIGHT={AB_HEIGHT}
-                    size={window.innerWidth - 32}
-                    ref={artboardRef}
-                >
-                    {items ? (
-                        items.map((item, idx) => (
-                            <Editable
-                                selected={idx === selected}
-                                item={item}
-                                setAction={setAction}
-                            />
-                        ))
-                    ) : (
-                        <></>
-                    )}
-                </Artboard>
-            </CanvasSection>
-        </div>
+        <Container ref={canvasRef}>
+            <Artboard size={artboardSize} ref={artboardRef}>
+                {items ? (
+                    items.map((item, idx) => (
+                        <Editable
+                            selected={selected === idx}
+                            item={item}
+                            setAction={setAction}
+                        />
+                    ))
+                ) : (
+                    <></>
+                )}
+            </Artboard>
+        </Container>
     );
 };
