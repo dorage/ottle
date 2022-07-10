@@ -96,12 +96,46 @@ export const OttleMaker = () => {
         dispatch(updateItem(newItem));
     };
     const touchRotate = () => {
+        const calcRotation = (px, py, sx, sy, mx, my) => {
+            let rotation =
+                (angle(px, py, mx, my) - angle(px, py, sx, sy) + rotatePivot) %
+                1;
+            if (rotation < 0) rotation += 1;
+            return rotation;
+        };
+        const snap = (rotation) => {
+            if (rotation < 0.01 || rotation > 0.99) {
+                return 0;
+            }
+            if (rotation < 0.13 && rotation > 0.11) {
+                return 0.125;
+            }
+            if (rotation < 0.26 && rotation > 0.24) {
+                return 0.25;
+            }
+            if (rotation < 0.38 && rotation > 0.36) {
+                return 0.375;
+            }
+            if (rotation < 0.51 && rotation > 0.49) {
+                return 0.5;
+            }
+            if (rotation < 0.63 && rotation > 0.61) {
+                return 0.625;
+            }
+            if (rotation < 0.76 && rotation > 0.74) {
+                return 0.75;
+            }
+            if (rotation < 0.88 && rotation > 0.86) {
+                return 0.875;
+            }
+            return rotation;
+        };
         const { x: sx, y: sy } = startTouch;
         const { x: mx, y: my } = moveTouch;
         const { x: px, y: py } = getElementCenter(selectedRef.current);
 
-        const rotation =
-            (angle(px, py, mx, my) - angle(px, py, sx, sy) + rotatePivot) % 1;
+        const rotation = snap(calcRotation(px, py, sx, sy, mx, my));
+        console.log(rotation);
 
         const newItem = {
             ...items[selected],
