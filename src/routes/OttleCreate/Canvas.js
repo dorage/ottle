@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { Editable } from './Editable';
 import { selectArtboard } from '../../features/ottleMaker/artboardSlice';
 import { selectOttleItem } from '../../features/ottleMaker/ottleItemSlice';
-import { ControlPanel } from './ControlPanel';
 
 const [multipleMin, multipleMax] = [0.5, 2.5];
 
@@ -96,7 +95,6 @@ export const Canvas = ({ selectedRef }) => {
                     <></>
                 )}
             </Artboard>
-            <ControlPanel />
         </Container>
     );
 };

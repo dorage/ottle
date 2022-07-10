@@ -5,6 +5,8 @@ const GlobalStyles = createGlobalStyle`
     ${normalize}
 
     * {
+        user-select: none;
+
         &.pad{
             padding-left: 1.6rem;
             padding-right: 1.6rem;
@@ -59,7 +61,7 @@ export const theme = {
         gap_32: '3.2rem',
         gap_64: '6.4rem',
     },
-    fontsize: {
+    font: {
         h1: '2rem',
         h2: '1.5rem',
         h3: '1.17rem',

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { routes } from './configs/routes';
 import { Main } from './routes/Main';
 import { Likes } from './routes/Likes';
@@ -35,13 +35,23 @@ function App() {
                 </Route>
                 <Route
                     path={routes.ottleCreate}
-                    element={isMobile ? <OttleMaker /> : <PageNotFound />}
+                    element={
+                        isMobile ? (
+                            <OttleMaker />
+                        ) : (
+                            <Navigate to={routes.pageNotFound} />
+                        )
+                    }
                 />
                 <Route path={routes.ottleDetail()} element={<Main />} />
                 <Route path={routes.ottleEdit()} element={<Main />} />
                 <Route path={routes.productDetail()} element={<Main />} />
                 <Route path={routes.settings} element={<Main />} />
-                <Route path='*' element={<PageNotFound />} />
+                <Route path={routes.pageNotFound} element={<PageNotFound />} />
+                <Route
+                    path='*'
+                    element={<Navigate to={routes.pageNotFound} />}
+                />
             </Routes>
         </BrowserRouter>
     );

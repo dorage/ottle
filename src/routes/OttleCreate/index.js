@@ -1,9 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import { IconButton } from '../../components/IconButton/IconButton';
 import { Canvas } from './Canvas';
-import { XIcon } from '@heroicons/react/outline';
+import { Inspector } from './Inspector';
 import {
     onResizeArtboard,
     selectArtboard,
@@ -19,6 +18,7 @@ import {
     setMoveTouch,
 } from '../../features/ottleMaker/ottleActionSlice';
 import { angle, clamp, distance, getElementCenter } from '../../configs/utils';
+import { OttleCreateHeader } from '../../components/Header';
 
 //#region styled-components
 const Container = styled.div`
@@ -30,15 +30,6 @@ const Container = styled.div`
     touch-action: none;
 `;
 
-const Header = styled.div`
-    height: 5rem;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-
-    border-bottom: 1px solid ${(props) => props.theme.color.black_600};
-    background-color: white;
-`;
 //#endregion
 
 export const OttleMaker = () => {
@@ -135,7 +126,6 @@ export const OttleMaker = () => {
         const { x: px, y: py } = getElementCenter(selectedRef.current);
 
         const rotation = snap(calcRotation(px, py, sx, sy, mx, my));
-        console.log(rotation);
 
         const newItem = {
             ...items[selected],
@@ -179,10 +169,9 @@ export const OttleMaker = () => {
             onTouchEnd={onTouchEnd}
             onTouchCancel={onTouchCancel}
         >
-            <Header>
-                <IconButton icon={<XIcon />} />
-            </Header>
+            <OttleCreateHeader />
             <Canvas selectedRef={selectedRef} />
+            <Inspector />
         </Container>
     );
 };

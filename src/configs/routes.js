@@ -7,7 +7,7 @@ const likes = '/likes';
 const boards = '/boards';
 const profile = '/profile';
 const settings = '/settings';
-const pageNotFound = 'page-not-found';
+const pageNotFound = '/page-not-found';
 
 export const routes = {
     main,

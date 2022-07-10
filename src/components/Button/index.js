@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { LinkHoC } from '../HOC/LinkHoC';
 
-//#region styled-components
 export const GradientButton = styled.button`
     padding: 0.4rem 1.6rem;
 
@@ -21,6 +20,13 @@ export const GradientButton = styled.button`
         rgba(236, 160, 255, 1) 100%
     );
 `;
-//#endregion
-
 export const LinkedGradientButton = LinkHoC(GradientButton);
+
+export const Textbutton = styled.button`
+    color: ${(props) => props.theme.color.black_400};
+    font-size: 1.6rem;
+
+    border: none;
+    background: none;
+`;
+export const LinkedTextButton = LinkHoC(Textbutton);

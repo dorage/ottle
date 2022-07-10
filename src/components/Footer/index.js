@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import {
-    ViewBoardsIcon,
-    HeartIcon,
-    ClipboardListIcon,
-    UserCircleIcon,
-} from '@heroicons/react/outline';
+    HiOutlineViewBoards,
+    HiOutlineHeart,
+    HiOutlineClipboardList,
+    HiOutlineUserCircle,
+} from 'react-icons/hi';
 import { IconButton, IconLink } from '../IconButton/IconButton';
 import { routes } from '../../configs/routes';
 
@@ -16,7 +16,7 @@ const Section = styled.footer`
     right: 0px;
     bottom: 0px;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly;
     align-items: center;
     height: 5rem;
 
@@ -28,10 +28,10 @@ const Section = styled.footer`
 const genPathObj = (path, icon) => ({ path, Icon: icon });
 
 const paths = [
-    genPathObj(routes.main, ViewBoardsIcon),
-    genPathObj(routes.likes, HeartIcon),
-    genPathObj(routes.boards, ClipboardListIcon),
-    genPathObj(routes.profile, UserCircleIcon),
+    genPathObj(routes.main, HiOutlineViewBoards),
+    /*    genPathObj(routes.likes, HiOutlineHeart), 추후 업데이트 */
+    /*    genPathObj(routes.boards, HiOutlineClipboardList), 추후 업데이트 */
+    genPathObj(routes.profile, HiOutlineUserCircle),
 ];
 
 export const Footer = ({ pathname }) => {

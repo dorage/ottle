@@ -10,9 +10,8 @@ import {
 import { TbRotate, TbArrowsMaximize, TbHandFinger, TbX } from 'react-icons/tb';
 
 const Container = styled.div`
-    display: absolute;
-    bottom: 0px;
     text-align: center;
+    border-bottom: 1px solid ${(props) => props.theme.color.black_400};
 `;
 
 export const ControlPanel = () => {
