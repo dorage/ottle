@@ -33,7 +33,7 @@ export const artboardSlice = createSlice({
 export const onResizeArtboard = () => (dispatch, getState) => {
     const w = window.innerWidth;
     const h = window.innerHeight;
-    let size = Math.min(Math.min(w, h), DEFAULT_SIZE) - 2 * 16;
+    let size = Math.min(Math.min(w, h), DEFAULT_SIZE, h / 2) - 2 * 16;
     dispatch(updateScreenSize({ size }));
 };
 

@@ -11,10 +11,6 @@ const Container = styled.div``;
 export const Layout = (props) => {
     const location = useLocation();
 
-    useEffect(() => {
-        console.log(location);
-    }, []);
-
     return (
         <Container>
             <Header />

@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 const Button = styled.button`
     border: none;
     background-color: transparent;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 
     & > svg {
         width: ${(props) => `${props.w ? props.w / 10 : 2.8}rem`};
@@ -32,6 +33,7 @@ export const IconButton = ({
     children,
     icon, // children 혹은 icon props를 통해 전달받음.
     onClick,
+    ...props
 }) => {
     return (
         <Button
@@ -41,6 +43,7 @@ export const IconButton = ({
             activeColor={activeColor}
             active={active}
             onClick={onClick}
+            {...props}
         >
             {children || icon}
         </Button>

@@ -1,11 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { ReceiptRefundIcon } from '@heroicons/react/outline';
 import { Editable } from './Editable';
 import { selectArtboard } from '../../features/ottleMaker/artboardSlice';
-import { selectOttleMaker } from '../../features/ottleMaker/ottleMakerSlice';
+import { selectOttleItem } from '../../features/ottleMaker/ottleItemSlice';
+import { ControlPanel } from './ControlPanel';
 
 const [multipleMin, multipleMax] = [0.5, 2.5];
 
@@ -41,13 +40,13 @@ const Artboard = styled.div`
 
 //#endregion
 
-export const Canvas = ({ setAction }) => {
+export const Canvas = ({ selectedRef }) => {
     const [x, setX] = useState(0);
     const [y, setY] = useState(0);
     const [multiple, setMultiple] = useState(1.0);
 
     const { size: artboardSize } = useSelector(selectArtboard);
-    const { selected, items } = useSelector(selectOttleMaker);
+    const { selected, items } = useSelector(selectOttleItem);
 
     const canvasRef = useRef();
     const artboardRef = useRef();
@@ -87,15 +86,17 @@ export const Canvas = ({ setAction }) => {
                 {items ? (
                     items.map((item, idx) => (
                         <Editable
+                            key={item.id}
                             selected={selected === idx}
+                            selectedRef={selectedRef}
                             item={item}
-                            setAction={setAction}
                         />
                     ))
                 ) : (
                     <></>
                 )}
             </Artboard>
+            <ControlPanel />
         </Container>
     );
 };

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { routes } from './configs/routes';
 import { Main } from './routes/Main';
@@ -13,13 +13,15 @@ import { useSelector } from 'react-redux';
 import { selectArtboard } from './features/ottleMaker/artboardSlice';
 
 function App() {
-    // TODO; 나중에 삭제
-    if (process.env.NODE_ENV === 'development') {
-        const state = useSelector(selectArtboard);
-        useEffect(() => {
-            console.log(state);
-        }, [state]);
-    }
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        setIsMobile(
+            navigator.userAgent
+                .toLowerCase()
+                .match(/(iphone)|(android)|(mobile)/g)
+        );
+    }, []);
 
     return (
         <BrowserRouter>
@@ -31,7 +33,10 @@ function App() {
                     <Route path={routes.boards} element={<Boards />} />
                     <Route path={routes.profile} element={<Profile />} />
                 </Route>
-                <Route path={routes.ottleCreate} element={<OttleMaker />} />
+                <Route
+                    path={routes.ottleCreate}
+                    element={isMobile ? <OttleMaker /> : <PageNotFound />}
+                />
                 <Route path={routes.ottleDetail()} element={<Main />} />
                 <Route path={routes.ottleEdit()} element={<Main />} />
                 <Route path={routes.productDetail()} element={<Main />} />

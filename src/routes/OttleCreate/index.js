@@ -1,24 +1,33 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { IconButton } from '../../components/IconButton/IconButton';
-import { CANVAS_ACTIONS } from '../../configs/vars';
 import { Canvas } from './Canvas';
 import { XIcon } from '@heroicons/react/outline';
 import {
     onResizeArtboard,
     selectArtboard,
-    updateScreenSize,
 } from '../../features/ottleMaker/artboardSlice';
-import { theme } from '../../assets/styles/GlobalStyles';
-import { selectOttleMaker } from '../../features/ottleMaker/ottleMakerSlice';
+import {
+    selectOttleItem,
+    updateItem,
+} from '../../features/ottleMaker/ottleItemSlice';
+import {
+    CANVAS_ACTIONS,
+    selectOttleAction,
+    setStartTouch,
+    setMoveTouch,
+} from '../../features/ottleMaker/ottleActionSlice';
+import { angle, clamp, distance, getElementCenter } from '../../configs/utils';
 
 //#region styled-components
-const APP = styled.div`
+const Container = styled.div`
     width: 100vw;
     height: 100vh;
 
     background-color: #eeeeee;
+    // TODO; PC에서 안되네
+    touch-action: none;
 `;
 
 const Header = styled.div`
@@ -32,162 +41,114 @@ const Header = styled.div`
 `;
 //#endregion
 
-const distance = (x1, y1, x2, y2) =>
-    Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
-const clamp = (val, min, max) => Math.max(Math.min(val, max), min);
-const getElementCenter = (elem) => {
-    const { left, top, width, height } = elem.getBoundingClientRect();
-    return [left + width / 2, top + height / 2];
-};
-const getRotation = (pivotX, pivotY, currX, currY) => {
-    const radians = Math.atan2(currY - pivotY, currX - pivotX);
-    const degree = radians * (180 / Math.PI) + 180;
-    return degree / 360;
-};
-
 export const OttleMaker = () => {
     const dispatch = useDispatch();
     const { size: artboardSize } = useSelector(selectArtboard);
-    const { selected, items } = useSelector(selectOttleMaker);
-
-    const [action, setAction] = useState(CANVAS_ACTIONS.IDLE);
-    const [startPointer, setStartPointer] = useState([0, 0]);
-    const [movePivot, setMovePivot] = useState([0, 0]);
-    const [rotatePivot, setRotatePivot] = useState(0);
-    const [scalePivot, setScalePivot] = useState(0);
+    const { selected, items } = useSelector(selectOttleItem);
+    const {
+        action,
+        startTouch,
+        moveTouch,
+        movePivot,
+        scalePivot,
+        rotatePivot,
+    } = useSelector(selectOttleAction);
+    const selectedRef = useRef();
 
     useEffect(() => {
+        // resize artboard
         dispatch(onResizeArtboard());
         window.addEventListener('resize', () => dispatch(onResizeArtboard()));
     }, []);
 
-    /**
-     * 마우스가 다운되었을 때 기록된 startPointer[clientX, clientY]를 기준으로
-     * 현재의 clientX, clientY를 통해 차이를 구하고
-     * 시작포인트에 합산해서 item을 업데이트한다.
-     * @param {*} x 현재 clientX
-     * @param {*} y 현재 clientY
-     */
-    const move = (x, y) => {
-        const [sx, sy] = startPointer;
-        const [px, py] = movePivot;
-        const dx = (x - sx) / artboardSize;
-        const dy = (y - sy) / artboardSize;
+    // 이동을 구현
+    const touchMove = () => {
+        const { x: sx, y: sy } = startTouch;
+        const { x: mx, y: my } = moveTouch;
+        const { x: px, y: py } = movePivot;
 
-        const position = {
-            x: clamp(px + dx, 0, 1),
-            y: clamp(py + dy, 0, 1),
-        };
+        const dx = (mx - sx) / artboardSize; // - arboard size;
+        const dy = (my - sy) / artboardSize; // - arboard size;
 
-        const item = {
+        const newItem = {
             ...items[selected],
-            position,
+            position: { x: clamp(px + dx, 0, 1), y: clamp(py + dy, 0, 1) },
         };
 
-        //setItems([item]);
+        dispatch(updateItem(newItem));
     };
-    /**
-     * 마우스가 다운되었을 때 기록된 startPointer[clientX, clientY]를 기준으로
-     * 현재의 clientX, clientY 좌표와의 거리를 구하고
-     * 기존 item의 scale값에 합산해서 item을 업데이트한다.
-     * @param {*} x 현재 clientX
-     * @param {*} y 현재 clientY
-     */
-    const scale = (x, y) => {
-        const [sx, sy] = startPointer;
-        const p = scalePivot;
-        const sign = x > sx && y > sy ? -1 : 1;
-        const dist = clamp(
-            (sign * distance(sx, sy, x, y)) / artboardSize,
-            -1,
-            10
-        );
-        const scale = Math.max(p + dist, 0.1);
+    const touchScale = () => {
+        const { x: sx, y: sy } = startTouch;
+        const { x: mx, y: my } = moveTouch;
+        const { x: px, y: py } = getElementCenter(selectedRef.current);
 
-        const item = {
+        const startDist = distance(sx, sy, px, py);
+        const movedDist = distance(mx, my, px, py);
+        const dist = (movedDist - startDist) / artboardSize;
+
+        const scale = Math.max(scalePivot + dist, 0.1);
+
+        const newItem = {
             ...items[selected],
             scale,
         };
-        //setItems([item]);
+
+        dispatch(updateItem(newItem));
     };
-    /**
-     *
-     * @param {*} x 현재 clientX
-     * @param {*} y 현재 clientY
-     */
-    const rotate = (x, y) => {
-        const [sx, sy] = startPointer;
-        const [px, py] = rotatePivot;
+    const touchRotate = () => {
+        const { x: sx, y: sy } = startTouch;
+        const { x: mx, y: my } = moveTouch;
+        const { x: px, y: py } = getElementCenter(selectedRef.current);
 
         const rotation =
-            getRotation(px, py, x, y) - getRotation(px, py, sx, sy);
+            (angle(px, py, mx, my) - angle(px, py, sx, sy) + rotatePivot) % 1;
 
-        const item = { ...items[selected], rotation };
-        //setItems([item]);
+        const newItem = {
+            ...items[selected],
+            rotation,
+        };
+
+        dispatch(updateItem(newItem));
     };
 
     //#region event
-    const onMouseDown = (e) => {
-        setStartPointer([e.clientX, e.clientY]);
-        switch (e.target.id) {
-            case CANVAS_ACTIONS.SCALE:
-                setAction(CANVAS_ACTIONS.SCALE);
-                setScalePivot(items[selected].scale);
-                break;
-            case CANVAS_ACTIONS.DELETE:
-                setAction(CANVAS_ACTIONS.DELETE);
-                break;
-            case CANVAS_ACTIONS.ROTATE:
-                setAction(CANVAS_ACTIONS.ROTATE);
-                setRotatePivot(getElementCenter(e.target.parentElement));
-                break;
-            case CANVAS_ACTIONS.MOVE:
-                setAction(CANVAS_ACTIONS.MOVE);
-                setMovePivot([
-                    items[selected].position.x,
-                    items[selected].position.y,
-                ]);
-                break;
-            default:
-                setAction(CANVAS_ACTIONS.IDLE);
-                break;
-        }
-    };
 
-    const onMouseMove = (e) => {
+    //#region  event-touch
+    const onTouchStart = (e) => {
+        dispatch(setStartTouch(e));
+    };
+    const onTouchMove = (e) => {
+        if (action === CANVAS_ACTIONS.IDLE) return;
+        dispatch(setMoveTouch(e));
+
         switch (action) {
             case CANVAS_ACTIONS.MOVE:
-                move(e.clientX, e.clientY);
+                touchMove();
                 break;
             case CANVAS_ACTIONS.SCALE:
-                scale(e.clientX, e.clientY);
-                break;
-            case CANVAS_ACTIONS.DELETE:
-                console.log(CANVAS_ACTIONS.DELETE);
+                touchScale();
                 break;
             case CANVAS_ACTIONS.ROTATE:
-                rotate(e.clientX, e.clientY, e.target);
+                touchRotate();
                 break;
-            default:
-                console.log(action);
-                return;
         }
     };
-    const onMouseUp = (e) => {
-        setAction(CANVAS_ACTIONS.IDLE);
-    };
+    const onTouchEnd = (e) => {};
+    const onTouchCancel = (e) => {};
+    //#endregion
     //#endregion
 
     return (
-        <APP
-            onMouseDown={onMouseDown}
-            onMouseMove={onMouseMove}
-            onMouseUp={onMouseUp}
+        <Container
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
+            onTouchCancel={onTouchCancel}
         >
             <Header>
                 <IconButton icon={<XIcon />} />
             </Header>
-            <Canvas />
-        </APP>
+            <Canvas selectedRef={selectedRef} />
+        </Container>
     );
 };
