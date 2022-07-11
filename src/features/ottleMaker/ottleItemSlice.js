@@ -14,7 +14,7 @@ const generateItem = () => ({
 });
 
 const initialState = {
-    selected: 0, //
+    selected: NaN, //
     items: [generateItem()],
 };
 
@@ -32,6 +32,7 @@ export const ottleItemSlice = createSlice({
     },
 });
 
+export const itemHasSelected = (selected) => !isNaN(selected);
 export const { selectItem, releaseItem, updateItem } = ottleItemSlice.actions;
 export const selectOttleItem = (state) => state.ottleItem;
 

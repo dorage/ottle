@@ -4,10 +4,13 @@ import styled from 'styled-components';
 import { Canvas } from './Canvas';
 import { Inspector } from './Inspector';
 import {
+    onMoveArtboard,
     onResizeArtboard,
     selectArtboard,
+    updatePosition,
 } from '../../features/ottleMaker/artboardSlice';
 import {
+    itemHasSelected,
     selectOttleItem,
     updateItem,
 } from '../../features/ottleMaker/ottleItemSlice';
@@ -16,16 +19,20 @@ import {
     selectOttleAction,
     setStartTouch,
     setMoveTouch,
+    releaseStartTouch,
+    setAction,
 } from '../../features/ottleMaker/ottleActionSlice';
 import { angle, clamp, distance, getElementCenter } from '../../configs/utils';
 import { OttleCreateHeader } from '../../components/Header';
 
 //#region styled-components
 const Container = styled.div`
+    display: flex;
+    flex-direction: column;
     width: 100vw;
     height: 100vh;
 
-    background-color: #eeeeee;
+    background-color: ${(props) => props.theme.color.black_600};
     // TODO; PC에서 안되네
     touch-action: none;
 `;
@@ -34,7 +41,12 @@ const Container = styled.div`
 
 export const OttleMaker = () => {
     const dispatch = useDispatch();
-    const { size: artboardSize } = useSelector(selectArtboard);
+    const {
+        size: artboardSize,
+        position: artboardPosition,
+        multiple: artboardMultiple,
+        ratio: artboardRatio,
+    } = useSelector(selectArtboard);
     const { selected, items } = useSelector(selectOttleItem);
     const {
         action,
@@ -134,15 +146,21 @@ export const OttleMaker = () => {
 
         dispatch(updateItem(newItem));
     };
+    // 아트보드 이동
+    const touchArtboardMove = () => {
+        dispatch(onMoveArtboard());
+    };
 
     //#region event
 
     //#region  event-touch
     const onTouchStart = (e) => {
         dispatch(setStartTouch(e));
+        if (!itemHasSelected(selected))
+            dispatch(setAction(CANVAS_ACTIONS.ARTBOARD_MOVE));
     };
     const onTouchMove = (e) => {
-        if (action === CANVAS_ACTIONS.IDLE) return;
+        if (action === CANVAS_ACTIONS.IDLE || !startTouch) return;
         dispatch(setMoveTouch(e));
 
         switch (action) {
@@ -155,22 +173,28 @@ export const OttleMaker = () => {
             case CANVAS_ACTIONS.ROTATE:
                 touchRotate();
                 break;
+            case CANVAS_ACTIONS.ARTBOARD_MOVE:
+                touchArtboardMove();
+                break;
         }
     };
-    const onTouchEnd = (e) => {};
-    const onTouchCancel = (e) => {};
+    const onTouchEnd = (e) => {
+        dispatch(releaseStartTouch());
+    };
+    const onTouchCancel = (e) => {
+        dispatch(releaseStartTouch());
+    };
     //#endregion
     //#endregion
 
     return (
         <Container
-            onTouchStart={onTouchStart}
             onTouchMove={onTouchMove}
             onTouchEnd={onTouchEnd}
             onTouchCancel={onTouchCancel}
         >
             <OttleCreateHeader />
-            <Canvas selectedRef={selectedRef} />
+            <Canvas selectedRef={selectedRef} onTouchStart={onTouchStart} />
             <Inspector />
         </Container>
     );

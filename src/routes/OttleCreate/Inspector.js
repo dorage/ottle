@@ -1,14 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { ControlPanel } from './ControlPanel';
-import { IconButton } from '../../components/IconButton/IconButton';
+import { ArtboardControlPanel, ItemControlPanel } from './ControlPanel';
+import { IconButton } from '../../components/Button/IconButton';
 import { HiOutlinePlus, HiOutlineTrash } from 'react-icons/hi';
+import { useSelector } from 'react-redux';
+import {
+    selectOttleItem,
+    itemHasSelected,
+} from '../../features/ottleMaker/ottleItemSlice';
 
 //#region styled-components
 const Container = styled.div`
+    flex: 1;
     background-color: white;
-    height: 100%;
 `;
 const Header = styled.div`
     display: flex;
@@ -40,9 +45,15 @@ const Product = ({ src }) => (
 );
 
 export const Inspector = () => {
+    const { selected } = useSelector(selectOttleItem);
+
     return (
         <Container className='pad'>
-            <ControlPanel />
+            {itemHasSelected(selected) ? (
+                <ItemControlPanel />
+            ) : (
+                <ArtboardControlPanel />
+            )}
             <Header>
                 <h1>Products</h1>
                 <HeaderControls>

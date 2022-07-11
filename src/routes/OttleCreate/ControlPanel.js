@@ -1,20 +1,29 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
-import { IconButton } from '../../components/IconButton/IconButton';
+import { IconButton } from '../../components/Button/IconButton';
 import {
     CANVAS_ACTIONS,
     selectOttleAction,
     setAction,
 } from '../../features/ottleMaker/ottleActionSlice';
 import { TbRotate, TbArrowsMaximize, TbHandFinger, TbX } from 'react-icons/tb';
+import { Slider } from '../../components/Input/Slider';
+import {
+    multipleToPercent,
+    selectArtboard,
+    updateMulitple,
+} from '../../features/ottleMaker/artboardSlice';
+import { HiSearch } from 'react-icons/hi';
 
 const Container = styled.div`
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border-bottom: 1px solid ${(props) => props.theme.color.black_400};
 `;
 
-export const ControlPanel = () => {
+export const ItemControlPanel = () => {
     const dispatch = useDispatch();
     const { action } = useSelector(selectOttleAction);
 
@@ -46,6 +55,24 @@ export const ControlPanel = () => {
                     dispatch(setAction(CANVAS_ACTIONS.IDLE));
                 }}
                 icon={<TbX />}
+            />
+        </Container>
+    );
+};
+
+export const ArtboardControlPanel = () => {
+    const dispatch = useDispatch();
+    const { action } = useSelector(selectOttleAction);
+    const { multiple } = useSelector(selectArtboard);
+
+    return (
+        <Container>
+            <IconButton active={true} icon={<HiSearch />} />
+            <Slider
+                value={multipleToPercent(multiple)}
+                onChange={(e) => {
+                    dispatch(updateMulitple(e.currentTarget.value));
+                }}
             />
         </Container>
     );

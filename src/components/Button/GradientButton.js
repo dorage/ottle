@@ -21,12 +21,3 @@ export const GradientButton = styled.button`
     );
 `;
 export const LinkedGradientButton = LinkHoC(GradientButton);
-
-export const Textbutton = styled.button`
-    color: ${(props) => props.theme.color.black_400};
-    font-size: 1.6rem;
-
-    border: none;
-    background: none;
-`;
-export const LinkedTextButton = LinkHoC(Textbutton);

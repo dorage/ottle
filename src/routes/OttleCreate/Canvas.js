@@ -25,10 +25,16 @@ const Container = styled.section`
     z-index: 1;
 `;
 
-const Artboard = styled.div`
+const Artboard = styled.div.attrs((props) => ({
+    style: {
+        width: `${props.size || 100}px`,
+        height: `${props.size || 100}px`,
+        left: `${props.x || 0}px`,
+        top: `${props.y || 0}px`,
+        transform: `scale(${props.multiple}, ${props.multiple})`,
+    },
+}))`
     position: relative;
-    width: ${(props) => props.size || 100}px;
-    height: ${(props) => props.size || 100}px;
     margin: 0 auto;
 
     overflow: hidden;
@@ -39,12 +45,12 @@ const Artboard = styled.div`
 
 //#endregion
 
-export const Canvas = ({ selectedRef }) => {
-    const [x, setX] = useState(0);
-    const [y, setY] = useState(0);
-    const [multiple, setMultiple] = useState(1.0);
-
-    const { size: artboardSize } = useSelector(selectArtboard);
+export const Canvas = ({ selectedRef, onTouchStart }) => {
+    const {
+        size: artboardSize,
+        multiple,
+        position: { x, y },
+    } = useSelector(selectArtboard);
     const { selected, items } = useSelector(selectOttleItem);
 
     const canvasRef = useRef();
@@ -54,34 +60,28 @@ export const Canvas = ({ selectedRef }) => {
         const xDiff = multiple * getWidth(artboardRef) - getWidth(canvasRef);
         const yDiff = multiple * getHeight(artboardRef) - getHeight(canvasRef);
 
-        const left = xDiff <= 0 ? 1 : 0.5 * xDiff * x;
-        const top = yDiff <= 0 ? 1 : 0.5 * yDiff * y;
+        const left = xDiff <= 0 ? 0 : 0.5 * xDiff * x;
+        const top = yDiff <= 0 ? 0 : 0.5 * yDiff * y;
 
         artboardRef.current.style.left = `${left}px`;
         artboardRef.current.style.top = `${top}px`;
     };
-
-    const scaleArtboard = () => {
-        artboardRef.current.style.transform = `scale(${multiple}, ${multiple})`;
-    };
-
+    const getX = () => {};
+    const getY = () => {};
     useEffect(() => {
-        document.addEventListener('resize', () => {
-            //
-        });
-    }, []);
-
-    useEffect(() => {
-        updateArtboardPosition();
+        // updateArtboardPosition();
     }, [x, y]);
-    useEffect(() => {
-        updateArtboardPosition();
-        scaleArtboard();
-    }, [multiple]);
 
     return (
         <Container ref={canvasRef}>
-            <Artboard size={artboardSize} ref={artboardRef}>
+            <Artboard
+                size={artboardSize}
+                ref={artboardRef}
+                onTouchStart={onTouchStart}
+                multiple={multiple}
+                x={x}
+                y={y}
+            >
                 {items ? (
                     items.map((item, idx) => (
                         <Editable

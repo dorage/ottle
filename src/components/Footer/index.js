@@ -7,7 +7,7 @@ import {
     HiOutlineClipboardList,
     HiOutlineUserCircle,
 } from 'react-icons/hi';
-import { IconButton, IconLink } from '../IconButton/IconButton';
+import { IconButton, LinkedIconButton } from '../Button/IconButton';
 import { routes } from '../../configs/routes';
 
 const Section = styled.footer`
@@ -41,7 +41,7 @@ export const Footer = ({ pathname }) => {
                 pathname === path ? (
                     <IconButton active={true} icon={<Icon />} />
                 ) : (
-                    <IconLink to={path} icon={<Icon />} />
+                    <LinkedIconButton to={path} icon={<Icon />} />
                 )
             )}
         </Section>

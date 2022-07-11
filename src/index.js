@@ -6,8 +6,11 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import GlobalStyles, { theme } from './assets/styles/GlobalStyles';
 import { ThemeProvider } from 'styled-components';
+import { createPortal } from 'react-dom';
+import { Modal } from './components/Modal';
+import { Alert } from './components/Alert';
 
-const container = document.getElementById('root');
+const container = document.getElementById('app-root');
 const root = createRoot(container);
 
 root.render(
@@ -16,6 +19,8 @@ root.render(
         <Provider store={store}>
             <ThemeProvider theme={theme}>
                 <App />
+                <Modal />
+                <Alert />
             </ThemeProvider>
         </Provider>
     </React.StrictMode>

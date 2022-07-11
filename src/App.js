@@ -35,13 +35,7 @@ function App() {
                 </Route>
                 <Route
                     path={routes.ottleCreate}
-                    element={
-                        isMobile ? (
-                            <OttleMaker />
-                        ) : (
-                            <Navigate to={routes.pageNotFound} />
-                        )
-                    }
+                    element={isMobile ? <OttleMaker /> : <OttleMaker />}
                 />
                 <Route path={routes.ottleDetail()} element={<Main />} />
                 <Route path={routes.ottleEdit()} element={<Main />} />

@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import ottle_black_512 from '../../assets/images/ottle_black_512.png';
-import { GradientButton, LinkedGradientButton, Textbutton } from '../Button';
+import { GradientButton, LinkedGradientButton } from '../Button/GradientButton';
+import { Textbutton } from '../Button/TextButton';
 import { routes } from '../../configs/routes';
 
 const Section = styled.section`

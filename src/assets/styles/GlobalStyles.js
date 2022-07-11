@@ -5,6 +5,7 @@ const GlobalStyles = createGlobalStyle`
     ${normalize}
 
     * {
+        box-sizing: border-box;
         user-select: none;
 
         &.pad{
@@ -12,29 +13,32 @@ const GlobalStyles = createGlobalStyle`
             padding-right: 1.6rem;
         }
     }
-    
     html{
         font-size: 62.5%;
         font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+        overflow: none;
+    }
+    html.noScroll, html.noScroll > body{
+        overflow:none;
     }
     body{
         min-height: 100vh;
         max-width: 100vw;
     }
-
     button{
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
         &:active{
             filter: blur(0.3rem);
             transition: 0.3s;
         }
     }
     a{
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
         &:active{
             filter: blur(0.3rem);
             transition: 0.3s;
         }
     }
-
     section {
         padding-left: 1.6rem;
         padding-right: 1.6rem;

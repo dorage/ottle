@@ -41,3 +41,15 @@ export const angle = (pivotX, pivotY, currX, currY) => {
     const degree = radians * (180 / Math.PI) + 180;
     return degree / 360;
 };
+
+/**
+ * 100분율 val을 min~max 범위내로 스케일링합니다.
+ * @param {Number} val
+ * @param {Number} min
+ * @param {Number} max
+ * @returns
+ */
+export const scalePercent = (val, min, max) => {
+    if (min > max) return null;
+    return val / (100 / (max - min)) + min;
+};

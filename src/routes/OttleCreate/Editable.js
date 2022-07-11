@@ -57,7 +57,6 @@ export const Editable = ({
             ref={selectedRef}
         >
             <Image
-                id={selected && CANVAS_ACTIONS.MOVE}
                 imgSrc={src}
                 width={getW()}
                 height={getH()}
