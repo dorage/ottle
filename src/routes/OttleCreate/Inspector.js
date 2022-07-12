@@ -4,7 +4,7 @@ import styled, { keyframes } from 'styled-components';
 import { ArtboardControlPanel, ItemControlPanel } from './ControlPanel';
 import { IconButton } from '../../components/Button/IconButton';
 import { HiOutlineInbox, HiOutlinePlus, HiOutlineTrash } from 'react-icons/hi';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
     selectOttleItem,
     itemHasSelected,
@@ -12,6 +12,7 @@ import {
 import { ProductLayer } from './ProductLayer';
 import { Textbutton } from '../../components/Button/TextButton';
 import { RoundButton } from '../../components/Button/RoundButton';
+import { openItemDrawer } from '../../features/ottleMaker/ottleItemDrawer';
 
 //#region styled-components
 const Container = styled.div`
@@ -43,7 +44,8 @@ const NoItemContainer = styled.div`
 `;
 //#endregion
 
-export const Inspector = ({ openItemSelect }) => {
+export const Inspector = () => {
+    const dispatch = useDispatch();
     const { selected, items } = useSelector(selectOttleItem);
     const [deleteMode, setDeleteMode] = useState(false);
 
@@ -83,7 +85,7 @@ export const Inspector = ({ openItemSelect }) => {
                                 h={24}
                                 icon={<HiOutlinePlus />}
                                 onClick={() => {
-                                    openItemSelect();
+                                    dispatch(openItemDrawer());
                                 }}
                             />
                         </>
@@ -113,7 +115,7 @@ export const Inspector = ({ openItemSelect }) => {
                     <h1>아이템이 없어요 :\</h1>
                     <RoundButton
                         onClick={() => {
-                            openItemSelect();
+                            dispatch(openItemDrawer());
                         }}
                     >
                         아이템 추가하기

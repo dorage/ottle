@@ -68,11 +68,7 @@ export const ArtboardControlPanel = () => {
 
     return (
         <Container>
-            <IconButton
-                active={true}
-                icon={<HiSearch />}
-                onClick={() => dispatch(updateMulitple(multipleToPercent(1.0)))}
-            />
+            <IconButton active={true} icon={<HiSearch />} />
             <Slider
                 value={multipleToPercent(multiple)}
                 onChange={(e) => {

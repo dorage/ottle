@@ -1,14 +1,24 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-    category: null,
-    data: null,
+    isOpend: false,
+    category: [],
+    data: [],
 };
 
 const ottleItemDrawer = createSlice({
     name: 'ottleItemDrawer',
     initialState,
-    reducers: {},
+    reducers: {
+        openItemDrawer: (state) => {
+            state.isOpend = true;
+        },
+        closeItemDrawer: (state) => {
+            state.isOpend = false;
+        },
+    },
 });
 
+export const selectOttleItemDrawer = (state) => state.ottleItemDrawer;
+export const { openItemDrawer, closeItemDrawer } = ottleItemDrawer.actions;
 export default ottleItemDrawer.reducer;

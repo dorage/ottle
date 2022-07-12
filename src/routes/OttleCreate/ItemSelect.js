@@ -3,22 +3,33 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { IconButton } from '../../components/Button/IconButton';
 import { HiX, HiChevronLeft } from 'react-icons/hi';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+    closeItemDrawer,
+    selectOttleItemDrawer,
+} from '../../features/ottleMaker/ottleItemDrawer';
 
 //#region styled-components
 const Container = styled.div`
-    position: absolute;
+    position: fixed;
+    top: 0;
     bottom: 0;
     left: 0;
     right: 0;
     display: flex;
     flex-direction: column;
     width: 100vw;
-    height: calc(100vh - 10rem);
     padding-top: ${(props) => props.theme.gap.gap_16};
 
     border-top: 1px solid ${(props) => props.theme.color.black_600};
     background-color: white;
     z-index: 99;
+
+    transform: translateY(100vh);
+    transition: 0.5s;
+    &.item-select-opend {
+        transform: translateY(0);
+    }
 `;
 const Header = styled.div`
     display: flex;
@@ -86,14 +97,17 @@ const Price = styled.div.attrs((props) => ({
 //#endregion
 
 export const ItemSelect = ({ closeItemSelect }) => {
+    const dispatch = useDispatch();
+    const { isOpend } = useSelector(selectOttleItemDrawer);
+
     return (
-        <Container>
+        <Container className={isOpend ? 'item-select-opend' : ''}>
             <Header>
                 <IconButton icon={<HiChevronLeft />} />
                 <IconButton
                     icon={<HiX />}
                     onClick={() => {
-                        closeItemSelect();
+                        dispatch(closeItemDrawer());
                     }}
                 />
             </Header>

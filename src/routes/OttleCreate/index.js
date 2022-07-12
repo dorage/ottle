@@ -28,12 +28,13 @@ import { ItemSelect } from './ItemSelect';
 
 //#region styled-components
 const Container = styled.div`
+    position: fixed;
     display: flex;
     flex-direction: column;
     width: 100vw;
     height: 100vh;
-
     background-color: ${(props) => props.theme.color.black_600};
+    overflow: hidden;
     // TODO; PC에서 안되네
     touch-action: none;
 `;
@@ -58,20 +59,12 @@ export const OttleMaker = () => {
         rotatePivot,
     } = useSelector(selectOttleAction);
     const selectedRef = useRef();
-    const [itemSelectOpend, setItemSelectOpend] = useState(false);
 
     useEffect(() => {
         // resize artboard
         dispatch(onResizeArtboard());
         window.addEventListener('resize', () => dispatch(onResizeArtboard()));
     }, []);
-
-    const openItemSelect = () => {
-        setItemSelectOpend(true);
-    };
-    const closeItemSelect = () => {
-        setItemSelectOpend(false);
-    };
 
     // 이동을 구현
     const touchMove = () => {
@@ -204,10 +197,8 @@ export const OttleMaker = () => {
         >
             <OttleCreateHeader />
             <Canvas selectedRef={selectedRef} onTouchStart={onTouchStart} />
-            <Inspector openItemSelect={openItemSelect} />
-            {itemSelectOpend && (
-                <ItemSelect closeItemSelect={closeItemSelect} />
-            )}
+            <Inspector />
+            <ItemSelect />
         </Container>
     );
 };
