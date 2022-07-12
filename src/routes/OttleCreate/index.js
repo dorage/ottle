@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { Canvas } from './Canvas';
@@ -24,6 +24,7 @@ import {
 } from '../../features/ottleMaker/ottleActionSlice';
 import { angle, clamp, distance, getElementCenter } from '../../configs/utils';
 import { OttleCreateHeader } from '../../components/Header';
+import { ItemSelect } from './ItemSelect';
 
 //#region styled-components
 const Container = styled.div`
@@ -57,12 +58,20 @@ export const OttleMaker = () => {
         rotatePivot,
     } = useSelector(selectOttleAction);
     const selectedRef = useRef();
+    const [itemSelectOpend, setItemSelectOpend] = useState(false);
 
     useEffect(() => {
         // resize artboard
         dispatch(onResizeArtboard());
         window.addEventListener('resize', () => dispatch(onResizeArtboard()));
     }, []);
+
+    const openItemSelect = () => {
+        setItemSelectOpend(true);
+    };
+    const closeItemSelect = () => {
+        setItemSelectOpend(false);
+    };
 
     // 이동을 구현
     const touchMove = () => {
@@ -195,7 +204,10 @@ export const OttleMaker = () => {
         >
             <OttleCreateHeader />
             <Canvas selectedRef={selectedRef} onTouchStart={onTouchStart} />
-            <Inspector />
+            <Inspector openItemSelect={openItemSelect} />
+            {itemSelectOpend && (
+                <ItemSelect closeItemSelect={closeItemSelect} />
+            )}
         </Container>
     );
 };

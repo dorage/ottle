@@ -18,8 +18,8 @@ const Container = styled.div`
     padding: 6.6rem 0;
 
     overflow: hidden;
-    z-index: 1001;
-    //ointer-events: none;
+    z-index: ${(props) => props.theme.zindex.alert};
+    pointer-events: none;
 `;
 
 const Message = styled.div`

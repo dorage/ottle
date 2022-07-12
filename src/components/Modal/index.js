@@ -3,6 +3,12 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { ModalPortal } from '../Portal';
 
+/*
+TODO; 모달이 추가되어야 하는 곳
+1. 캔버스 아이템 삭제시
+2. 캔버스에서 나가려 할 때
+*/
+
 //#region styled-components
 const Container = styled.div`
     position: fixed;
@@ -17,7 +23,7 @@ const Container = styled.div`
     height: 100vh;
 
     overflow: hidden;
-    z-index: 1000;
+    z-index: ${(props) => props.theme.zindex.modal};
 `;
 
 const ExMo = styled.div`

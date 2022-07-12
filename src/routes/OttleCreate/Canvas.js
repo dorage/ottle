@@ -1,9 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { Editable } from './Editable';
+import { Editable, SelectIndicator } from './Editable';
 import { selectArtboard } from '../../features/ottleMaker/artboardSlice';
-import { selectOttleItem } from '../../features/ottleMaker/ottleItemSlice';
+import {
+    itemHasSelected,
+    selectOttleItem,
+} from '../../features/ottleMaker/ottleItemSlice';
 
 const [multipleMin, multipleMax] = [0.5, 2.5];
 
@@ -83,14 +86,19 @@ export const Canvas = ({ selectedRef, onTouchStart }) => {
                 y={y}
             >
                 {items ? (
-                    items.map((item, idx) => (
-                        <Editable
-                            key={item.id}
-                            selected={selected === idx}
-                            selectedRef={selectedRef}
-                            item={item}
-                        />
-                    ))
+                    <>
+                        {[...items].reverse().map((item, idx) => (
+                            <Editable
+                                key={item.id}
+                                selected={selected === idx}
+                                selectedRef={selectedRef}
+                                item={item}
+                            />
+                        ))}
+                        {itemHasSelected(selected) && (
+                            <SelectIndicator item={items[selected]} />
+                        )}
+                    </>
                 ) : (
                     <></>
                 )}

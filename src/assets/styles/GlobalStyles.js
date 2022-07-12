@@ -57,6 +57,7 @@ export const theme = {
         black_400: '#999999',
         black_500: '#bbbbbb',
         black_600: '#eeeeee',
+        highlight: 'blue',
     },
     gap: {
         gap_4: '0.4rem',
@@ -78,6 +79,11 @@ export const theme = {
         p12: '1.2rem',
         p10: '1rem',
         p8: '0.8rem',
+    },
+    zindex: {
+        alert: 1001,
+        modal: 1000,
+        selectIndicator: 999,
     },
 };
 

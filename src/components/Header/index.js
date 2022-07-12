@@ -5,6 +5,7 @@ import ottle_black_512 from '../../assets/images/ottle_black_512.png';
 import { GradientButton, LinkedGradientButton } from '../Button/GradientButton';
 import { Textbutton } from '../Button/TextButton';
 import { routes } from '../../configs/routes';
+import { useNavigate } from 'react-router-dom';
 
 const Section = styled.section`
     display: flex;
@@ -31,9 +32,19 @@ export const Header = () => {
     );
 };
 
-export const OttleCreateHeader = () => (
-    <Section className='pad'>
-        <Textbutton>취소</Textbutton>
-        <GradientButton>Posting</GradientButton>
-    </Section>
-);
+export const OttleCreateHeader = () => {
+    const navigator = useNavigate();
+
+    return (
+        <Section className='pad'>
+            <Textbutton
+                onClick={() => {
+                    navigator(routes.main);
+                }}
+            >
+                취소
+            </Textbutton>
+            <GradientButton>Posting</GradientButton>
+        </Section>
+    );
+};

@@ -15,6 +15,7 @@ import {
     updateMulitple,
 } from '../../features/ottleMaker/artboardSlice';
 import { HiSearch } from 'react-icons/hi';
+import { releaseItem } from '../../features/ottleMaker/ottleItemSlice';
 
 const Container = styled.div`
     display: flex;
@@ -53,6 +54,7 @@ export const ItemControlPanel = () => {
             <IconButton
                 onClick={() => {
                     dispatch(setAction(CANVAS_ACTIONS.IDLE));
+                    dispatch(releaseItem());
                 }}
                 icon={<TbX />}
             />
@@ -62,12 +64,15 @@ export const ItemControlPanel = () => {
 
 export const ArtboardControlPanel = () => {
     const dispatch = useDispatch();
-    const { action } = useSelector(selectOttleAction);
     const { multiple } = useSelector(selectArtboard);
 
     return (
         <Container>
-            <IconButton active={true} icon={<HiSearch />} />
+            <IconButton
+                active={true}
+                icon={<HiSearch />}
+                onClick={() => dispatch(updateMulitple(multipleToPercent(1.0)))}
+            />
             <Slider
                 value={multipleToPercent(multiple)}
                 onChange={(e) => {
