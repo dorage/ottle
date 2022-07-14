@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { ALERTS, broadcastAlert } from '../alert/alertSlice';
 
-// items => 화면에 item을 추가하거나 변경/삭제시  업데이트
-// sticker =>
+const MAX_ITEM_COUNT = 18;
 
 export const generateItem = () => ({
     size: { w: 500, h: 500 },
@@ -45,6 +45,36 @@ export const ottleItemSlice = createSlice({
     },
 });
 
+/**
+ * 아이템을 추가합니다.
+ * @param {*} item
+ * @returns {Boolean} 아이템 추가 성공여부
+ */
+export const addItem = (item) => (dispatch, getState) => {
+    const { items } = selectOttleItem(getState());
+    if (items.length >= MAX_ITEM_COUNT) {
+        dispatch(broadcastAlert(ALERTS.ottleCreate.tooManyItem));
+        return false;
+    }
+    /*
+    TODO;
+    item은 상품의 정보만 담고 있으니까
+    여기서는 변경을 다음과 같이 해줘야 한다.
+    {
+        position, rotation, scale,
+        product:{
+            id, name, brand, price,
+            img_src:{
+                thumbnail, edit, original
+            }
+        }
+    }
+    */
+    dispatch(ottleItemSlice.actions.addItem(item));
+    return true;
+};
+
+export const checkItemCount = (items) => items.length >= MAX_ITEM_COUNT;
 export const itemHasSelected = (selected) => !isNaN(selected);
 export const {
     selectItem,

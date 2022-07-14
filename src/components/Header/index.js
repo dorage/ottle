@@ -6,6 +6,8 @@ import { GradientButton, LinkedGradientButton } from '../Button/GradientButton';
 import { Textbutton } from '../Button/TextButton';
 import { routes } from '../../configs/routes';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { openModal } from '../../features/modal/modalSlice';
 
 const Section = styled.section`
     display: flex;
@@ -34,12 +36,19 @@ export const Header = () => {
 
 export const OttleCreateHeader = () => {
     const navigator = useNavigate();
+    const dispatch = useDispatch();
 
     return (
         <Section className='pad'>
             <Textbutton
                 onClick={() => {
-                    navigator(routes.main);
+                    dispatch(
+                        openModal({
+                            onYesAction: () => {
+                                navigator(routes.main);
+                            },
+                        })
+                    );
                 }}
             >
                 취소

@@ -3,7 +3,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 export const ALERTS = {
     ottleCreate: {
         noItem: '아직 옷을 추가하지 않았습니다',
-        tooManyItem: '16개 이상의 아이템을 사용할 수 없습니다',
+        tooManyItem: `18개 이상의 아이템을 사용할 수 없습니다`,
     },
     ottleDetail: {
         unknownSeller: '판매처가 확인되지 않습니다',
@@ -32,13 +32,13 @@ const removeAlert = createAsyncThunk(
         await timer(ALERT_DURATION);
         const { queue } = selectAlert(getState());
         if (queue.length) {
-            // 다음 메시지를 위해 다시 실행
             dispatch(
                 alertSlice.actions.nextQueue({
                     message: queue[0],
                     queue: queue.slice(1),
                 })
             );
+            // 다음 메시지를 위해 다시 실행
             dispatch(removeAlert());
         } else {
             dispatch(alertSlice.actions.endAlert());

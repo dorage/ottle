@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { ModalPortal } from '../Portal';
+import { useDispatch, useSelector } from 'react-redux';
+import { closeModal, selectModal } from '../../features/modal/modalSlice';
 
 /*
 TODO; 모달이 추가되어야 하는 곳
@@ -64,15 +66,27 @@ const Button = styled.div`
 //#endregion
 
 export const Modal = () => {
+    const dispatch = useDispatch();
+    const { isOpend, onYesAction, onNoAction } = useSelector(selectModal);
+
+    const onClickNo = () => {
+        dispatch(closeModal());
+        onNoAction && onNoAction();
+    };
+    const onClickYes = () => {
+        dispatch(closeModal());
+        onYesAction && onYesAction();
+    };
+
     return (
         <ModalPortal>
-            {false && (
+            {isOpend && (
                 <Container>
                     <ModalContainer>
-                        <Content>정말 삭제할까요?</Content>
+                        <Content>그만 만드실건가요?</Content>
                         <ButtonRow>
-                            <Button>아니요</Button>
-                            <Button>예</Button>
+                            <Button onClick={onClickYes}>예</Button>
+                            <Button onClick={onClickNo}>아니요</Button>
                         </ButtonRow>
                     </ModalContainer>
                 </Container>

@@ -1,9 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { generateItem } from './ottleItemSlice';
 
 const initialState = {
-    isOpend: false,
-    category: [],
-    data: [],
+    isOpend: true,
+    path: [],
+    category: ['상의', '하의', '악세사리', '스티커'],
+    data: [generateItem(), generateItem(), generateItem(), generateItem()],
 };
 
 const ottleItemDrawer = createSlice({
