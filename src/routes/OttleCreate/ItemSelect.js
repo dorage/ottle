@@ -125,12 +125,12 @@ export const ItemSelect = ({ closeItemSelect }) => {
         if (!hasAdded) {
             return true;
         }
-        setAddedList([...addedList, idx]);
-        setTimeout(() => removeOnAdded(idx), 500);
+        //setAddedList([...addedList, idx]);
+        //setTimeout(() => removeOnAdded(idx), 500);
     };
 
     const removeOnAdded = (idx) => {
-        setAddedList(addedList.filter((e) => e !== idx));
+        //setAddedList(addedList.filter((e) => e !== idx));
     };
 
     return (
