@@ -1,10 +1,20 @@
 import { normalize } from 'styled-normalize';
 import { createGlobalStyle } from 'styled-components';
 
+export const MAX_WIDTH_INT = 800;
+export const MAX_WIDTH_PX = `${MAX_WIDTH_INT}px`;
+
 const GlobalStyles = createGlobalStyle`
     ${normalize}
 
     * {
+        /* hide scrollbar */
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+        *::-webkit-scrollbar {
+            display: none;
+        }
+
         box-sizing: border-box;
         &:not(input, textarea){     
             -webkit-user-select: none;
@@ -102,6 +112,7 @@ export const theme = {
     zindex: {
         alert: 9999,
         modal: 9998,
+        footer: 9997,
         selectIndicator: 999,
         ottleCreate: {
             normal: 8990,

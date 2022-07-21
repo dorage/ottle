@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 import { selectScreen } from '../../features/screen/screenSlice';
+import { MAX_WIDTH_PX } from '../../assets/styles/GlobalStyles';
 
 //#region styled-components
 const Container = styled.div.attrs((props) => ({
@@ -14,6 +15,8 @@ const Container = styled.div.attrs((props) => ({
     position: fixed;
     display: flex;
     flex-direction: column;
+    max-width: ${MAX_WIDTH_PX};
+
     background-color: ${(props) => props.pg || 'white'};
     z-index: ${(props) => props.zindex || '8000'};
     overflow: clip;

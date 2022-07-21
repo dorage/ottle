@@ -17,6 +17,7 @@ import { routes } from '../../configs/routes';
 
 const Container = styled(FooterContainer)`
     justify-content: space-evenly;
+    z-index: ${(props) => props.theme.zindex.footer};
 `;
 
 const genPathObj = (path, icon) => ({ path, Icon: icon });
