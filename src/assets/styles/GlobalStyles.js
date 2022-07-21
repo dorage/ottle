@@ -6,20 +6,39 @@ const GlobalStyles = createGlobalStyle`
 
     * {
         box-sizing: border-box;
-        user-select: none;
-
+        &:not(input, textarea){     
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
         &.pad{
             padding-left: 1.6rem;
             padding-right: 1.6rem;
+        }
+        &.flex-1{
+            flex:1
+        }
+        &.flex-2{
+            flex:2
+        }
+        &.flex-3{
+            flex:3
+        }
+        &.flex-4{
+            flex:4
         }
     }
     html{
         font-size: 62.5%;
         font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
-        overflow: none;
+        overflow: hidden;
     }
-    html.noScroll, html.noScroll > body{
-        overflow:none;
+    html, body {
+        position:fixed;
+        overscroll-behavior-y: none;
+        overflow: hidden;
     }
     body{
         min-height: 100vh;
@@ -57,7 +76,7 @@ export const theme = {
         black_400: '#999999',
         black_500: '#bbbbbb',
         black_600: '#eeeeee',
-        highlight: 'blue',
+        highlight: '#0FC2C0',
     },
     gap: {
         gap_4: '0.4rem',
@@ -81,9 +100,15 @@ export const theme = {
         p8: '0.8rem',
     },
     zindex: {
-        alert: 1001,
-        modal: 1000,
+        alert: 9999,
+        modal: 9998,
         selectIndicator: 999,
+        ottleCreate: {
+            normal: 8990,
+            posting: 8998,
+            postingFooter: 8999,
+            itemDrawer: 8991,
+        },
     },
 };
 

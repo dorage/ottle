@@ -15,7 +15,7 @@ export const generateItem = () => ({
 
 const initialState = {
     selected: NaN, //
-    items: [],
+    items: [generateItem()],
 };
 
 export const ottleItemSlice = createSlice({
@@ -31,6 +31,10 @@ export const ottleItemSlice = createSlice({
         updateItem: (state, action) => {
             state.items[state.selected] = action.payload;
         },
+        updateItems: (state, action) => {
+            // 레이어 순서를 바꿀때만 사용하기
+            state.items = action.payload;
+        },
         addItem: (state, action) => {
             state.items = [...state.items, action.payload];
         },
@@ -44,6 +48,33 @@ export const ottleItemSlice = createSlice({
         },
     },
 });
+
+export const bringFoward = () => (dispatch, getState) => {
+    const { selected, items } = selectOttleItem(getState());
+    if (selected === 0) return;
+    dispatch(
+        ottleItemSlice.actions.updateItems([
+            ...items.slice(0, Math.max(selected - 1, 0)),
+            items[selected],
+            items[selected - 1],
+            ...items.slice(selected + 1),
+        ])
+    );
+    dispatch(ottleItemSlice.actions.selectItem(selected - 1));
+};
+export const sendBackward = () => (dispatch, getState) => {
+    const { selected, items } = selectOttleItem(getState());
+    if (selected === items.length - 1) return;
+    dispatch(
+        ottleItemSlice.actions.updateItems([
+            ...items.slice(0, selected),
+            items[selected + 1],
+            items[selected],
+            ...items.slice(selected + 2),
+        ])
+    );
+    dispatch(ottleItemSlice.actions.selectItem(selected + 1));
+};
 
 /**
  * 아이템을 추가합니다.
@@ -63,7 +94,7 @@ export const addItem = (item) => (dispatch, getState) => {
     {
         position, rotation, scale,
         product:{
-            id, name, brand, price,
+            id, name, brand, price, link, category
             img_src:{
                 thumbnail, edit, original
             }

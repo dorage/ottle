@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { RiGhostSmileLine, RiGhostSmileFill } from 'react-icons/ri';
+import { RiMacLine, RiMacbookLine } from 'react-icons/ri';
 import { BiExit } from 'react-icons/bi';
 import { IconButton } from '../../components/Button/IconButton';
 import { LinkedTextButton } from '../../components/Button/TextButton';
@@ -22,7 +22,7 @@ const Text = styled.div`
     margin-bottom: ${(props) => props.theme.gap.gap_32};
 `;
 
-export const PageNotFound = () => {
+export const DesktopNotReady = () => {
     const [click, setClick] = useState(false);
 
     useEffect(() => {
@@ -35,12 +35,12 @@ export const PageNotFound = () => {
                 w={64}
                 h={64}
                 active={true}
-                icon={click ? <RiGhostSmileLine /> : <RiGhostSmileFill />}
+                icon={click ? <RiMacLine /> : <RiMacbookLine />}
             />
             <Text>
-                우리가 아직 만들지 않은 페이지에요
+                PC에선 아직 지원하지 않고 있어요 :"
                 <br />
-                다음에 다시 만나요 :)
+                다음에 다시 만나요.
             </Text>
             <LinkedTextButton to={routes.main}>
                 홈으로 돌아가기 →

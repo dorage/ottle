@@ -7,7 +7,14 @@ import {
     selectOttleAction,
     setAction,
 } from '../../features/ottleMaker/ottleActionSlice';
-import { TbRotate, TbArrowsMaximize, TbHandFinger, TbX } from 'react-icons/tb';
+import {
+    TbRotate,
+    TbArrowsMaximize,
+    TbHandFinger,
+    TbX,
+    TbFoldUp,
+    TbFoldDown,
+} from 'react-icons/tb';
 import { Slider } from '../../components/Input/Slider';
 import {
     multipleToPercent,
@@ -15,7 +22,11 @@ import {
     updateMulitple,
 } from '../../features/ottleMaker/artboardSlice';
 import { HiSearch } from 'react-icons/hi';
-import { releaseItem } from '../../features/ottleMaker/ottleItemSlice';
+import {
+    bringFoward,
+    releaseItem,
+    sendBackward,
+} from '../../features/ottleMaker/ottleItemSlice';
 
 const Container = styled.div`
     display: flex;
@@ -30,6 +41,18 @@ export const ItemControlPanel = () => {
 
     return (
         <Container>
+            <IconButton
+                onClick={() => {
+                    dispatch(bringFoward());
+                }}
+                icon={<TbFoldUp />}
+            />
+            <IconButton
+                onClick={() => {
+                    dispatch(sendBackward());
+                }}
+                icon={<TbFoldDown />}
+            />
             <IconButton
                 active={action === CANVAS_ACTIONS.MOVE}
                 onClick={() => {

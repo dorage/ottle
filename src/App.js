@@ -1,21 +1,29 @@
 import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { routes } from './configs/routes';
 import { Main } from './routes/Main';
 import { Likes } from './routes/Likes';
 import { Boards } from './routes/Boards';
 import { Profile } from './routes/Profile';
+import { OttleDetail } from './routes/OttleDetail';
 import { PageNotFound } from './routes/PageNotFound';
 import { OttleMaker } from './routes/OttleCreate';
-import { Layout } from './components/Layout';
 import { RouterPanel } from './components/devs/RouterPanel';
 import { useSelector } from 'react-redux';
-import { selectArtboard } from './features/ottleMaker/artboardSlice';
+import { HomeLayout } from './routes/HomeLayout';
+import { selectUser } from './features/user/userSlice';
+import { ScreenHoC } from './components/HOC/ScreenHoC';
+import { AuthHoC } from './components/HOC/AuthHoC';
+import { DesktopNotReady } from './routes/DesktopNotReady';
 
 function App() {
+    const dispatch = useDispatch();
     const [isMobile, setIsMobile] = useState(false);
+    const { isAuth, loading, user } = useSelector(selectUser);
 
     useEffect(() => {
+        // userAgent 체크해서 모바일인지 확인
         setIsMobile(
             navigator.userAgent
                 .toLowerCase()
@@ -27,7 +35,7 @@ function App() {
         <BrowserRouter>
             {process.env.NODE_ENV === 'development' && <RouterPanel />}
             <Routes>
-                <Route path={routes.main} element={<Layout />}>
+                <Route path={routes.main} element={<HomeLayout />}>
                     <Route path={routes.main} element={<Main />} />
                     <Route path={routes.likes} element={<Likes />} />
                     <Route path={routes.boards} element={<Boards />} />
@@ -35,10 +43,9 @@ function App() {
                 </Route>
                 <Route
                     path={routes.ottleCreate}
-                    element={isMobile ? <OttleMaker /> : <OttleMaker />}
+                    element={isMobile ? <OttleMaker /> : <DesktopNotReady />}
                 />
-                <Route path={routes.ottleDetail()} element={<Main />} />
-                <Route path={routes.ottleEdit()} element={<Main />} />
+                <Route path={routes.ottleDetail()} element={<OttleDetail />} />
                 <Route path={routes.productDetail()} element={<Main />} />
                 <Route path={routes.settings} element={<Main />} />
                 <Route path={routes.pageNotFound} element={<PageNotFound />} />
@@ -51,4 +58,4 @@ function App() {
     );
 }
 
-export default App;
+export default ScreenHoC(AuthHoC(App));

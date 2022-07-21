@@ -1,12 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
-export const LinkHoC = (Component) => (props) => {
-    const to = props.to;
+const StyledLink = styled(Link)`
+    display: block;
+`;
+
+export const LinkHoC = (Component) => ({ to, className, ...props }) => {
     return (
-        <Link to={to}>
+        <StyledLink to={to} className={className}>
             <Component {...props} />
-        </Link>
+        </StyledLink>
     );
 };

@@ -12,7 +12,7 @@ import {
 import { ProductLayer } from './ProductLayer';
 import { Textbutton } from '../../components/Button/TextButton';
 import { RoundButton } from '../../components/Button/RoundButton';
-import { openItemDrawer } from '../../features/ottleMaker/ottleItemDrawer';
+import { openItemDrawer } from '../../features/ottleMaker/ottleItemDrawerSlice';
 
 //#region styled-components
 const Container = styled.div`

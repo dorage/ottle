@@ -2,9 +2,15 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { selectAlert } from '../../features/alert/alertSlice';
+import { selectScreen } from '../../features/screen/screenSlice';
 import { AlertPortal } from '../Portal';
 
-const Container = styled.div`
+const Container = styled.div.attrs((props) => ({
+    style: {
+        width: props.w ? `${props.w}px` : '100vw',
+        height: props.h ? `${props.h}px` : '100vh',
+    },
+}))`
     position: fixed;
     top: 0;
     left: 0;
@@ -13,9 +19,7 @@ const Container = styled.div`
     display: flex;
     flex-direction: column-reverse;
     align-items: center;
-    width: 100vw;
-    height: 100vh;
-    padding: 6.6rem 0;
+    padding: ${(props) => props.theme.gap.gap_64} 0;
 
     overflow: hidden;
     z-index: ${(props) => props.theme.zindex.alert};
@@ -39,12 +43,13 @@ const Message = styled.div`
 `;
 
 export const Alert = () => {
+    const { w, h } = useSelector(selectScreen);
     const { alert, message } = useSelector(selectAlert);
 
     return (
         <AlertPortal>
             {alert && (
-                <Container>
+                <Container w={w} h={h}>
                     <Message>{message}</Message>
                 </Container>
             )}

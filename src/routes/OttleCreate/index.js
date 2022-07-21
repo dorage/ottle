@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import { Canvas } from './Canvas';
 import { Inspector } from './Inspector';
 import {
@@ -23,25 +23,21 @@ import {
     setAction,
 } from '../../features/ottleMaker/ottleActionSlice';
 import { angle, clamp, distance, getElementCenter } from '../../configs/utils';
-import { OttleCreateHeader } from '../../components/Header';
-import { ItemSelect } from './ItemSelect';
+import { OttleCreateHeader } from './Header';
+import { openPosting } from '../../features/ottleMaker/ottlePostingSlice';
+import { openModal } from '../../features/modal/modalSlice';
+import { routes } from '../../configs/routes';
+import { ALERTS, broadcastAlert } from '../../features/alert/alertSlice';
+import { FullScreenContainer } from '../../components/Layout/Container';
+import { theme } from '../../assets/styles/GlobalStyles';
+import { OttleCreatePosting } from '../../components/OttleCreatePosting';
+import { OttleCreateItemDrawer } from '../../components/OttleCreateItemDrawer';
 
 //#region styled-components
-const Container = styled.div`
-    position: fixed;
-    display: flex;
-    flex-direction: column;
-    width: 100vw;
-    height: 100vh;
-    background-color: ${(props) => props.theme.color.black_600};
-    overflow: hidden;
-    // TODO; PC에서 안되네
-    touch-action: none;
-`;
-
 //#endregion
 
 export const OttleMaker = () => {
+    const navigator = useNavigate();
     const dispatch = useDispatch();
     const {
         size: artboardSize,
@@ -64,6 +60,12 @@ export const OttleMaker = () => {
         // resize artboard
         dispatch(onResizeArtboard());
         window.addEventListener('resize', () => dispatch(onResizeArtboard()));
+        window.addEventListener('beforeunload', (event) => {
+            // 표준에 따라 기본 동작 방지
+            event.preventDefault();
+            // Chrome에서는 returnValue 설정이 필요함
+            event.returnValue = '';
+        });
     }, []);
 
     // 이동을 구현
@@ -190,15 +192,35 @@ export const OttleMaker = () => {
     //#endregion
 
     return (
-        <Container
+        <FullScreenContainer
+            zindex={theme.zindex.ottleCreate.normal}
             onTouchMove={onTouchMove}
             onTouchEnd={onTouchEnd}
             onTouchCancel={onTouchCancel}
         >
-            <OttleCreateHeader />
+            <OttleCreateHeader
+                onCancle={() => {
+                    dispatch(
+                        openModal({
+                            onYesAction: () => {
+                                navigator(routes.main);
+                            },
+                        })
+                    );
+                }}
+                onSubmit={() => {
+                    // TODO; 나중에 지우기
+                    if (items.length < 2) {
+                        dispatch(broadcastAlert(ALERTS.ottleCreate.noItem));
+                        return;
+                    }
+                    dispatch(openPosting());
+                }}
+            />
             <Canvas selectedRef={selectedRef} onTouchStart={onTouchStart} />
             <Inspector />
-            <ItemSelect />
-        </Container>
+            <OttleCreateItemDrawer />
+            <OttleCreatePosting />
+        </FullScreenContainer>
     );
 };

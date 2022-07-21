@@ -2,11 +2,11 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { store } from './app/store';
+import './app/firebase';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import GlobalStyles, { theme } from './assets/styles/GlobalStyles';
 import { ThemeProvider } from 'styled-components';
-import { createPortal } from 'react-dom';
 import { Modal } from './components/Modal';
 import { Alert } from './components/Alert';
 

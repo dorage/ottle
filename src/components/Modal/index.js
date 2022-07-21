@@ -5,12 +5,6 @@ import { ModalPortal } from '../Portal';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModal, selectModal } from '../../features/modal/modalSlice';
 
-/*
-TODO; 모달이 추가되어야 하는 곳
-1. 캔버스 아이템 삭제시
-2. 캔버스에서 나가려 할 때
-*/
-
 //#region styled-components
 const Container = styled.div`
     position: fixed;

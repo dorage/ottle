@@ -16,13 +16,9 @@ const Button = styled.button`
                 ? props.activeColor || props.theme.color.black_200
                 : props.normalColor || props.theme.color.black_400};
     }
-    ${(props) =>
-        props.active &&
-        `
-        &.selected:active {
-            filter: none;
-        }
-    `}
+    &:active {
+        filter: ${(props) => (props.active ? 'none' : 'inherit')};
+    }
 `;
 export const IconButton = ({
     w,

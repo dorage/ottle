@@ -2,8 +2,9 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 export const ALERTS = {
     ottleCreate: {
-        noItem: '아직 옷을 추가하지 않았습니다',
+        noItem: '아이템을 2개 이상 추가해주세요',
         tooManyItem: `18개 이상의 아이템을 사용할 수 없습니다`,
+        noTitle: `타이틀을 입력해주세요`,
     },
     ottleDetail: {
         unknownSeller: '판매처가 확인되지 않습니다',

@@ -1,28 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import { useLocation } from 'react-router-dom';
+import { FooterContainer } from '../../components/Layout/Footer';
 import {
     HiOutlineViewBoards,
     HiOutlineHeart,
     HiOutlineClipboardList,
     HiOutlineUserCircle,
 } from 'react-icons/hi';
-import { IconButton, LinkedIconButton } from '../Button/IconButton';
+import {
+    IconButton,
+    LinkedIconButton,
+} from '../../components/Button/IconButton';
 import { routes } from '../../configs/routes';
 
-const Section = styled.footer`
-    position: fixed;
-    left: 0px;
-    right: 0px;
-    bottom: 0px;
-    display: flex;
+const Container = styled(FooterContainer)`
     justify-content: space-evenly;
-    align-items: center;
-    height: 5rem;
-
-    border-top: 1px solid #eeeeee;
-    background-color: white;
-    z-index: 99;
 `;
 
 const genPathObj = (path, icon) => ({ path, Icon: icon });
@@ -30,13 +24,15 @@ const genPathObj = (path, icon) => ({ path, Icon: icon });
 const paths = [
     genPathObj(routes.main, HiOutlineViewBoards),
     /*    genPathObj(routes.likes, HiOutlineHeart), 추후 업데이트 */
-    /*    genPathObj(routes.boards, HiOutlineClipboardList), 추후 업데이트 */
+    genPathObj(routes.boards, HiOutlineClipboardList),
     genPathObj(routes.profile, HiOutlineUserCircle),
 ];
 
-export const Footer = ({ pathname }) => {
+export const HomeLayoutFooter = () => {
+    const { pathname } = useLocation();
+
     return (
-        <Section className='pad'>
+        <Container className='pad'>
             {paths.map(({ path, Icon }) =>
                 pathname === path ? (
                     <IconButton active={true} icon={<Icon />} />
@@ -44,6 +40,6 @@ export const Footer = ({ pathname }) => {
                     <LinkedIconButton to={path} icon={<Icon />} />
                 )
             )}
-        </Section>
+        </Container>
     );
 };

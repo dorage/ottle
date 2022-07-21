@@ -9,7 +9,8 @@ import { selectOttleAction } from './ottleActionSlice';
 // 렌더링용 사진의 사이즈는 1080 * 1920 (틱톡 영상 사이즈)
 // 편집에는 큰 용량이 필요없으니 2/3 사이즈(720px)에서 작업을 한다.
 const MIN_RATIO = 2 / 3;
-const DEFAULT_SIZE = 1080 * MIN_RATIO;
+export const ARTBOARD_SIZE = 1080;
+const DEFAULT_SIZE = ARTBOARD_SIZE * MIN_RATIO;
 
 export const MULTIPLE_MIN = 0.5;
 export const MULTIPLE_MAX = 2;
