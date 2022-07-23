@@ -9,6 +9,10 @@ import {
 
 //#region styled-components
 const Container = styled.div``;
+const Image = styled.img`
+    width: 100%;
+    aspect-ratio: 1/1;
+`;
 //#endregion
 
 export const MainThread = () => {
@@ -24,7 +28,7 @@ export const MainThread = () => {
             ) : data ? (
                 <>
                     {data.map((e) => (
-                        <img src={e.image.lg} />
+                        <Image src={e.image.lg} />
                     ))}
                 </>
             ) : (

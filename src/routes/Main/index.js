@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { EmailSignIn } from '../../components/devs/EmailSignIn';
-import { MainThread } from './Thread';
+import { MainThread } from './MainThread';
 
 export const Main = () => {
     return (
