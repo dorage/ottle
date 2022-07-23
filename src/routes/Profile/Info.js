@@ -89,7 +89,7 @@ export const ProfileInfo = ({ user }) => {
         <Container className='pad'>
             <Row>
                 <div className='flex-1'>
-                    <Portrait src={pic} />
+                    <Portrait src={user.profile_src} />
                 </div>
                 <FigureGroups className='flex-3'>
                     <FigureGroup>

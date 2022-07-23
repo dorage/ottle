@@ -1,0 +1,34 @@
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { getThreadDocs } from '../../app/firestore';
+
+const initialState = { data: null, loading: true, error: false };
+
+export const threadAsyncAction = createAsyncThunk('thread/fetch', async () => {
+    try {
+        return await getThreadDocs();
+    } catch (err) {
+        return err;
+    }
+});
+
+const threadSlice = createSlice({
+    name: 'thread',
+    initialState,
+    reducers: {},
+    extraReducers(builder) {
+        builder.addCase(threadAsyncAction.fulfilled, (state, action) => {
+            state.loading = false;
+            state.data = action.payload;
+            state.error = null;
+        });
+        builder.addCase(threadAsyncAction.rejected, (state, action) => {
+            state.loading = false;
+            state.data = null;
+            state.error = action.payload;
+        });
+    },
+});
+
+export const {} = threadSlice.actions;
+export const selectThread = (state) => state.thread;
+export default threadSlice.reducer;

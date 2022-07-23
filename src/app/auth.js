@@ -4,13 +4,13 @@ import {
     signOut,
 } from 'firebase/auth';
 import { auth } from './firebase';
+import { getUserDoc, writeCitiesData } from './firestore';
 
 /*
     Auth 내부에서 로그인 여부 확인방법
 */
 const checkSignedIn = () => {
     onAuthStateChanged(auth, (user) => {});
-    console.log(auth.currentUser);
     return auth.currentUser;
 };
 
@@ -23,14 +23,14 @@ const checkSignedIn = () => {
  * @param {*} dispatchfn
  */
 export const initAuth = (dispatchfn) => {
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
         if (!user) {
             dispatchfn(null);
             return;
         }
-        const { displayName, email, uid } = user;
-        console.log(displayName, email, uid);
-        dispatchfn({ name: displayName || 'unnamed', email, uid });
+        const { uid } = user;
+        const userDoc = await getUserDoc(uid);
+        dispatchfn({ ...userDoc, uid });
     });
 };
 
@@ -49,9 +49,8 @@ export const signInWithEmailPassword = (email, password) => async () => {
             email,
             password
         );
-        console.log(credential);
-        console.log(credential.user);
-        return credential.user;
+        const user = await getUserDoc(credential.user.uid);
+        return { ...user, uid: credential.user.uid };
     } catch (err) {
         console.err(err);
     }

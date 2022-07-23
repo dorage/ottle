@@ -76,4 +76,4 @@ function App() {
     );
 }
 
-export default ScreenHoC(AuthHoC(App));
+export default AuthHoC(ScreenHoC(App));

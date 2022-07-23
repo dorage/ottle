@@ -1,9 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { routes } from '../../configs/routes';
+import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { generateItem } from '../../features/ottleMaker/ottleItemSlice';
 import { useNavigate } from 'react-router-dom';
+import { getOttleDocs } from '../../app/firestore';
+import {
+    myOttlesAsyncAction,
+    selectMyOttles,
+} from '../../features/profile/myOttlesSlice';
 
 //#region styled-components
 const Container = styled.div`
@@ -18,12 +24,14 @@ const Ottle = styled.img`
 `;
 //#endregion
 
-const items = Array(40)
-    .fill(0)
-    .map(() => generateItem());
-
-export const ProfileItems = () => {
+export const ProfileItems = ({ uid }) => {
+    const dispatch = useDispatch();
     const navigation = useNavigate();
+    const { data, loading } = useSelector(selectMyOttles);
+
+    useEffect(() => {
+        dispatch(myOttlesAsyncAction(uid));
+    }, []);
 
     const onClickOttle = (id) => () => {
         navigation(routes.ottleDetail(id));
@@ -31,13 +39,19 @@ export const ProfileItems = () => {
 
     return (
         <Container className='pad'>
-            {items.map(({ id, src }, idx) => (
-                <Ottle
-                    key={`${idx}${id}`}
-                    src={src}
-                    onClick={onClickOttle(id)}
-                />
-            ))}
+            {loading ? (
+                <></>
+            ) : data ? (
+                data.map(({ id, image }) => (
+                    <Ottle
+                        key={`${id}`}
+                        src={image.sm}
+                        onClick={onClickOttle(id)}
+                    />
+                ))
+            ) : (
+                <></>
+            )}
         </Container>
     );
 };

@@ -8,6 +8,8 @@ import alertReducer from '../features/alert/alertSlice';
 import modalReducer from '../features/modal/modalSlice';
 import screenReducer from '../features/screen/screenSlice';
 import userReducer from '../features/user/userSlice';
+import myOttleReducer from '../features/profile/myOttlesSlice';
+import threadReducer from '../features/main/ThreadSlice';
 
 export const store = configureStore({
     reducer: {
@@ -20,5 +22,11 @@ export const store = configureStore({
         ottlePosting: ottlePostingReducer,
         alert: alertReducer,
         modal: modalReducer,
+        thread: threadReducer,
+        myOttles: myOttleReducer,
     },
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware({
+            serializableCheck: {},
+        }),
 });

@@ -10,9 +10,7 @@ const userData = {
 export const signInAsyncAction = createAsyncThunk(
     'user/signin',
     async (signInFn) => {
-        const { email, displayName, uid } = await signInFn();
-        console.log(email, displayName, uid);
-        return { email, displayName, uid };
+        return await signInFn();
     }
 );
 
@@ -29,7 +27,6 @@ const userSlice = createSlice({
     initialState: userData,
     reducers: {
         checkAuth: (state, action) => {
-            console.log(action.payload);
             state.isAuth = action.payload ? true : false;
             state.user = action.payload ? action.payload : null;
             state.loading = false;

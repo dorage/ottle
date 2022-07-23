@@ -24,8 +24,8 @@ const genPathObj = (path, icon) => ({ path, Icon: icon });
 
 const paths = [
     genPathObj(routes.main, HiOutlineViewBoards),
-    /*    genPathObj(routes.likes, HiOutlineHeart), 추후 업데이트 */
-    genPathObj(routes.boards, HiOutlineClipboardList),
+    // genPathObj(routes.likes, HiOutlineHeart), 추후 업데이트
+    // genPathObj(routes.groups, HiOutlineClipboardList), 추후 업데이트
     genPathObj(routes.profile, HiOutlineUserCircle),
 ];
 
@@ -36,9 +36,9 @@ export const HomeLayoutFooter = () => {
         <Container className='pad'>
             {paths.map(({ path, Icon }) =>
                 pathname === path ? (
-                    <IconButton active={true} icon={<Icon />} />
+                    <IconButton active={true} icon={<Icon />} key={path} />
                 ) : (
-                    <LinkedIconButton to={path} icon={<Icon />} />
+                    <LinkedIconButton to={path} icon={<Icon />} key={path} />
                 )
             )}
         </Container>
