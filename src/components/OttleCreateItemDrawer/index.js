@@ -7,13 +7,18 @@ import { HiX, HiChevronLeft, HiCheckCircle } from 'react-icons/hi';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     closeItemDrawer,
-    selectOttleItemDrawer,
-} from '../../features/ottleMaker/ottleItemDrawerSlice';
+    selectItemDrawer,
+} from '../../features/ottleMaker/itemDrawerSlice';
 import { addItem } from '../../features/ottleMaker/ottleItemSlice';
 import { Icon } from '../Icon/icon';
-import { OttleCreateItemDrawerHeader } from './Header';
+import { ItemDrawerHeader } from './Header';
 import { InputField } from '../Input/InputField';
-import { OttleCreateItemDrawerItems } from './Items';
+import {
+    itemDrawerCategoryAsyncAction,
+    selectItemDrawerCategory,
+} from '../../features/ottleMaker/itemDrawerCategorySlice';
+import { ItemDrawerItemGrid, ItemDrawerCategoryGrid } from './Grid';
+import { GridCategories } from './Categories';
 
 //#region styled-components
 const Container = styled(FullScreenContainer)`
@@ -35,15 +40,15 @@ const SearchBarContainer = styled.div`
 
 export const OttleCreateItemDrawer = ({ closeItemSelect }) => {
     const dispatch = useDispatch();
-    const { isOpend, category, data } = useSelector(selectOttleItemDrawer);
+    const { isOpend } = useSelector(selectItemDrawer);
 
-    const onClickItem = (idx) => {
-        dispatch(addItem(data[idx]));
-    };
+    useEffect(() => {
+        dispatch(itemDrawerCategoryAsyncAction());
+    }, []);
 
     return (
         <Container className={isOpend ? 'item-select-opend' : ''}>
-            <OttleCreateItemDrawerHeader
+            <ItemDrawerHeader
                 onClickBack={() => {}}
                 onClickClose={() => {
                     dispatch(closeItemDrawer());
@@ -52,7 +57,8 @@ export const OttleCreateItemDrawer = ({ closeItemSelect }) => {
             <SearchBarContainer>
                 <InputField placeholder='search brand, product' />
             </SearchBarContainer>
-            <OttleCreateItemDrawerItems data={data} onClickItem={onClickItem} />
+            <ItemDrawerCategoryGrid />
+            <ItemDrawerItemGrid />
         </Container>
     );
 };

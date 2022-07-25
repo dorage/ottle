@@ -17,7 +17,7 @@ import { routes } from '../../configs/routes';
 
 //#region styled-components
 const Container = styled(FullScreenContainer)`
-    transform: translateX(100vh);
+    transform: translateX(100vw);
     transition: 0.3s;
     &.posting-opend {
         transform: translateX(0);

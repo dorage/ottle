@@ -7,6 +7,8 @@ import {
     getDocs,
     setDoc,
     Timestamp,
+    orderBy,
+    limit,
 } from 'firebase/firestore';
 import { firestore } from './firebase';
 
@@ -60,6 +62,29 @@ export const getThreadDocs = async () => {
         });
     });
     return ottles;
+};
+
+export const getItemCategories = async () => {
+    const itemCategoriesQuery = query(
+        collectionGroup(firestore, 'item_categories'),
+        orderBy('order')
+    );
+    const querySnapshot = await getDocs(itemCategoriesQuery);
+    const itemCategories = [];
+    querySnapshot.forEach((doc) =>
+        itemCategories.push({ id: doc.id, ...doc.data() })
+    );
+    return itemCategories;
+};
+
+export const getItemsInCategory = async (categoryId) => {
+    const itemsQuery = query(
+        collection(firestore, 'item_categories', categoryId, 'items')
+    );
+    const querySnapshot = await getDocs(itemsQuery);
+    const items = [];
+    querySnapshot.forEach((doc) => items.push({ id: doc.id, ...doc.data() }));
+    return items;
 };
 
 export const writeCitiesData = async () => {

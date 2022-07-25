@@ -9,7 +9,7 @@ import { HiChevronLeft, HiX } from 'react-icons/hi';
 const Container = styled.div``;
 //#endregion
 
-export const OttleCreateItemDrawerHeader = ({ onClickBack, onClickClose }) => {
+export const ItemDrawerHeader = ({ onClickBack, onClickClose }) => {
     return (
         <HeaderContainer>
             <IconButton icon={<HiChevronLeft />} onClick={onClickBack} />

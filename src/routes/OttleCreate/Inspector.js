@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import { ArtboardControlPanel, ItemControlPanel } from './ControlPanel';
 import { IconButton } from '../../components/Button/IconButton';
 import { HiOutlineInbox, HiOutlinePlus, HiOutlineTrash } from 'react-icons/hi';
@@ -12,7 +12,7 @@ import {
 import { ProductLayer } from './ProductLayer';
 import { Textbutton } from '../../components/Button/TextButton';
 import { RoundButton } from '../../components/Button/RoundButton';
-import { openItemDrawer } from '../../features/ottleMaker/ottleItemDrawerSlice';
+import { openItemDrawer } from '../../features/ottleMaker/itemDrawerSlice';
 
 //#region styled-components
 const Container = styled.div`

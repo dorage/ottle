@@ -2,7 +2,9 @@ import { configureStore } from '@reduxjs/toolkit';
 import artboardReducer from '../features/ottleMaker/artboardSlice';
 import ottleMakerReducer from '../features/ottleMaker/ottleItemSlice';
 import ottleActionReducer from '../features/ottleMaker/ottleActionSlice';
-import ottleItemDrawerReducer from '../features/ottleMaker/ottleItemDrawerSlice';
+import itemDrawerReducer from '../features/ottleMaker/itemDrawerSlice';
+import itemDrawerItemsReducer from '../features/ottleMaker/itemDrawerItemsSlice';
+import itemDrawerCategoryReducer from '../features/ottleMaker/itemDrawerCategorySlice';
 import ottlePostingReducer from '../features/ottleMaker/ottlePostingSlice';
 import alertReducer from '../features/alert/alertSlice';
 import modalReducer from '../features/modal/modalSlice';
@@ -18,7 +20,9 @@ export const store = configureStore({
         artboard: artboardReducer,
         ottleItem: ottleMakerReducer,
         ottleAction: ottleActionReducer,
-        ottleItemDrawer: ottleItemDrawerReducer,
+        itemDrawer: itemDrawerReducer,
+        itemDrawerItems: itemDrawerItemsReducer,
+        itemDrawerCategory: itemDrawerCategoryReducer,
         ottlePosting: ottlePostingReducer,
         alert: alertReducer,
         modal: modalReducer,
