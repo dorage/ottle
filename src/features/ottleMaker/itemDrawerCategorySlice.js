@@ -1,13 +1,36 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { getItemCategories } from '../../app/firestore';
+import {
+    getMainItemCategories,
+    getSubItemCategories,
+} from '../../app/firestore';
 
-const initialState = { history: [], data: [], loading: true, error: false };
+const initialState = {
+    path: [],
+    history: [],
+    data: [],
+    loading: true,
+    error: false,
+};
 
-export const itemDrawerCategoryAsyncAction = createAsyncThunk(
-    'itemDrawerCategory/fetch',
-    async () => {
+export const itemDrawerMainCategoryAsyncAction = createAsyncThunk(
+    'itemDrawerCategory/fetch-main-category',
+    async (_, { dispatch }) => {
         try {
-            return await getItemCategories();
+            return await getMainItemCategories();
+        } catch (err) {
+            return err;
+        }
+    }
+);
+export const itemDrawerSubCategoryAsyncAction = createAsyncThunk(
+    'itemDrawerCategory/fetch-sub-category',
+    async (categoryId, { dispatch, getState }) => {
+        try {
+            const { path } = selectItemDrawerCategory(getState());
+            return {
+                path: categoryId,
+                data: await getSubItemCategories([...path, categoryId]),
+            };
         } catch (err) {
             return err;
         }
@@ -17,10 +40,16 @@ export const itemDrawerCategoryAsyncAction = createAsyncThunk(
 const itemDrawerCategorySlice = createSlice({
     name: 'itemDrawerCategory',
     initialState,
-    reducers: {},
+    reducers: {
+        goBackItemDrawerCategory: (state, action) => {
+            const data = state.history.pop();
+            state.data = data;
+            state.path.pop();
+        },
+    },
     extraReducers(builder) {
         builder.addCase(
-            itemDrawerCategoryAsyncAction.pending,
+            itemDrawerMainCategoryAsyncAction.pending,
             (state, action) => {
                 state.loading = true;
                 state.data = [];
@@ -28,7 +57,7 @@ const itemDrawerCategorySlice = createSlice({
             }
         );
         builder.addCase(
-            itemDrawerCategoryAsyncAction.fulfilled,
+            itemDrawerMainCategoryAsyncAction.fulfilled,
             (state, action) => {
                 state.loading = false;
                 state.data = action.payload;
@@ -36,16 +65,44 @@ const itemDrawerCategorySlice = createSlice({
             }
         );
         builder.addCase(
-            itemDrawerCategoryAsyncAction.rejected,
+            itemDrawerMainCategoryAsyncAction.rejected,
             (state, action) => {
                 state.loading = false;
                 state.data = [];
                 state.error = action.payload;
             }
         );
+        builder.addCase(
+            itemDrawerSubCategoryAsyncAction.pending,
+            (state, action) => {
+                state.loading = true;
+            }
+        );
+        builder.addCase(
+            itemDrawerSubCategoryAsyncAction.fulfilled,
+            (state, action) => {
+                const { path, data } = action.payload;
+                state.loading = false;
+                state.path = [...state.path, path];
+                state.history = [...state.history, state.data];
+                state.data = data;
+                state.error = null;
+            }
+        );
+        builder.addCase(
+            itemDrawerSubCategoryAsyncAction.rejected,
+            (state, action) => {
+                const { path, data } = action.payload;
+                state.loading = false;
+                state.path = [...state.path, path];
+                state.history = [...state.history, state.data];
+                state.data = [];
+                state.error = data;
+            }
+        );
     },
 });
 
-export const {} = itemDrawerCategorySlice.actions;
+export const { goBackItemDrawerCategory } = itemDrawerCategorySlice.actions;
 export const selectItemDrawerCategory = (state) => state.itemDrawerCategory;
 export default itemDrawerCategorySlice.reducer;

@@ -14,7 +14,8 @@ import { Icon } from '../Icon/icon';
 import { ItemDrawerHeader } from './Header';
 import { InputField } from '../Input/InputField';
 import {
-    itemDrawerCategoryAsyncAction,
+    goBackItemDrawerCategory,
+    itemDrawerMainCategoryAsyncAction,
     selectItemDrawerCategory,
 } from '../../features/ottleMaker/itemDrawerCategorySlice';
 import { ItemDrawerItemGrid, ItemDrawerCategoryGrid } from './Grid';
@@ -43,16 +44,21 @@ export const OttleCreateItemDrawer = ({ closeItemSelect }) => {
     const { isOpend } = useSelector(selectItemDrawer);
 
     useEffect(() => {
-        dispatch(itemDrawerCategoryAsyncAction());
+        dispatch(itemDrawerMainCategoryAsyncAction());
     }, []);
+
+    const onClickBack = () => {
+        dispatch(goBackItemDrawerCategory());
+    };
+    const onClickClose = () => {
+        dispatch(closeItemDrawer());
+    };
 
     return (
         <Container className={isOpend ? 'item-select-opend' : ''}>
             <ItemDrawerHeader
-                onClickBack={() => {}}
-                onClickClose={() => {
-                    dispatch(closeItemDrawer());
-                }}
+                onClickBack={onClickBack}
+                onClickClose={onClickClose}
             />
             <SearchBarContainer>
                 <InputField placeholder='search brand, product' />

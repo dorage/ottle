@@ -2,9 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectItemDrawerCategory } from '../../features/ottleMaker/itemDrawerCategorySlice';
+import {
+    itemDrawerMainCategoryAsyncAction,
+    itemDrawerSubCategoryAsyncAction,
+    selectItemDrawerCategory,
+} from '../../features/ottleMaker/itemDrawerCategorySlice';
 import { GridLoadingItem } from './LoadingItem';
-import { getItemsInCategory } from '../../app/firestore';
 import { itemDrawerItemsAsyncAction } from '../../features/ottleMaker/itemDrawerItemsSlice';
 
 //#region styled-components
@@ -40,7 +43,7 @@ export const GridCategories = () => {
     const { loading, data, error } = useSelector(selectItemDrawerCategory);
 
     const onClickCategory = (id) => () => {
-        dispatch(itemDrawerItemsAsyncAction(id));
+        dispatch(itemDrawerSubCategoryAsyncAction(id));
     };
 
     return (

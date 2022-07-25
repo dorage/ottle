@@ -104,7 +104,9 @@ export const GridItems = () => {
     return (
         <>
             {loading ? (
-                <></>
+                Array(12)
+                    .fill()
+                    .map((_, idx) => <GridLoadingItem key={idx} />)
             ) : error ? (
                 <></>
             ) : data.length ? (

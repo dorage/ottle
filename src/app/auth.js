@@ -4,7 +4,7 @@ import {
     signOut,
 } from 'firebase/auth';
 import { auth } from './firebase';
-import { getUserDoc, writeCitiesData } from './firestore';
+import { getUserDoc } from './firestore';
 
 /*
     Auth 내부에서 로그인 여부 확인방법
