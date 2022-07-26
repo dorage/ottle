@@ -23,7 +23,7 @@ const InputGroup = styled.div`
 const ConfigGroup = styled.div`
     display: flex;
     justify-content: space-between;
-    margin-bottom: ${(props) => props.theme.gap.gap_8};
+    margin-bottom: ${(props) => props.theme.gap.gap_16};
 `;
 //#endregion
 
@@ -39,7 +39,7 @@ export const OttleCreatePostingForm = ({ data }) => {
     };
 
     return (
-        <Container>
+        <Container className='pad'>
             <InputGroup>
                 <h2>어떤 룩인가요?</h2>
                 <InputField
@@ -56,7 +56,6 @@ export const OttleCreatePostingForm = ({ data }) => {
                     onChange={onChangeInput('description')}
                 />
             </InputGroup>
-
             <ConfigGroup>
                 <Label>사진 저장하기</Label>
                 <Toggle

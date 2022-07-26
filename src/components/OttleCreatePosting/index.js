@@ -14,6 +14,9 @@ import { OttleCreatePostingForm } from './Form';
 import { OttleCreatePostingFooter } from './Footer';
 import { OttleCreatePostingPreview } from './Preview';
 import { routes } from '../../configs/routes';
+import { uploadOttleImage } from '../../app/storage';
+import { selectUser } from '../../features/user/userSlice';
+import { setOttleDoc } from '../../app/firestore';
 
 //#region styled-components
 const Container = styled(FullScreenContainer)`
@@ -35,18 +38,30 @@ export const OttleCreatePosting = () => {
     const dispatch = useDispatch();
     const navigator = useNavigate();
     const canvasRef = useRef();
-    const { isOpend, form } = useSelector(selectOttlePosting);
 
-    const collectForm = () => {};
+    const { isOpend, form } = useSelector(selectOttlePosting);
+    const { user } = useSelector(selectUser);
 
     const onClickSave = () => {
         if (process.env.NODE_ENV === 'development') navigator(routes.main);
     };
 
     const onClickPublish = () => {
+        const { title, description } = form;
+        if (!title.length) return;
+
         const link = document.createElement('a');
-        link.download = 'download.jpg';
+        link.download = `download_${Number(new Date())}.webp`;
         link.href = canvasRef.current.toDataURL();
+        canvasRef.current.toBlob(
+            (blob) =>
+                setOttleDoc(user.uid, blob, {
+                    title,
+                    description,
+                }),
+            'image/webp',
+            1
+        );
         link.click();
         link.remove();
 

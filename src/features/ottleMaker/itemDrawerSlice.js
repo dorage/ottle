@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { generateItem } from './ottleItemSlice';
 
 const initialState = {
-    isOpend: true,
+    isOpend: false,
 };
 
 const itemDrawer = createSlice({

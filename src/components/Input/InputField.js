@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 //#region styled-components
-export const InputField = styled.input`
+const Input = styled.input`
+    position: relative;
     border: none;
     border-bottom: 1px solid black;
     font-size: ${(props) => props.theme.font.p16};
@@ -15,4 +16,12 @@ export const InputField = styled.input`
         background-color: ${(props) => props.theme.color.black_600};
     }
 `;
+
+const Message = styled.div`
+    position: absolute;
+`;
 //#endregion
+
+export const InputField = ({ error, msg, ...props }) => {
+    return <Input {...props} />;
+};

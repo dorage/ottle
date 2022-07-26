@@ -10,11 +10,15 @@ import {
     where,
     orderBy,
     limit,
+    serverTimestamp,
 } from 'firebase/firestore';
 import { firestore } from './firebase';
+import { gsToURL, uploadOttleImage } from './storage';
 
-const C_ITEM_CATEGORIES = 'item_categories';
-const C_ITEMS = 'items';
+export const C_USERS = 'users';
+export const C_ITEM_CATEGORIES = 'item_categories';
+export const C_ITEMS = 'items';
+export const C_OTTLES = 'ottles';
 
 const timestampToDate = (timestamp) => {
     const date = timestamp.toDate();
@@ -29,7 +33,7 @@ const dateToTimestamp = (date) => {
 };
 
 export const getUserDoc = async (uid) => {
-    const docRef = doc(firestore, 'users', uid);
+    const docRef = doc(firestore, C_USERS, uid);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
@@ -39,10 +43,17 @@ export const getUserDoc = async (uid) => {
     }
 };
 
+/**
+ * uid 를 가진 유저의 모든 Ottle을 가져옵니다.
+ * @param {*} uid
+ * @returns
+ */
 export const getOttleDocs = async (uid) => {
-    const querySnapshot = await getDocs(
-        collection(firestore, `users/${uid}/ottles`)
+    const ottlesQuery = query(
+        collection(firestore, C_USERS, uid, C_OTTLES),
+        orderBy('created_at', 'desc')
     );
+    const querySnapshot = await getDocs(ottlesQuery);
     const ottles = [];
     querySnapshot.forEach((doc) => {
         ottles.push({
@@ -51,7 +62,23 @@ export const getOttleDocs = async (uid) => {
             created_at: timestampToDate(doc.data().created_at),
         });
     });
+    console.log(ottles);
     return ottles;
+};
+
+/**
+ * uid의 유저에 새로운 Ottle을 저장합니다
+ * @param {*} param0
+ */
+export const setOttleDoc = async (uid, blob, { title, description }) => {
+    const ottleRef = collection(firestore, C_USERS, uid, C_OTTLES);
+    const { url, gsUrl } = await uploadOttleImage(uid, blob);
+    await setDoc(doc(ottleRef), {
+        title,
+        description,
+        image: { sm: url, md: url, lg: url, original: gsUrl },
+        created_at: serverTimestamp(),
+    });
 };
 
 export const getThreadDocs = async () => {

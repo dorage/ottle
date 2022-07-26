@@ -18,11 +18,13 @@ const Image = styled.img`
 export const MainThread = () => {
     const dispatch = useDispatch();
     const { data, loading, error } = useSelector(selectThread);
+
     useEffect(() => {
         dispatch(threadAsyncAction());
     }, []);
+
     return (
-        <Container>
+        <Container className='pad'>
             {loading ? (
                 <></>
             ) : data ? (

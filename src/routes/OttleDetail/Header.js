@@ -40,7 +40,7 @@ export const OttleDetailHeader = () => {
                 onClick={() => navigation(routes.main)}
             />
             <TitleSection>
-                <Username>Unnamed</Username>
+                <Username></Username>
                 <Pagename>Ottles</Pagename>
             </TitleSection>
             <Block></Block>

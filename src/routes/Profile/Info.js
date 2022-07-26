@@ -14,7 +14,9 @@ const Container = styled.div`
 `;
 const Portrait = styled.div`
     width: 100%;
+    max-width: 150px;
     aspect-ratio: 1/1;
+    margin: 0 auto;
     border-radius: 100% 100% 0 0;
     background-color: ${(props) => props.theme.color.black_600};
     background-image: url(${(props) => props.src});

@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { generateItem } from './ottleItemSlice';
 
 const initialState = {
-    isOpend: false,
+    isOpend: true,
     form: {
         title: '',
         description: '',
