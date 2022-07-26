@@ -4,10 +4,12 @@ import { ALERTS, broadcastAlert } from '../alert/alertSlice';
 const MAX_ITEM_COUNT = 18;
 
 export const generateItem = () => ({
+    loading: true,
     size: { w: 500, h: 500 },
     position: { x: 0.5, y: 0.5 },
     scale: 1.0,
     rotation: 1.0,
+    product: {},
     src: 'https://picsum.photos/500',
     name: 'product',
     id: '01',
@@ -15,7 +17,7 @@ export const generateItem = () => ({
 
 const initialState = {
     selected: NaN, //
-    items: [generateItem()],
+    items: [],
 };
 
 export const ottleItemSlice = createSlice({
@@ -36,7 +38,7 @@ export const ottleItemSlice = createSlice({
             state.items = action.payload;
         },
         addItem: (state, action) => {
-            state.items = [...state.items, action.payload];
+            state.items = [action.payload, ...state.items];
         },
         removeItem: (state, action) => {
             state.selected =
@@ -76,17 +78,35 @@ export const sendBackward = () => (dispatch, getState) => {
     dispatch(ottleItemSlice.actions.selectItem(selected + 1));
 };
 
+const genNewItem = ({ w, h }, product) => ({
+    size: { w, h },
+    position: { x: 0.5, y: 0.5 },
+    scale: 1.0,
+    rotation: 1.0,
+    product,
+});
 /**
  * 아이템을 추가합니다.
  * @param {*} item
  * @returns {Boolean} 아이템 추가 성공여부
  */
-export const addItem = (item) => (dispatch, getState) => {
+export const addItem = (product) => (dispatch, getState) => {
     const { items } = selectOttleItem(getState());
     if (items.length >= MAX_ITEM_COUNT) {
         dispatch(broadcastAlert(ALERTS.ottleCreate.tooManyItem));
         return false;
     }
+
+    const img = new Image();
+    img.src = product.image.original;
+    img.onload = function() {
+        dispatch(
+            ottleItemSlice.actions.addItem(
+                genNewItem({ w: this.width, h: this.height }, product)
+            )
+        );
+    };
+
     /*
     TODO;
     item은 상품의 정보만 담고 있으니까
@@ -101,8 +121,6 @@ export const addItem = (item) => (dispatch, getState) => {
         }
     }
     */
-    dispatch(ottleItemSlice.actions.addItem(item));
-    return true;
 };
 
 export const checkItemCount = (items) => items.length >= MAX_ITEM_COUNT;

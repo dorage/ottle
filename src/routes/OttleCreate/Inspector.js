@@ -94,11 +94,11 @@ export const Inspector = () => {
             </Header>
             {items.length ? (
                 <LayerContainer>
-                    {items.map((e, idx) => (
+                    {items.map((item, idx) => (
                         <ProductLayer
-                            key={idx}
                             index={idx}
-                            src={e.src}
+                            item={item}
+                            key={idx}
                             selected={selected === idx}
                             deleteMode={deleteMode}
                         />

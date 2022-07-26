@@ -2,24 +2,15 @@ import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { FullScreenContainer } from '../Layout/Container';
-import { IconButton } from '../Button/IconButton';
-import { HiX, HiChevronLeft, HiCheckCircle } from 'react-icons/hi';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     closeItemDrawer,
     selectItemDrawer,
 } from '../../features/ottleMaker/itemDrawerSlice';
-import { addItem } from '../../features/ottleMaker/ottleItemSlice';
-import { Icon } from '../Icon/icon';
 import { ItemDrawerHeader } from './Header';
 import { InputField } from '../Input/InputField';
-import {
-    goBackItemDrawerCategory,
-    itemDrawerMainCategoryAsyncAction,
-    selectItemDrawerCategory,
-} from '../../features/ottleMaker/itemDrawerCategorySlice';
+import { goBackItemDrawerCategory } from '../../features/ottleMaker/itemDrawerCategorySlice';
 import { ItemDrawerItemGrid, ItemDrawerCategoryGrid } from './Grid';
-import { GridCategories } from './Categories';
 
 //#region styled-components
 const Container = styled(FullScreenContainer)`
@@ -42,10 +33,6 @@ const SearchBarContainer = styled.div`
 export const OttleCreateItemDrawer = ({ closeItemSelect }) => {
     const dispatch = useDispatch();
     const { isOpend } = useSelector(selectItemDrawer);
-
-    useEffect(() => {
-        dispatch(itemDrawerMainCategoryAsyncAction());
-    }, []);
 
     const onClickBack = () => {
         dispatch(goBackItemDrawerCategory());

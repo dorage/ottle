@@ -8,6 +8,8 @@ import { GridNoItems } from './NoItem';
 import { HiOutlineCheck } from 'react-icons/hi';
 import { Icon } from '../../components/Icon/icon';
 import { theme } from '../../assets/styles/GlobalStyles';
+import { selectItemDrawerCategory } from '../../features/ottleMaker/itemDrawerCategorySlice';
+import { addItem } from '../../features/ottleMaker/ottleItemSlice';
 
 //#region styled-components
 const Item = styled.div`
@@ -34,11 +36,11 @@ const Thumb = styled.div`
 `;
 const Brand = styled.div`
     margin-bottom: ${(props) => props.theme.gap.gap_4};
-    font-size: ${(props) => props.theme.font.p14};
+    font-size: ${(props) => props.theme.font.p10};
     font-weight: 700;
 `;
 const Title = styled.div`
-    font-size: ${(props) => props.theme.font.p16};
+    font-size: ${(props) => props.theme.font.p14};
 `;
 const Price = styled.div`
     font-size: ${(props) => props.theme.font.p12};
@@ -57,6 +59,7 @@ const Added = styled.div`
 //#endregion
 
 const GridItem = ({ data, ...props }) => {
+    const dispatch = useDispatch();
     const itemRef = useRef();
     const [active, setActive] = useState(false);
     const {
@@ -69,6 +72,7 @@ const GridItem = ({ data, ...props }) => {
     const onClickItem = (id) => () => {
         if (active) return;
         setActive(true);
+        dispatch(addItem(data));
         setTimeout(() => {
             setActive(false);
         }, 1000);
@@ -98,12 +102,14 @@ const GridItem = ({ data, ...props }) => {
 };
 
 export const GridItems = () => {
-    const dispatch = useDispatch();
-    const { loading, data, error } = useSelector(selectItemDrawerItems);
+    const { loading: itemLoading, data, error } = useSelector(
+        selectItemDrawerItems
+    );
+    const { loading: categoryLoading } = useSelector(selectItemDrawerCategory);
 
     return (
         <>
-            {loading ? (
+            {itemLoading || categoryLoading ? (
                 Array(12)
                     .fill()
                     .map((_, idx) => <GridLoadingItem key={idx} />)

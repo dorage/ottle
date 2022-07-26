@@ -14,6 +14,7 @@ import {
 import { firestore } from './firebase';
 
 const C_ITEM_CATEGORIES = 'item_categories';
+const C_ITEMS = 'items';
 
 const timestampToDate = (timestamp) => {
     const date = timestamp.toDate();
@@ -101,17 +102,37 @@ export const getSubItemCategories = async (path) => {
     querySnapshot.forEach((doc) =>
         itemCategories.push({ id: doc.id, ...doc.data() })
     );
-    console.log(pathString, itemCategories);
     return itemCategories;
 };
 
+/**
+ * 카테고리 선정 이전에 표시될 아이템을 가져옵니다.
+ * @returns
+ */
+export const getItemsRecommend = async () => {
+    const itemsQuery = query(collection(firestore, C_ITEMS), limit(24));
+    const querySnapshot = await getDocs(itemsQuery);
+    const items = [];
+    querySnapshot.forEach((doc) => items.push({ id: doc.id, ...doc.data() }));
+    console.log(items);
+    return items;
+};
+
+/**
+ * 해당 카테고리에 포함된 아이템을 가져옵니다
+ * @param {*} categoryId
+ * @returns
+ */
 export const getItemsInCategory = async (categoryId) => {
     const itemsQuery = query(
-        collection(firestore, C_ITEM_CATEGORIES, categoryId, 'items')
+        collection(firestore, C_ITEMS),
+        where('category', 'array-contains', categoryId),
+        limit(24)
     );
     const querySnapshot = await getDocs(itemsQuery);
     const items = [];
     querySnapshot.forEach((doc) => items.push({ id: doc.id, ...doc.data() }));
+    console.log(items);
     return items;
 };
 
@@ -122,10 +143,10 @@ export const getItemsInCategory = async (categoryId) => {
 // ██████████████████████████████████████████████████████████████
 
 if (process.env.NODE_ENV === 'development') {
-    const genCategory = (order, id, name, children = []) => ({
+    const genCategory = (level, id, name, children = []) => ({
         id,
         name,
-        order,
+        level,
         children,
     });
 
@@ -187,50 +208,104 @@ if (process.env.NODE_ENV === 'development') {
     ];
     const tempCategory = [
         genCategory(0, 'top', '상의', [
-            genCategory(0, 'shirt', '셔츠'),
+            genCategory(1, 'shirt', '셔츠'),
             genCategory(1, 'tshirt', '티셔츠'),
-            genCategory(2, 'hoodie', '후드티'),
-            genCategory(3, 'sweater', '스웨터'),
+            genCategory(1, 'hoodie', '후드티'),
+            genCategory(1, 'sweater', '스웨터'),
         ]),
-        genCategory(1, 'bottom', '하의', [
-            genCategory(0, 'denim', '데님팬츠'),
+        genCategory(0, 'bottom', '하의', [
+            genCategory(1, 'denim', '데님팬츠'),
             genCategory(1, 'cotton', '코튼팬츠'),
-            genCategory(2, 'slacks', '정장/슬랙스'),
-            genCategory(3, 'slacks', '스커트'),
-            genCategory(4, 'trainer', '트레이닝팬츠'),
-            genCategory(5, 'shorts', '숏팬츠'),
+            genCategory(1, 'slacks', '정장/슬랙스'),
+            genCategory(1, 'slacks', '스커트'),
+            genCategory(1, 'trainer', '트레이닝팬츠'),
+            genCategory(1, 'shorts', '숏팬츠'),
         ]),
-        genCategory(2, 'outer', '아우터', [
-            genCategory(0, 'hoodie-zipup', '후드집업'),
+        genCategory(0, 'outer', '아우터', [
+            genCategory(1, 'hoodie-zipup', '후드집업'),
             genCategory(1, 'cardigan', '가디건'),
-            genCategory(2, 'coat', '코트'),
-            genCategory(3, 'jacket', '자켓'),
-            genCategory(4, 'blazer', '블레이저'),
+            genCategory(1, 'coat', '코트'),
+            genCategory(1, 'jacket', '자켓'),
+            genCategory(1, 'blazer', '블레이저'),
         ]),
     ];
 
     const writeCategoryData = async (categories) => {
-        console.log('startToWrite');
-        for (const main of categories) {
+        console.log('start writting');
+        for (let i = 0; i < categories.length; i++) {
+            const main = categories[i];
             const itemCategoriesRef = collection(firestore, C_ITEM_CATEGORIES);
             await setDoc(doc(itemCategoriesRef, main.id), {
                 name: main.name,
-                order: main.order,
+                order: i,
+                level: main.level,
             });
-            for (const sub of main.children) {
+            for (let j = 0; j < main.children.length; j++) {
+                const sub = main.children[j];
                 const subCategoriesRef = collection(
                     firestore,
                     `item_categories/${main.id}/item_categories`
                 );
                 await setDoc(doc(subCategoriesRef, sub.id), {
                     name: sub.name,
-                    order: sub.order,
+                    order: j,
+                    level: sub.level,
                 });
             }
         }
+        console.log('done writting');
     };
 
-    const genItem = () => {};
+    const genItem = (category, brand, name, link, image) => ({
+        category,
+        brand,
+        name,
+        image: { sm: image, md: image, lg: image, original: image },
+        link,
+    });
 
-    const writeItemData = async (items) => {};
+    const items = [
+        genItem(
+            ['top', 'shirt'],
+            'ENGINEERED GARMENTS',
+            '퍼펙트한 셔츠',
+            'www.naver.com',
+            'http://localhost:9199/v0/b/ottle-47f85.appspot.com/o/items%2Faccessories%2Faccessory.jpg?alt=media&token=5fcd4742-889b-459e-8a8c-23557cd0b186'
+        ),
+        genItem(
+            ['top', 'tshirt'],
+            'NEEDLES',
+            '겁나게 멋진 티샤쓰',
+            'www.naver.com',
+            'http://localhost:9199/v0/b/ottle-47f85.appspot.com/o/items%2Fbottoms%2Fpant.png?alt=media&token=bde997e5-9804-47bf-ad27-1e9151f34798'
+        ),
+        genItem(
+            ['bottom', 'denim'],
+            'NUDIE JEAN',
+            '누디진 옐로 스티치 데님 팬츠',
+            'www.naver.com',
+            'http://localhost:9199/v0/b/ottle-47f85.appspot.com/o/items%2Fshoes%2Fshoes.png?alt=media&token=020e1ef2-3d3c-459c-9bae-6eaad0269404'
+        ),
+        genItem(
+            ['bottom', 'cotton'],
+            'POLO RALPH LAUREN',
+            '폴로 된장 코튼 팬츠',
+            'www.naver.com',
+            'http://localhost:9199/v0/b/ottle-47f85.appspot.com/o/items%2Fstickers%2Fsticker.png?alt=media&token=c3dc1eeb-ddb8-4454-9f38-bda636fc4e6f'
+        ),
+        genItem(
+            ['outer', 'hoodie-zipup'],
+            'CANADA GOOSE',
+            '구스범스 방지 오리털 패딩',
+            'www.naver.com',
+            'http://localhost:9199/v0/b/ottle-47f85.appspot.com/o/items%2Ftops%2Ftop.png?alt=media&token=175cc349-485a-47b5-a27a-c754f62ec53d'
+        ),
+    ];
+
+    const writeItemData = async (items) => {
+        for (const item of items) {
+            const itemRef = collection(firestore, C_ITEMS);
+            await setDoc(doc(itemRef), item);
+        }
+    };
 }

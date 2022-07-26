@@ -29,9 +29,9 @@ export const OttleCreatePostingPreview = ({ canvasRef }) => {
         ctx.clearRect(0, 0, 1080, 1080);
         ctx.fillStyle = 'white';
         ctx.fillRect(0, 0, 1080, 1080);
-        items.forEach((item) => {
+        [...items].reverse().forEach((item) => {
             const img = new Image();
-            img.src = item.src;
+            img.src = item.product.image.original;
             img.crossOrigin = 'Anonymous'; // html canvas toDataURL 오류
             img.onload = () => {
                 const {

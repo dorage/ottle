@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
@@ -8,7 +8,6 @@ import {
     selectItemDrawerCategory,
 } from '../../features/ottleMaker/itemDrawerCategorySlice';
 import { GridLoadingItem } from './LoadingItem';
-import { itemDrawerItemsAsyncAction } from '../../features/ottleMaker/itemDrawerItemsSlice';
 
 //#region styled-components
 const CategoryContainer = styled.div`
@@ -41,6 +40,10 @@ const CategoryContainer = styled.div`
 export const GridCategories = () => {
     const dispatch = useDispatch();
     const { loading, data, error } = useSelector(selectItemDrawerCategory);
+
+    useEffect(() => {
+        dispatch(itemDrawerMainCategoryAsyncAction());
+    }, []);
 
     const onClickCategory = (id) => () => {
         dispatch(itemDrawerSubCategoryAsyncAction(id));

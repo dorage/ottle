@@ -59,22 +59,27 @@ const DeleteContainer = styled.div`
 //#endregion
 
 export const ProductLayer = ({
-    src,
-    selected,
     index,
+    item,
+    selected,
     deleteMode,
     ...props
 }) => {
     const dispatch = useDispatch();
+    const {
+        product: {
+            image: { original },
+        },
+    } = item;
 
     const onClickProduct = () => {
         if (selected) return;
         dispatch(selectItem(index));
     };
     return (
-        <Container key={index} index={index} {...props}>
+        <Container index={index} {...props}>
             <SmallProfile
-                src={src}
+                src={original}
                 selected={selected}
                 deleteMode={deleteMode}
                 onClick={!deleteMode && onClickProduct}

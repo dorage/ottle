@@ -51,7 +51,16 @@ export const SelectRect = styled.div.attrs((props) => ({
 
 export const Editable = ({
     selectedRef,
-    item: { name, src, position, size, scale, rotation },
+    item: {
+        position,
+        size,
+        scale,
+        rotation,
+        product: {
+            name,
+            image: { original },
+        },
+    },
 }) => {
     const { size: artboardSize, ratio: artboardRatio } = useSelector(
         selectArtboard
@@ -70,7 +79,12 @@ export const Editable = ({
             currRotation={rotation}
             ref={selectedRef}
         >
-            <Image imgSrc={src} width={getW()} height={getH()} alt={name} />
+            <Image
+                imgSrc={original}
+                width={getW()}
+                height={getH()}
+                alt={name}
+            />
         </Rect>
     );
 };

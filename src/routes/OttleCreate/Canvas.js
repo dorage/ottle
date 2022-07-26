@@ -89,7 +89,7 @@ export const Canvas = ({ selectedRef, onTouchStart }) => {
                     <>
                         {[...items].reverse().map((item, idx) => (
                             <Editable
-                                key={item.id}
+                                key={idx}
                                 selected={selected === idx}
                                 selectedRef={selectedRef}
                                 item={item}

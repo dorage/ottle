@@ -3,19 +3,25 @@ import {
     getMainItemCategories,
     getSubItemCategories,
 } from '../../app/firestore';
+import {
+    goBackItemDrawerItem,
+    itemDrawerCategoryItemsAsyncAction,
+    itemDrawerRecommendItemsAsyncAction,
+} from './itemDrawerItemsSlice';
 
 const initialState = {
     path: [],
     history: [],
     data: [],
     loading: true,
-    error: false,
+    error: null,
 };
 
 export const itemDrawerMainCategoryAsyncAction = createAsyncThunk(
     'itemDrawerCategory/fetch-main-category',
     async (_, { dispatch }) => {
         try {
+            dispatch(itemDrawerRecommendItemsAsyncAction());
             return await getMainItemCategories();
         } catch (err) {
             return err;
@@ -27,6 +33,8 @@ export const itemDrawerSubCategoryAsyncAction = createAsyncThunk(
     async (categoryId, { dispatch, getState }) => {
         try {
             const { path } = selectItemDrawerCategory(getState());
+
+            dispatch(itemDrawerCategoryItemsAsyncAction(categoryId));
             return {
                 path: categoryId,
                 data: await getSubItemCategories([...path, categoryId]),
@@ -42,8 +50,7 @@ const itemDrawerCategorySlice = createSlice({
     initialState,
     reducers: {
         goBackItemDrawerCategory: (state, action) => {
-            const data = state.history.pop();
-            state.data = data;
+            state.data = state.history.pop();
             state.path.pop();
         },
     },
@@ -103,6 +110,11 @@ const itemDrawerCategorySlice = createSlice({
     },
 });
 
-export const { goBackItemDrawerCategory } = itemDrawerCategorySlice.actions;
+export const goBackItemDrawerCategory = () => (dispatch) => {
+    dispatch(itemDrawerCategorySlice.actions.goBackItemDrawerCategory());
+    dispatch(goBackItemDrawerItem());
+};
+
+export const {} = itemDrawerCategorySlice.actions;
 export const selectItemDrawerCategory = (state) => state.itemDrawerCategory;
 export default itemDrawerCategorySlice.reducer;
