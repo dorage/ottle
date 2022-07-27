@@ -7,7 +7,7 @@ import {
     itemDrawerSubCategoryAsyncAction,
     selectItemDrawerCategory,
 } from '../../features/ottleMaker/itemDrawerCategorySlice';
-import { GridLoadingItem } from './LoadingItem';
+import { LoadingBlock } from './LoadingItem';
 
 //#region styled-components
 const CategoryContainer = styled.div`
@@ -56,7 +56,7 @@ export const GridCategories = () => {
                     {Array(9)
                         .fill()
                         .map((_, idx) => (
-                            <GridLoadingItem key={idx} />
+                            <LoadingBlock key={idx} />
                         ))}
                 </>
             ) : (

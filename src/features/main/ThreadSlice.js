@@ -1,11 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { getThreadDocs } from '../../app/firestore';
+import { getMainThreadDocs } from '../../app/firestore';
 
 const initialState = { data: [], loading: true, error: false };
 
 export const threadAsyncAction = createAsyncThunk('thread/fetch', async () => {
     try {
-        return await getThreadDocs();
+        return await getMainThreadDocs();
     } catch (err) {
         return err;
     }

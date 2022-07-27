@@ -13,7 +13,7 @@ import {
     serverTimestamp,
 } from 'firebase/firestore';
 import { firestore } from './firebase';
-import { gsToURL, uploadOttleImage } from './storage';
+import { uploadOttleImage } from './storage';
 
 export const C_USERS = 'users';
 export const C_ITEM_CATEGORIES = 'item_categories';
@@ -32,6 +32,11 @@ const dateToTimestamp = (date) => {
     return Timestamp.fromDate(date);
 };
 
+/**
+ * user 정보를 가져옵니다
+ * @param {*} uid
+ * @returns
+ */
 export const getUserDoc = async (uid) => {
     const docRef = doc(firestore, C_USERS, uid);
     const docSnap = await getDoc(docRef);
@@ -41,6 +46,24 @@ export const getUserDoc = async (uid) => {
     } else {
         return { name: '', email: '' };
     }
+};
+
+export const getMyOttleDoc = async (uid, ottleId) => {
+    const docRef = doc(firestore, C_USERS, uid, C_OTTLES, ottleId);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+        return docSnap.data();
+    } else {
+        throw new Error('없는 옷뜰입니다');
+    }
+};
+
+export const getUserOttleDoc = async (ottleId, user_id) => {
+    const userRef = query(
+        collection(firestore, C_USERS),
+        where('id', '==', 'user_id')
+    );
 };
 
 /**
@@ -62,7 +85,6 @@ export const getOttleDocs = async (uid) => {
             created_at: timestampToDate(doc.data().created_at),
         });
     });
-    console.log(ottles);
     return ottles;
 };
 
@@ -81,25 +103,37 @@ export const setOttleDoc = async (uid, blob, { title, description }) => {
     });
 };
 
-export const getThreadDocs = async () => {
+/**
+ * 메인화면에 표시할 스레드들을 가져옵니다.
+ * @returns
+ */
+export const getMainThreadDocs = async () => {
     const ottlesQuery = query(collectionGroup(firestore, 'ottles'));
-    const querySnapshot = await getDocs(ottlesQuery);
-    const ottles = [];
-    querySnapshot.forEach((doc) => {
-        ottles.push({
-            id: doc.id,
-            ...doc.data(),
-            created_at: timestampToDate(doc.data().created_at),
+    const ottleSnapshot = await getDocs(ottlesQuery);
+    const threads = [];
+
+    for (const doc of ottleSnapshot.docs) {
+        const makerSnapshot = await getDoc(doc.ref.parent.parent);
+        const { profile_src, name } = makerSnapshot.data();
+
+        threads.push({
+            maker: { id: makerSnapshot.id, name, profile_src },
+            ottle: {
+                id: doc.id,
+                ...doc.data(),
+                created_at: timestampToDate(doc.data().created_at),
+            },
         });
-    });
-    return ottles;
+    }
+
+    return threads;
 };
 
 /**
  * 아이템 카테고리 최상위 documents 를 가져옵니다.
  * @returns
  */
-export const getMainItemCategories = async () => {
+export const getMainItemCategoryDocs = async () => {
     const itemCategoriesQuery = query(
         collection(firestore, C_ITEM_CATEGORIES),
         orderBy('order')
@@ -115,7 +149,7 @@ export const getMainItemCategories = async () => {
  * 해당 categoryId를 가진 카테고리의 서브카테고리 documents 를 가져옵니다
  * @param {String[]} path
  */
-export const getSubItemCategories = async (path) => {
+export const getSubItemCategoryDocs = async (path) => {
     const pathString = path.reduce(
         (acc, curr) => `${acc}/${curr}/${C_ITEM_CATEGORIES}`,
         C_ITEM_CATEGORIES

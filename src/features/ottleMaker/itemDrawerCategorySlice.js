@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import {
-    getMainItemCategories,
-    getSubItemCategories,
+    getMainItemCategoryDocs,
+    getSubItemCategoryDocs,
 } from '../../app/firestore';
 import {
     goBackItemDrawerItem,
@@ -22,7 +22,7 @@ export const itemDrawerMainCategoryAsyncAction = createAsyncThunk(
     async (_, { dispatch }) => {
         try {
             dispatch(itemDrawerRecommendItemsAsyncAction());
-            return await getMainItemCategories();
+            return await getMainItemCategoryDocs();
         } catch (err) {
             return err;
         }
@@ -37,7 +37,7 @@ export const itemDrawerSubCategoryAsyncAction = createAsyncThunk(
             dispatch(itemDrawerCategoryItemsAsyncAction(categoryId));
             return {
                 path: categoryId,
-                data: await getSubItemCategories([...path, categoryId]),
+                data: await getSubItemCategoryDocs([...path, categoryId]),
             };
         } catch (err) {
             return err;

@@ -58,9 +58,9 @@ export const EmailSignIn = () => {
                 <>
                     <div>
                         <h3>이메일</h3>
-                        <InputField value={data.email} />
+                        <InputField value={data.email} readOnly />
                         <h3>비밀번호</h3>
-                        <InputField value={data.password} />
+                        <InputField value={data.password} readOnly />
                     </div>
                     <div>
                         <SemiRoundButton onClick={onSignIn}>

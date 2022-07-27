@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { LinkHoC } from '../HOC/LinkHoC';
+import { LoadingBlock } from '../OttleCreateItemDrawer/LoadingItem';
 
 const Button = styled.button`
     border: none;
@@ -20,7 +21,9 @@ const Button = styled.button`
         filter: ${(props) => (props.active ? 'none' : 'inherit')};
     }
 `;
+
 export const IconButton = ({
+    loading,
     w,
     h,
     normalColor,
@@ -41,7 +44,7 @@ export const IconButton = ({
             onClick={onClick}
             {...props}
         >
-            {children || icon}
+            {loading ? <LoadingBlock /> : children || icon}
         </Button>
     );
 };

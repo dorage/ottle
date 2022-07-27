@@ -43,12 +43,11 @@ export const OttleCreatePosting = () => {
     const { user } = useSelector(selectUser);
 
     const onClickSave = () => {
-        if (process.env.NODE_ENV === 'development') navigator(routes.main);
+        if (process.env.NODE_ENV === 'development') navigator(routes.main());
     };
 
     const onClickPublish = () => {
         const { title, description } = form;
-        if (!title.length) return;
 
         const link = document.createElement('a');
         link.download = `download_${Number(new Date())}.webp`;
@@ -65,7 +64,7 @@ export const OttleCreatePosting = () => {
         link.click();
         link.remove();
 
-        navigator(routes.main);
+        navigator(routes.main());
     };
 
     return (

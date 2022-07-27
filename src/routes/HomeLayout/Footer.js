@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { useLocation, useParams } from 'react-router-dom';
 import { FooterContainer } from '../../components/Layout/Footer';
 import {
     HiOutlineViewBoards,
@@ -13,34 +14,54 @@ import {
     IconButton,
     LinkedIconButton,
 } from '../../components/Button/IconButton';
-import { routes } from '../../configs/routes';
+import { getOriginUrl, routes } from '../../configs/routes';
+import { selectUser } from '../../features/user/userSlice';
 
 const Container = styled(FooterContainer)`
     justify-content: space-evenly;
     z-index: ${(props) => props.theme.zindex.footer};
 `;
 
-const genPathObj = (path, icon) => ({ path, Icon: icon });
-
-const paths = [
-    genPathObj(routes.main, HiOutlineViewBoards),
-    // genPathObj(routes.likes, HiOutlineHeart), 추후 업데이트
-    // genPathObj(routes.groups, HiOutlineClipboardList), 추후 업데이트
-    genPathObj(routes.profile, HiOutlineUserCircle),
-];
+const FooterIcon = ({ route, active, icon }) => {
+    return active ? (
+        <IconButton active={true} icon={icon} />
+    ) : (
+        <LinkedIconButton to={route()} icon={icon} />
+    );
+};
 
 export const HomeLayoutFooter = () => {
     const { pathname } = useLocation();
+    const params = useParams();
+    const [active, setActive] = useState(0);
+    const { loading, user, isAuth, error } = useSelector(selectUser);
+
+    useEffect(() => {
+        switch (getOriginUrl(params, pathname)) {
+            case routes.main():
+                setActive(0);
+                break;
+            case routes.profile():
+                setActive(1);
+                break;
+            case routes.user():
+                setActive(1);
+                break;
+        }
+    }, [pathname]);
 
     return (
         <Container className='pad'>
-            {paths.map(({ path, Icon }) =>
-                pathname === path ? (
-                    <IconButton active={true} icon={<Icon />} key={path} />
-                ) : (
-                    <LinkedIconButton to={path} icon={<Icon />} key={path} />
-                )
-            )}
+            <FooterIcon
+                active={active === 0}
+                route={routes.main}
+                icon={<HiOutlineViewBoards />}
+            />
+            <FooterIcon
+                active={active === 1}
+                route={routes.profile}
+                icon={<HiOutlineUserCircle />}
+            />
         </Container>
     );
 };

@@ -27,8 +27,8 @@ export const Background = styled.div`
 `;
 
 function App() {
-    const dispatch = useDispatch();
     const [isMobile, setIsMobile] = useState(false);
+    const { loading: userLoading, isAuth, user } = useSelector(selectUser);
 
     useEffect(() => {
         // userAgent 체크해서 모바일인지 확인
@@ -39,19 +39,15 @@ function App() {
         );
     }, []);
 
+    if (userLoading) return <></>;
+
     return (
         <Background>
             <BrowserRouter>
                 {process.env.NODE_ENV === 'development' && <RouterPanel />}
                 <Routes>
-                    <Route path={routes.main} element={<HomeLayout />}>
-                        <Route path={routes.main} element={<Main />} />
-                        <Route path={routes.likes} element={<Likes />} />
-                        <Route path={routes.boards} element={<Groups />} />
-                        <Route path={routes.profile} element={<Profile />} />
-                    </Route>
                     <Route
-                        path={routes.ottleCreate}
+                        path={routes.ottleCreate()}
                         element={
                             isMobile ? <OttleMaker /> : <DesktopNotReady />
                         }
@@ -60,16 +56,38 @@ function App() {
                         path={routes.ottleDetail()}
                         element={<OttleDetail />}
                     />
-                    <Route path={routes.productDetail()} element={<Main />} />
-                    <Route path={routes.settings} element={<Main />} />
                     <Route
-                        path={routes.pageNotFound}
+                        path={routes.pageNotFound()}
                         element={<PageNotFound />}
                     />
                     <Route
                         path='*'
-                        element={<Navigate to={routes.pageNotFound} />}
+                        element={<Navigate to={routes.pageNotFound()} />}
                     />
+                    <Route path={routes.main()} element={<HomeLayout />}>
+                        <Route path={routes.main()} element={<Main />} />
+                        <Route path={routes.groups()} element={<Groups />} />
+                        <Route
+                            path={routes.profile()}
+                            element={
+                                isAuth ? (
+                                    <Navigate to={routes.user(user.username)} />
+                                ) : (
+                                    <Navigate to={routes.main()} />
+                                )
+                            }
+                        />
+                        <Route
+                            path={routes.user()}
+                            element={
+                                isAuth ? (
+                                    <Profile />
+                                ) : (
+                                    <Navigate to={routes.main()} />
+                                )
+                            }
+                        />
+                    </Route>
                 </Routes>
             </BrowserRouter>
         </Background>

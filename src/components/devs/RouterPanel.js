@@ -45,11 +45,11 @@ export const RouterPanel = () => {
                     <Link to={routes.likes}>
                         <Button>{routes.likes}</Button>
                     </Link>
-                    <Link to={routes.boards}>
-                        <Button>{routes.boards}</Button>
+                    <Link to={routes.groupss}>
+                        <Button>{routes.groupss}</Button>
                     </Link>
-                    <Link to={routes.profile}>
-                        <Button>{routes.profile}</Button>
+                    <Link to={routes.user}>
+                        <Button>{routes.user}</Button>
                     </Link>
                     <Link to={routes.settings}>
                         <Button>{routes.settings}</Button>

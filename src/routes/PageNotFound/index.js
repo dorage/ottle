@@ -42,7 +42,7 @@ export const PageNotFound = () => {
                 <br />
                 다음에 다시 만나요 :)
             </Text>
-            <LinkedTextButton to={routes.main}>
+            <LinkedTextButton to={routes.main()}>
                 홈으로 돌아가기 →
             </LinkedTextButton>
         </Container>

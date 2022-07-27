@@ -33,8 +33,8 @@ export const ProfileItems = ({ uid }) => {
         dispatch(myOttlesAsyncAction(uid));
     }, []);
 
-    const onClickOttle = (id) => () => {
-        navigation(routes.ottleDetail(id));
+    const onClickOttle = (uid, ottleId) => () => {
+        navigation(routes.ottleDetail(uid, ottleId));
     };
 
     return (

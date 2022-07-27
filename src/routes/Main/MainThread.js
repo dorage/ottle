@@ -25,17 +25,7 @@ export const MainThread = () => {
 
     return (
         <Container className='pad'>
-            {loading ? (
-                <></>
-            ) : data ? (
-                <>
-                    {data.map((e) => (
-                        <Image src={e.image.lg} />
-                    ))}
-                </>
-            ) : (
-                <></>
-            )}
+            {loading ? <></> : data.length ? <></> : <></>}
         </Container>
     );
 };

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled, { keyframes } from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectItemDrawerItems } from '../../features/ottleMaker/itemDrawerItemsSlice';
-import { GridLoadingItem } from './LoadingItem';
+import { LoadingBlock } from './LoadingItem';
 import { GridNoItems } from './NoItem';
 import { HiOutlineCheck } from 'react-icons/hi';
 import { Icon } from '../../components/Icon/icon';
@@ -112,7 +112,7 @@ export const GridItems = () => {
             {itemLoading || categoryLoading ? (
                 Array(12)
                     .fill()
-                    .map((_, idx) => <GridLoadingItem key={idx} />)
+                    .map((_, idx) => <LoadingBlock key={idx} />)
             ) : error ? (
                 <></>
             ) : data.length ? (

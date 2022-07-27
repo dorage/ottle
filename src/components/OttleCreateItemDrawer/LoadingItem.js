@@ -21,6 +21,4 @@ const Container = styled.div`
 `;
 //#endregion
 
-export const GridLoadingItem = () => {
-    return <Container></Container>;
-};
+export const LoadingBlock = () => <Container />;
