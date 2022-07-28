@@ -6,6 +6,7 @@ import {
     getDoc,
     getDocs,
     setDoc,
+    deleteDoc,
     Timestamp,
     where,
     orderBy,
@@ -19,14 +20,13 @@ export const C_USERS = 'users';
 export const C_ITEM_CATEGORIES = 'item_categories';
 export const C_ITEMS = 'items';
 export const C_OTTLES = 'ottles';
+export const C_OTTLELIKES = 'ottle_likes';
+export const C_ITEMLIKES = 'item_likes';
 
 const timestampToDate = (timestamp) => {
+    if (timestamp === null || timestamp === undefined) return `방금 전`;
     const date = timestamp.toDate();
-    return {
-        year: date.getFullYear(),
-        month: date.getMonth() + 1,
-        date: date.getDate() + 1,
-    };
+    return `${date.getDate() + 1}.${date.getMonth() + 1}.${date.getFullYear()}`;
 };
 const dateToTimestamp = (date) => {
     return Timestamp.fromDate(date);
@@ -113,16 +113,19 @@ export const getOttleDocs = async (uid) => {
  * @returns
  */
 export const getMainThreadDocs = async () => {
-    const ottlesRef = query(collection(firestore, C_OTTLES), limit(10));
+    const ottlesRef = query(
+        collection(firestore, C_OTTLES),
+        orderBy('created_at', 'desc'),
+        limit(10)
+    );
     const ottleSnapshot = await getDocs(ottlesRef);
     const threads = [];
 
     for (const ottleDoc of ottleSnapshot.docs) {
         const { uid, created_at } = ottleDoc.data();
-        const maker = await getUserByUID(uid);
-
+        const user = await getUserByUID(uid);
         threads.push({
-            maker,
+            user,
             ottle: {
                 id: ottleDoc.id,
                 ...ottleDoc.data(),
@@ -200,15 +203,33 @@ export const getItemsInCategory = async (categoryId) => {
 };
 
 export const getFollow = async () => {
-    const q = doc(firestore, 'ottles', 'FEm5s5W8z6Z2OsSdsrBd');
-    const snap = await getDoc(q);
-    console.log(snap.data());
+    const ref = doc(firestore, 'ottles', 'FEm5s5W8z6Z2OsSdsrBd');
+    const snap = await getDoc(ref);
 };
-getFollow();
 export const setFollow = async () => {};
+export const deleteFollow = async () => {};
 
-export const getOttleLike = async () => {};
-export const setOttleLike = async () => {};
+export const getOttleLike = async (uid, ottleId) => {
+    const ref = query(
+        collection(firestore, C_OTTLELIKES),
+        where('uid', '==', uid),
+        where('ottle_id', '==', ottleId)
+    );
+    const snap = await getDoc(ref);
+    return snap.data();
+};
+export const setOttleLike = async (uid, ottleId) => {
+    const ref = doc(firestore, C_OTTLELIKES);
+    await setDoc(ref, { uid, ottle_id: ottleId });
+};
+export const deleteOttleLike = async (uid, ottleId) => {
+    const ref = query(
+        collection(firestore, C_OTTLELIKES),
+        where('uid', '==', uid),
+        where('ottle_id', '==', ottleId)
+    );
+    deleteDoc(ref);
+};
 
 // ██████████████████████████████████████████████████████████████
 //

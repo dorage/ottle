@@ -18,11 +18,8 @@ const Container = styled(HeaderContainer)`
 const TitleSection = styled.div`
     text-align: center;
 `;
-const Username = styled.div`
-    font-size: ${(props) => props.theme.font.p10};
-`;
 const Pagename = styled.div`
-    font-size: ${(props) => props.theme.font.p12};
+    font-size: ${(props) => props.theme.font.p14};
     font-weight: 700;
 `;
 const Block = styled.div`
@@ -31,8 +28,9 @@ const Block = styled.div`
 `;
 //#endregion
 
-export const OttleDetailHeader = () => {
+export const OttleDetailHeader = ({ loading, data }) => {
     const navigation = useNavigate();
+    if (loading) return <></>;
     return (
         <Container>
             <IconButton
@@ -40,8 +38,9 @@ export const OttleDetailHeader = () => {
                 onClick={() => navigation(-1)}
             />
             <TitleSection>
-                <Username></Username>
-                <Pagename>Ottles</Pagename>
+                <Pagename>
+                    <b>{data.user.name}</b> 님의 옷뜰
+                </Pagename>
             </TitleSection>
             <Block></Block>
         </Container>

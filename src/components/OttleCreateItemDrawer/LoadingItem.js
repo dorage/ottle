@@ -13,12 +13,14 @@ const glow = keyframes`
     }
 `;
 const Container = styled.div`
-    width: 100%;
-    height: 100%;
+    width: ${(props) => props.w || props.width || '100%'};
+    height: ${(props) => props.w || props.width || '100%'};
     background-color: ${(props) => props.theme.color.black_600};
 
     animation: ${glow} 1s ease-in-out infinite;
 `;
 //#endregion
 
-export const LoadingBlock = () => <Container />;
+export const LoadingBlock = ({ w, h, width, height }) => (
+    <Container w={w} h={h} width={width} height={height} />
+);

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import { Portrait } from '../../components/Layout/Portrait';
 import { IconButton } from '../../components/Button/IconButton';
 import { BsCaretDownFill } from 'react-icons/bs';
 import { theme } from '../../assets/styles/GlobalStyles';
@@ -11,17 +12,6 @@ const Container = styled.div`
     width: 100%;
     flex-direction: column;
     margin-bottom: ${(props) => props.theme.gap.gap_32};
-`;
-const Portrait = styled.div`
-    width: 100%;
-    max-width: 150px;
-    aspect-ratio: 1/1;
-    margin: 0 auto;
-    border-radius: 100% 100% 0 0;
-    background-color: ${(props) => props.theme.color.black_600};
-    background-image: url(${(props) => props.src});
-    background-size: cover;
-    background-position: center;
 `;
 const Row = styled.div`
     display: flex;

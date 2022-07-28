@@ -6,12 +6,13 @@ import {
     selectThread,
     threadAsyncAction,
 } from '../../features/main/ThreadSlice';
+import { Ottle } from '../../components/Ottle';
 
 //#region styled-components
 const Container = styled.div``;
-const Image = styled.img`
-    width: 100%;
-    aspect-ratio: 1/1;
+const Thread = styled.div`
+    padding: ${(props) => props.theme.gap.gap_16} 0;
+    border-bottom: 1px solid ${(props) => props.theme.color.black_600};
 `;
 //#endregion
 
@@ -25,7 +26,15 @@ export const MainThread = () => {
 
     return (
         <Container className='pad'>
-            {loading ? <></> : data.length ? <></> : <></>}
+            {!error ? (
+                data.map((e, idx) => (
+                    <Thread key={idx}>
+                        <Ottle loading={loading} data={e} />
+                    </Thread>
+                ))
+            ) : (
+                <></>
+            )}
         </Container>
     );
 };

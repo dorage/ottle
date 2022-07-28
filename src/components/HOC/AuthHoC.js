@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { initAuth } from '../../app/auth';
 import { checkAuth, selectUser } from '../../features/user/userSlice';
 import { LoadingBlock } from '../OttleCreateItemDrawer/LoadingItem';
+import { LoadingAuth } from '../Loading/LoadingAuth';
 
 export const AuthHoC = (Component) => (props) => {
     const dispatch = useDispatch();
@@ -12,6 +13,8 @@ export const AuthHoC = (Component) => (props) => {
     useEffect(() => {
         initAuth((payload) => dispatch(checkAuth(payload)));
     }, []);
+
+    if (loading) return <LoadingAuth />;
 
     return (
         <>

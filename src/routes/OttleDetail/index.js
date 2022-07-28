@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { OttleDetailHeader } from './Header';
@@ -9,7 +10,9 @@ import { selectUser } from '../../features/user/userSlice';
 import { getMyOttle, getOttleDetail } from '../../app/firestore';
 
 //#region styled-components
-
+const OttleSection = styled.div`
+    padding-top: ${(props) => props.theme.gap.gap_16};
+`;
 //#endregion
 
 export const OttleDetail = (props) => {
@@ -37,8 +40,16 @@ export const OttleDetail = (props) => {
 
     return (
         <FullScreenContainer>
-            <OttleDetailHeader />
-            {loading ? <></> : data ? <Ottle data={data} /> : <></>}
+            {!error ? (
+                <>
+                    <OttleDetailHeader loading={loading} data={data} />
+                    <OttleSection>
+                        <Ottle loading={loading} data={data} />
+                    </OttleSection>
+                </>
+            ) : (
+                <></>
+            )}
         </FullScreenContainer>
     );
 };
