@@ -37,7 +37,7 @@ export const OttleDetailHeader = () => {
         <Container>
             <IconButton
                 icon={<HiChevronLeft />}
-                onClick={() => navigation(routes.main)}
+                onClick={() => navigation(-1)}
             />
             <TitleSection>
                 <Username></Username>

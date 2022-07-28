@@ -40,13 +40,10 @@ export const getOriginUrl = (params, pathname) => {
 
 // TOKENS
 const PROFILE = 'profile';
-const USER = 'user';
-const OTTLE = 'ottle';
+const OTTLE = 'o';
 const CREATE = 'create';
-const GROUP = 'group';
-const GROUPS = 'groups';
+const GROUP = 'g';
 const ITEM = 'item';
-const LIEKS = 'likes';
 const PAGENOTFOUND = 'page-not-found';
 
 // URLS
@@ -58,7 +55,7 @@ const ottleCreate = (username, ottleId) =>
     URL(user(username), OTTLE, param({ ottleId }), CREATE);
 const ottleDetail = (username, ottleId) =>
     URL(user(username), OTTLE, param({ ottleId }));
-const groups = (username) => URL(user(username), GROUPS);
+const groups = (username) => URL(user(username), GROUP);
 const group = (username, groupId) =>
     URL(user(username), GROUP, param({ groupId }));
 const itemDetail = (itemId) => URL(ITEM, param({ itemId }));

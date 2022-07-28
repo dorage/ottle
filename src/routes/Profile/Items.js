@@ -24,17 +24,18 @@ const Ottle = styled.img`
 `;
 //#endregion
 
-export const ProfileItems = ({ uid }) => {
+export const ProfileItems = ({ user }) => {
     const dispatch = useDispatch();
     const navigation = useNavigate();
+    const { uid, username } = user;
     const { data, loading } = useSelector(selectMyOttles);
 
     useEffect(() => {
         dispatch(myOttlesAsyncAction(uid));
     }, []);
 
-    const onClickOttle = (uid, ottleId) => () => {
-        navigation(routes.ottleDetail(uid, ottleId));
+    const onClickOttle = (username, ottleId) => () => {
+        navigation(routes.ottleDetail(username, ottleId));
     };
 
     return (
@@ -46,7 +47,7 @@ export const ProfileItems = ({ uid }) => {
                     <Ottle
                         key={`${id}`}
                         src={image.sm}
-                        onClick={onClickOttle(id)}
+                        onClick={onClickOttle(username, id)}
                     />
                 ))
             ) : (

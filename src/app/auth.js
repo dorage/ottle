@@ -4,7 +4,7 @@ import {
     signOut,
 } from 'firebase/auth';
 import { auth } from './firebase';
-import { getUserDoc } from './firestore';
+import { getUserByUID } from './firestore';
 
 /*
     Auth 내부에서 로그인 여부 확인방법
@@ -29,7 +29,7 @@ export const initAuth = (dispatchfn) => {
             return;
         }
         const { uid } = user;
-        const userDoc = await getUserDoc(uid);
+        const userDoc = await getUserByUID(uid);
         dispatchfn({ ...userDoc, uid });
     });
 };
@@ -49,7 +49,7 @@ export const signInWithEmailPassword = (email, password) => async () => {
             email,
             password
         );
-        const user = await getUserDoc(credential.user.uid);
+        const user = await getUserByUID(credential.user.uid);
         return { ...user, uid: credential.user.uid };
     } catch (err) {
         console.err(err);

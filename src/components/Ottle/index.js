@@ -7,6 +7,7 @@ const Container = styled.div``;
 //#endregion
 
 export const Ottle = ({ data }) => {
+    console.log(data);
     return (
         <Container className='pad'>
             <div>썸네일</div>

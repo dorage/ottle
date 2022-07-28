@@ -7,18 +7,16 @@ import { selectUser } from '../../features/user/userSlice';
 import { getOttleDocs } from '../../app/firestore';
 
 export const Profile = () => {
-    const { isAuth, loading, user } = useSelector(selectUser);
+    const { user } = useSelector(selectUser);
 
     useEffect(() => {
         if (user) getOttleDocs(user.uid);
     }, [user]);
 
-    if (loading) return <></>;
-
     return user ? (
         <div>
             <ProfileInfo user={user} />
-            <ProfileItems uid={user.uid} />
+            <ProfileItems user={user} />
         </div>
     ) : (
         <></>

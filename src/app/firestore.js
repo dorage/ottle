@@ -37,33 +37,50 @@ const dateToTimestamp = (date) => {
  * @param {*} uid
  * @returns
  */
-export const getUserDoc = async (uid) => {
+export const getUserByUID = async (uid) => {
     const docRef = doc(firestore, C_USERS, uid);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-        return docSnap.data();
+        return { uid: docSnap.id, ...docSnap.data() };
     } else {
-        return { name: '', email: '' };
+        return null;
     }
 };
 
-export const getMyOttleDoc = async (uid, ottleId) => {
-    const docRef = doc(firestore, C_USERS, uid, C_OTTLES, ottleId);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-        return docSnap.data();
-    } else {
-        throw new Error('없는 옷뜰입니다');
-    }
-};
-
-export const getUserOttleDoc = async (ottleId, user_id) => {
+export const getUserByUsername = async (username) => {
     const userRef = query(
         collection(firestore, C_USERS),
-        where('id', '==', 'user_id')
+        where('username', '==', username)
     );
+    const userSnap = await getDocs(userRef);
+    if (!userSnap.docs.length) throw new Error('there has no user');
+    return { uid: userSnap.docs[0].id, ...userSnap.docs[0].data() };
+};
+
+export const getOttleDetail = async (username, ottleId) => {
+    const user = await getUserByUsername(username);
+    // TODO; like여부나 댓글등의 자료도 가져와야함.
+    const ottleRef = doc(firestore, C_OTTLES, ottleId);
+    const ottleSnap = await getDoc(ottleRef);
+    const ottle = ottleSnap.data();
+    return { user, ottle };
+};
+
+/**
+ * uid의 유저에 새로운 Ottle을 저장합니다
+ * @param {*} param0
+ */
+export const setOttleDoc = async (uid, blob, { title, description }) => {
+    const ottleRef = collection(firestore, C_OTTLES);
+    const { url, gsUrl } = await uploadOttleImage(uid, blob);
+    await setDoc(doc(ottleRef), {
+        uid,
+        title,
+        description,
+        image: { sm: url, md: url, lg: url, original: gsUrl },
+        created_at: serverTimestamp(),
+    });
 };
 
 /**
@@ -73,34 +90,22 @@ export const getUserOttleDoc = async (ottleId, user_id) => {
  */
 export const getOttleDocs = async (uid) => {
     const ottlesQuery = query(
-        collection(firestore, C_USERS, uid, C_OTTLES),
+        collection(firestore, C_OTTLES),
+        where('uid', '==', uid),
         orderBy('created_at', 'desc')
     );
     const querySnapshot = await getDocs(ottlesQuery);
     const ottles = [];
     querySnapshot.forEach((doc) => {
+        const { created_at } = doc.data();
         ottles.push({
             id: doc.id,
             ...doc.data(),
-            created_at: timestampToDate(doc.data().created_at),
+            created_at: timestampToDate(created_at),
         });
     });
-    return ottles;
-};
 
-/**
- * uid의 유저에 새로운 Ottle을 저장합니다
- * @param {*} param0
- */
-export const setOttleDoc = async (uid, blob, { title, description }) => {
-    const ottleRef = collection(firestore, C_USERS, uid, C_OTTLES);
-    const { url, gsUrl } = await uploadOttleImage(uid, blob);
-    await setDoc(doc(ottleRef), {
-        title,
-        description,
-        image: { sm: url, md: url, lg: url, original: gsUrl },
-        created_at: serverTimestamp(),
-    });
+    return ottles;
 };
 
 /**
@@ -108,24 +113,23 @@ export const setOttleDoc = async (uid, blob, { title, description }) => {
  * @returns
  */
 export const getMainThreadDocs = async () => {
-    const ottlesQuery = query(collectionGroup(firestore, 'ottles'));
-    const ottleSnapshot = await getDocs(ottlesQuery);
+    const ottlesRef = query(collection(firestore, C_OTTLES), limit(10));
+    const ottleSnapshot = await getDocs(ottlesRef);
     const threads = [];
 
-    for (const doc of ottleSnapshot.docs) {
-        const makerSnapshot = await getDoc(doc.ref.parent.parent);
-        const { profile_src, name } = makerSnapshot.data();
+    for (const ottleDoc of ottleSnapshot.docs) {
+        const { uid, created_at } = ottleDoc.data();
+        const maker = await getUserByUID(uid);
 
         threads.push({
-            maker: { id: makerSnapshot.id, name, profile_src },
+            maker,
             ottle: {
-                id: doc.id,
-                ...doc.data(),
-                created_at: timestampToDate(doc.data().created_at),
+                id: ottleDoc.id,
+                ...ottleDoc.data(),
+                created_at: timestampToDate(created_at),
             },
         });
     }
-
     return threads;
 };
 
@@ -175,7 +179,6 @@ export const getItemsRecommend = async () => {
     const querySnapshot = await getDocs(itemsQuery);
     const items = [];
     querySnapshot.forEach((doc) => items.push({ id: doc.id, ...doc.data() }));
-    console.log(items);
     return items;
 };
 
@@ -193,9 +196,19 @@ export const getItemsInCategory = async (categoryId) => {
     const querySnapshot = await getDocs(itemsQuery);
     const items = [];
     querySnapshot.forEach((doc) => items.push({ id: doc.id, ...doc.data() }));
-    console.log(items);
     return items;
 };
+
+export const getFollow = async () => {
+    const q = doc(firestore, 'ottles', 'FEm5s5W8z6Z2OsSdsrBd');
+    const snap = await getDoc(q);
+    console.log(snap.data());
+};
+getFollow();
+export const setFollow = async () => {};
+
+export const getOttleLike = async () => {};
+export const setOttleLike = async () => {};
 
 // ██████████████████████████████████████████████████████████████
 //
@@ -325,7 +338,7 @@ if (process.env.NODE_ENV === 'development') {
         link,
     });
 
-    const items = [
+    const testItems = [
         genItem(
             ['top', 'shirt'],
             'ENGINEERED GARMENTS',
@@ -368,5 +381,61 @@ if (process.env.NODE_ENV === 'development') {
             const itemRef = collection(firestore, C_ITEMS);
             await setDoc(doc(itemRef), item);
         }
+    };
+
+    const genOttle = (uid, title, description, image) => ({
+        uid,
+        title,
+        description,
+        image: {
+            sm: image,
+            md: image,
+            lg: image,
+            original: image,
+        },
+    });
+
+    const testOttles = [
+        genOttle(
+            'ACa0Zv6C2lfmpUqeP5cpKhtpd2dy',
+            '2022 핫한 섬머룩 #1',
+            '',
+            'http://localhost:9199/v0/b/ottle-47f85.appspot.com/o/users%2FsnUitsNBCaFldTHfdP8gkWbUBSs9%2Fottles%2Ftester_2.jpg?alt=media&token=aaed0307-bc94-41f9-8610-4850d3f187f8'
+        ),
+        genOttle(
+            'ACa0Zv6C2lfmpUqeP5cpKhtpd2dy',
+            '2022 핫한 섬머룩 #2',
+            '',
+            'http://localhost:9199/v0/b/ottle-47f85.appspot.com/o/users%2FsnUitsNBCaFldTHfdP8gkWbUBSs9%2Fottles%2Ftester_1.jpg?alt=media&token=10388046-8200-4f12-943d-f6ad18fc0faf'
+        ),
+        genOttle(
+            'snUitsNBCaFldTHfdP8gkWbUBSs9',
+            '2학기에 이렇게만 입고 놀러가자',
+            'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+            'http://localhost:9199/v0/b/ottle-47f85.appspot.com/o/users%2FsnUitsNBCaFldTHfdP8gkWbUBSs9%2Fottles%2Flook.jpg?alt=media&token=34a7c79a-4720-4a37-a0ac-870d3eec72e8'
+        ),
+        genOttle(
+            'snUitsNBCaFldTHfdP8gkWbUBSs9',
+            '회사에서 패션으로 이름좀 떨치고 싶다면',
+            'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+            'http://localhost:9199/v0/b/ottle-47f85.appspot.com/o/users%2FsnUitsNBCaFldTHfdP8gkWbUBSs9%2Fottles%2F1658815405117?alt=media&token=4459b08e-b425-4f88-ae8e-1a143546a91b'
+        ),
+        genOttle(
+            'snUitsNBCaFldTHfdP8gkWbUBSs9',
+            '개강하면 동기들 기강잡는 룩',
+            'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+            'http://localhost:9199/v0/b/ottle-47f85.appspot.com/o/users%2FsnUitsNBCaFldTHfdP8gkWbUBSs9%2Fottles%2F1658815320974?alt=media&token=179fb772-d71c-4a4e-9698-3547fe285095'
+        ),
+    ];
+
+    const writeOttleData = async (ottles) => {
+        for (const ottle of ottles) {
+            const ottleRef = collection(firestore, C_OTTLES);
+            await setDoc(doc(ottleRef), {
+                ...ottle,
+                created_at: serverTimestamp(),
+            });
+        }
+        console.log('done! writeOttleData');
     };
 }

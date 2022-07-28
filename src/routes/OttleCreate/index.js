@@ -205,7 +205,7 @@ export const OttleMaker = () => {
                     dispatch(
                         openModal({
                             onYesAction: () => {
-                                navigator(routes.main);
+                                navigator(routes.main());
                             },
                         })
                     );
