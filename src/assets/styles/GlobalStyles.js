@@ -23,6 +23,11 @@ const GlobalStyles = createGlobalStyle`
             -ms-user-select: none;
             user-select: none;
         }
+        &.text-overflow{    
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
         &.pad{
             padding-left: 1.6rem;
             padding-right: 1.6rem;

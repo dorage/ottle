@@ -14,3 +14,15 @@ export const LinkHoC = (Component) => ({ to, className, ...props }) => {
         </StyledLink>
     );
 };
+
+const ExLink = styled.a`
+    display: block;
+`;
+
+export const ExLinkHoC = (Component) => ({ to, className, ...props }) => {
+    return (
+        <ExLink href={to} target='_blank'>
+            <Component {...props} />
+        </ExLink>
+    );
+};

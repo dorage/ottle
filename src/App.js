@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { routes } from './configs/routes';
 import { Main } from './routes/Main';
 import { Likes } from './routes/Likes';
@@ -43,53 +43,46 @@ function App() {
 
     return (
         <Background>
-            <BrowserRouter>
-                {process.env.NODE_ENV === 'development' && <RouterPanel />}
-                <Routes>
+            {process.env.NODE_ENV === 'development' && <RouterPanel />}
+            <Routes>
+                <Route
+                    path={routes.ottleCreate()}
+                    element={isMobile ? <OttleMaker /> : <DesktopNotReady />}
+                />
+                <Route path={routes.ottleDetail()} element={<OttleDetail />} />
+                <Route
+                    path={routes.pageNotFound()}
+                    element={<PageNotFound />}
+                />
+                <Route
+                    path='*'
+                    element={<Navigate to={routes.pageNotFound()} />}
+                />
+                <Route path={routes.main()} element={<HomeLayout />}>
+                    <Route path={routes.main()} element={<Main />} />
+                    <Route path={routes.groups()} element={<Groups />} />
                     <Route
-                        path={routes.ottleCreate()}
+                        path={routes.profile()}
                         element={
-                            isMobile ? <OttleMaker /> : <DesktopNotReady />
+                            isAuth ? (
+                                <Navigate to={routes.user(user.username)} />
+                            ) : (
+                                <Navigate to={routes.main()} />
+                            )
                         }
                     />
                     <Route
-                        path={routes.ottleDetail()}
-                        element={<OttleDetail />}
+                        path={routes.user()}
+                        element={
+                            isAuth ? (
+                                <Profile />
+                            ) : (
+                                <Navigate to={routes.main()} />
+                            )
+                        }
                     />
-                    <Route
-                        path={routes.pageNotFound()}
-                        element={<PageNotFound />}
-                    />
-                    <Route
-                        path='*'
-                        element={<Navigate to={routes.pageNotFound()} />}
-                    />
-                    <Route path={routes.main()} element={<HomeLayout />}>
-                        <Route path={routes.main()} element={<Main />} />
-                        <Route path={routes.groups()} element={<Groups />} />
-                        <Route
-                            path={routes.profile()}
-                            element={
-                                isAuth ? (
-                                    <Navigate to={routes.user(user.username)} />
-                                ) : (
-                                    <Navigate to={routes.main()} />
-                                )
-                            }
-                        />
-                        <Route
-                            path={routes.user()}
-                            element={
-                                isAuth ? (
-                                    <Profile />
-                                ) : (
-                                    <Navigate to={routes.main()} />
-                                )
-                            }
-                        />
-                    </Route>
-                </Routes>
-            </BrowserRouter>
+                </Route>
+            </Routes>
         </Background>
     );
 }

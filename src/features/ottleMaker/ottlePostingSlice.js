@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { generateItem } from './ottleItemSlice';
 
 const initialState = {
     isOpend: true,

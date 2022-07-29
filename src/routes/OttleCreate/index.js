@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import { Canvas } from './Canvas';
 import { Inspector } from './Inspector';
 import {
@@ -25,7 +24,7 @@ import {
 import { angle, clamp, distance, getElementCenter } from '../../configs/utils';
 import { OttleCreateHeader } from './Header';
 import { openPosting } from '../../features/ottleMaker/ottlePostingSlice';
-import { openModal } from '../../features/modal/modalSlice';
+import { MODAL_TYPE, openModal } from '../../features/modal/modalSlice';
 import { routes } from '../../configs/routes';
 import { ALERTS, broadcastAlert } from '../../features/alert/alertSlice';
 import { FullScreenContainer } from '../../components/Layout/Container';
@@ -37,7 +36,6 @@ import { OttleCreateItemDrawer } from '../../components/OttleCreateItemDrawer';
 //#endregion
 
 export const OttleMaker = () => {
-    const navigator = useNavigate();
     const dispatch = useDispatch();
     const {
         size: artboardSize,
@@ -204,9 +202,9 @@ export const OttleMaker = () => {
                 onCancle={() => {
                     dispatch(
                         openModal({
-                            onYesAction: () => {
-                                navigator(routes.main());
-                            },
+                            type: MODAL_TYPE.YES_OR_NO,
+                            message: '그만 만드실건가요?',
+                            onYesAction: () => {},
                         })
                     );
                 }}

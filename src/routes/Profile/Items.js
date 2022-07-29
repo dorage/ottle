@@ -3,9 +3,7 @@ import { routes } from '../../configs/routes';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { generateItem } from '../../features/ottleMaker/ottleItemSlice';
 import { useNavigate } from 'react-router-dom';
-import { getOttleDocs } from '../../app/firestore';
 import {
     myOttlesAsyncAction,
     selectMyOttles,

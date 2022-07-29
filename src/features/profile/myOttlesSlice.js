@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { getOttleDocs } from '../../app/firestore';
-import { selectUser } from '../user/userSlice';
+import { getOttlesOfUser } from '../../app/firestore';
 
 const initialState = { data: null, loading: true, error: null };
 
@@ -8,7 +7,7 @@ export const myOttlesAsyncAction = createAsyncThunk(
     'myOttles/fetch',
     async (uid, { dispatch, getState }) => {
         try {
-            return await getOttleDocs(uid);
+            return await getOttlesOfUser(uid);
         } catch (err) {
             return err;
         }

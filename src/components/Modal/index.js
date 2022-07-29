@@ -1,9 +1,13 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import { ModalPortal } from '../Portal';
 import { useDispatch, useSelector } from 'react-redux';
-import { closeModal, selectModal } from '../../features/modal/modalSlice';
+import {
+    closeModal,
+    MODAL_TYPE,
+    selectModal,
+} from '../../features/modal/modalSlice';
 
 //#region styled-components
 const Container = styled.div`
@@ -60,31 +64,51 @@ const Button = styled.div`
 //#endregion
 
 export const Modal = () => {
-    const dispatch = useDispatch();
-    const { isOpend, onYesAction, onNoAction } = useSelector(selectModal);
-
-    const onClickNo = () => {
-        dispatch(closeModal());
-        onNoAction && onNoAction();
-    };
-    const onClickYes = () => {
-        dispatch(closeModal());
-        onYesAction && onYesAction();
-    };
+    const { isOpend } = useSelector(selectModal);
 
     return (
         <ModalPortal>
             {isOpend && (
                 <Container>
-                    <ModalContainer>
-                        <Content>그만 만드실건가요?</Content>
-                        <ButtonRow>
-                            <Button onClick={onClickYes}>예</Button>
-                            <Button onClick={onClickNo}>아니요</Button>
-                        </ButtonRow>
-                    </ModalContainer>
+                    <ModalSwitcher />
                 </Container>
             )}
         </ModalPortal>
+    );
+};
+
+const ModalSwitcher = () => {
+    const dispatch = useDispatch();
+    const { type, message } = useSelector(selectModal);
+
+    switch (type) {
+        case MODAL_TYPE.YES_OR_NO:
+            return <ModalYesOrNo message={message} />;
+        default:
+            dispatch(closeModal());
+            return <></>;
+    }
+};
+
+const ModalYesOrNo = ({ message }) => {
+    const dispatch = useDispatch();
+    const navigator = useNavigate();
+
+    const onClickNo = async () => {
+        dispatch(closeModal());
+    };
+    const onClickYes = async () => {
+        navigator(-1);
+        dispatch(closeModal());
+    };
+
+    return (
+        <ModalContainer>
+            <Content>{message}</Content>
+            <ButtonRow>
+                <Button onClick={onClickYes}>예</Button>
+                <Button onClick={onClickNo}>아니요</Button>
+            </ButtonRow>
+        </ModalContainer>
     );
 };

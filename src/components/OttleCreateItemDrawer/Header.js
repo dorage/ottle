@@ -8,7 +8,6 @@ import { HiChevronLeft, HiX } from 'react-icons/hi';
 import { selectItemDrawerCategory } from '../../features/ottleMaker/itemDrawerCategorySlice';
 
 //#region styled-components
-const Container = styled.div``;
 //#endregion
 
 export const ItemDrawerHeader = ({ onClickBack, onClickClose }) => {

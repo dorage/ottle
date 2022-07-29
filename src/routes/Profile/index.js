@@ -4,13 +4,13 @@ import { useSelector } from 'react-redux';
 import { ProfileItems } from './Items';
 import { ProfileInfo } from './Info';
 import { selectUser } from '../../features/user/userSlice';
-import { getOttleDocs } from '../../app/firestore';
+import { getOttlesOfUser } from '../../app/firestore';
 
 export const Profile = () => {
     const { user } = useSelector(selectUser);
 
     useEffect(() => {
-        if (user) getOttleDocs(user.uid);
+        if (user) getOttlesOfUser(user.uid);
     }, [user]);
 
     return user ? (

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { LinkHoC } from '../HOC/LinkHoC';
+import { ExLinkHoC, LinkHoC } from '../HOC/LinkHoC';
 import { LoadingBlock } from '../OttleCreateItemDrawer/LoadingItem';
 
 const Button = styled.button`
@@ -50,3 +50,5 @@ export const IconButton = ({
 };
 
 export const LinkedIconButton = LinkHoC(IconButton);
+
+export const ExLinkedIconButton = ExLinkHoC(IconButton);

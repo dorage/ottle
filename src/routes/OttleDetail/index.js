@@ -8,10 +8,26 @@ import { FullScreenContainer } from '../../components/Layout/Container';
 import { Ottle } from '../../components/Ottle';
 import { selectUser } from '../../features/user/userSlice';
 import { getMyOttle, getOttleDetail } from '../../app/firestore';
+import { OttleItems } from '../../components/Ottle/Items';
 
 //#region styled-components
+const Container = styled.div`
+    width: 100%;
+    height: 100%;
+    padding-bottom: ${(props) => props.theme.gap.gap_64};
+
+    overflow: scroll;
+`;
 const OttleSection = styled.div`
     padding-top: ${(props) => props.theme.gap.gap_16};
+    margin-bottom: ${(props) => props.theme.gap.gap_32};
+`;
+const ItemSection = styled.div``;
+const Divider = styled.div`
+    margin-bottom: ${(props) => props.theme.gap.gap_32};
+    & > hr {
+        color: ${(props) => props.theme.color.black_600};
+    }
 `;
 //#endregion
 
@@ -31,25 +47,33 @@ export const OttleDetail = (props) => {
                 fetchData({ data, loading: false, error: false });
             })
             .catch((error) => {
+                console.log(error);
                 fetchData({ data: null, loading: false, error: true });
             });
     }, []);
-    useEffect(() => {
-        console.log(data, loading, error);
-    }, [data, loading, error]);
 
     return (
         <FullScreenContainer>
-            {!error ? (
-                <>
-                    <OttleDetailHeader loading={loading} data={data} />
-                    <OttleSection>
-                        <Ottle loading={loading} data={data} />
-                    </OttleSection>
-                </>
-            ) : (
-                <></>
-            )}
+            <Container>
+                {loading ? (
+                    <></>
+                ) : !error ? (
+                    <>
+                        <OttleDetailHeader data={data} />
+                        <OttleSection className='pad'>
+                            <Ottle data={data} />
+                        </OttleSection>
+                        <Divider className='pad'>
+                            <hr />
+                        </Divider>
+                        <ItemSection className='pad'>
+                            <OttleItems items={data.items} />
+                        </ItemSection>
+                    </>
+                ) : (
+                    <></>
+                )}
+            </Container>
         </FullScreenContainer>
     );
 };

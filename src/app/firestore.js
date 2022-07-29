@@ -12,6 +12,7 @@ import {
     orderBy,
     limit,
     serverTimestamp,
+    documentId,
 } from 'firebase/firestore';
 import { firestore } from './firebase';
 import { uploadOttleImage } from './storage';
@@ -58,20 +59,38 @@ export const getUserByUsername = async (username) => {
     return { uid: userSnap.docs[0].id, ...userSnap.docs[0].data() };
 };
 
-export const getOttleDetail = async (username, ottleId) => {
-    const user = await getUserByUsername(username);
-    // TODO; like여부나 댓글등의 자료도 가져와야함.
+/**
+ * ottleId로 ottle의 정보를 가져옵니다.
+ * @param {*} ottleId
+ * @returns
+ */
+export const getOttleById = async (ottleId) => {
     const ottleRef = doc(firestore, C_OTTLES, ottleId);
     const ottleSnap = await getDoc(ottleRef);
-    const ottle = ottleSnap.data();
-    return { user, ottle };
+    return { id: ottleSnap.id, ...ottleSnap.data() };
 };
 
 /**
- * uid의 유저에 새로운 Ottle을 저장합니다
+ * 오뜰의 상세 정보를 가져옵니다
+ * @param {*} username
+ * @param {*} ottleId
+ * @returns
+ */
+export const getOttleDetail = async (username, ottleId) => {
+    const user = await getUserByUsername(username);
+    const ottle = await getOttleById(ottleId);
+    const items = await getItemsById(ottle.items);
+    const like = await getOttleLike(user.uid, ottleId);
+    // TODO; like여부나 댓글등의 자료도 가져와야함.
+
+    return { user, ottle, items, like };
+};
+
+/**
+ * uid의 유저에 새로운 Ottle을 포스팅합니다.
  * @param {*} param0
  */
-export const setOttleDoc = async (uid, blob, { title, description }) => {
+export const setOttleDoc = async (uid, blob, { title, description, items }) => {
     const ottleRef = collection(firestore, C_OTTLES);
     const { url, gsUrl } = await uploadOttleImage(uid, blob);
     await setDoc(doc(ottleRef), {
@@ -79,16 +98,42 @@ export const setOttleDoc = async (uid, blob, { title, description }) => {
         title,
         description,
         image: { sm: url, md: url, lg: url, original: gsUrl },
+        items: items.map((e) => e.product.id),
         created_at: serverTimestamp(),
     });
 };
 
 /**
+ * 내가 좋아요를 누른 모든 옷뜰을 찾아옵니다.
+ * @param {*} uid
+ * @returns
+ */
+export const getLikedOttles = async (uid) => {
+    const ref = query(
+        collection(firestore, C_OTTLELIKES),
+        where('uid', '==', uid),
+        orderBy('created_at', 'desc'),
+        limit(24)
+    );
+    const querySnapshot = await getDocs(ref);
+    const ottles = [];
+    querySnapshot.forEach((doc) => {
+        const { created_at } = doc.data();
+        ottles.push({
+            id: doc.id,
+            ...doc.data(),
+            created_at: timestampToDate(created_at),
+        });
+    });
+
+    return ottles;
+};
+/**
  * uid 를 가진 유저의 모든 Ottle을 가져옵니다.
  * @param {*} uid
  * @returns
  */
-export const getOttleDocs = async (uid) => {
+export const getOttlesOfUser = async (uid) => {
     const ottlesQuery = query(
         collection(firestore, C_OTTLES),
         where('uid', '==', uid),
@@ -122,7 +167,7 @@ export const getMainThreadDocs = async () => {
     const threads = [];
 
     for (const ottleDoc of ottleSnapshot.docs) {
-        const { uid, created_at } = ottleDoc.data();
+        const { uid, created_at, items } = ottleDoc.data();
         const user = await getUserByUID(uid);
         threads.push({
             user,
@@ -131,6 +176,7 @@ export const getMainThreadDocs = async () => {
                 ...ottleDoc.data(),
                 created_at: timestampToDate(created_at),
             },
+            items: await getItemsById(items.slice(0, 3)),
         });
     }
     return threads;
@@ -172,7 +218,20 @@ export const getSubItemCategoryDocs = async (path) => {
     );
     return itemCategories;
 };
-
+/**
+ * itemIds에 포함된 아이템의 리스트를 가져옵니다.
+ * @param {*} itemIds
+ */
+export const getItemsById = async (itemIds = []) => {
+    const itemsRef = query(
+        collection(firestore, C_ITEMS),
+        where(documentId(), 'in', itemIds)
+    );
+    const itemsSnap = await getDocs(itemsRef);
+    const items = [];
+    itemsSnap.forEach((doc) => items.push({ id: doc.id, ...doc.data() }));
+    return items;
+};
 /**
  * 카테고리 선정 이전에 표시될 아이템을 가져옵니다.
  * @returns
@@ -184,7 +243,6 @@ export const getItemsRecommend = async () => {
     querySnapshot.forEach((doc) => items.push({ id: doc.id, ...doc.data() }));
     return items;
 };
-
 /**
  * 해당 카테고리에 포함된 아이템을 가져옵니다
  * @param {*} categoryId
@@ -209,18 +267,28 @@ export const getFollow = async () => {
 export const setFollow = async () => {};
 export const deleteFollow = async () => {};
 
+/**
+ * ottle의 like여부를 가져옵니다.
+ * @param {*} uid
+ * @param {*} ottleId
+ * @returns
+ */
 export const getOttleLike = async (uid, ottleId) => {
     const ref = query(
         collection(firestore, C_OTTLELIKES),
         where('uid', '==', uid),
         where('ottle_id', '==', ottleId)
     );
-    const snap = await getDoc(ref);
-    return snap.data();
+    const snap = await getDocs(ref);
+    return !snap.empty;
 };
 export const setOttleLike = async (uid, ottleId) => {
-    const ref = doc(firestore, C_OTTLELIKES);
-    await setDoc(ref, { uid, ottle_id: ottleId });
+    const ref = collection(firestore, C_OTTLELIKES);
+    await setDoc(doc(ref), {
+        uid,
+        ottle_id: ottleId,
+        created_at: serverTimestamp(),
+    });
 };
 export const deleteOttleLike = async (uid, ottleId) => {
     const ref = query(
@@ -228,7 +296,10 @@ export const deleteOttleLike = async (uid, ottleId) => {
         where('uid', '==', uid),
         where('ottle_id', '==', ottleId)
     );
-    deleteDoc(ref);
+    const snaps = await getDocs(ref);
+    const promises = [];
+    snaps.forEach((doc) => promises.push(deleteDoc(doc.ref)));
+    await Promise.all(promises);
 };
 
 // ██████████████████████████████████████████████████████████████
@@ -408,6 +479,7 @@ if (process.env.NODE_ENV === 'development') {
         uid,
         title,
         description,
+        items: ['7NnBHVC1HkPKJSF8Pay2'],
         image: {
             sm: image,
             md: image,
@@ -459,4 +531,9 @@ if (process.env.NODE_ENV === 'development') {
         }
         console.log('done! writeOttleData');
     };
+    /*
+    Array(40)
+        .fill()
+        .forEach(() => writeOttleData([testOttles[4]]));
+    */
 }

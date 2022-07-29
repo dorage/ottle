@@ -9,6 +9,7 @@ import {
 import { IconButton } from '../Button/IconButton';
 import { Portrait } from '../Layout/Portrait';
 import { LoadingBlock } from '../OttleCreateItemDrawer/LoadingItem';
+import { LikeButton } from '../Button/LikeButton';
 
 //#region styled-components
 const Container = styled.div``;
@@ -44,9 +45,8 @@ const Image = styled.div`
 //#endregion
 
 export const Ottle = ({ loading, data }) => {
-    if (loading) return <></>;
     return (
-        <Container className='pad'>
+        <Container>
             <Header>
                 <ProfileSection>
                     <Portrait src={data.user.profile_src} />
@@ -62,13 +62,9 @@ export const Ottle = ({ loading, data }) => {
                 <Image src={data.ottle.image.lg} />
             </ImageSection>
             <Control>
-                <IconButton icon={<HiOutlineHeart />} />
-                <IconButton icon={<HiOutlineChatAlt />} />
+                <LikeButton ottleId={data.ottle.id} initialValue={data.like} />
             </Control>
-            <Body>
-                <b>{data.user.name} </b>
-                {data.ottle.description}
-            </Body>
+            <Body>{data.ottle.description}</Body>
         </Container>
     );
 };

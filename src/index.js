@@ -6,6 +6,7 @@ import './app/firebase';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import GlobalStyles, { theme } from './assets/styles/GlobalStyles';
+import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import { Modal } from './components/Modal';
 import { Alert } from './components/Alert';
@@ -18,9 +19,11 @@ root.render(
         <GlobalStyles />
         <Provider store={store}>
             <ThemeProvider theme={theme}>
-                <App />
-                <Modal />
-                <Alert />
+                <BrowserRouter>
+                    <App />
+                    <Modal />
+                    <Alert />
+                </BrowserRouter>
             </ThemeProvider>
         </Provider>
     </>

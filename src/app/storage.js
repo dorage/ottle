@@ -2,10 +2,6 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from './firebase';
 import { C_USERS, C_OTTLES } from './firestore';
 
-// Create a storage reference from our storage service
-const storageRef = ref(storage);
-const imageRef = ref(storage, 'items/tops/top.png');
-
 export const uploadOttleImage = async (uid, blob) => {
     const storageRef = ref(
         storage,

@@ -3,18 +3,6 @@ import { ALERTS, broadcastAlert } from '../alert/alertSlice';
 
 const MAX_ITEM_COUNT = 18;
 
-export const generateItem = () => ({
-    loading: true,
-    size: { w: 500, h: 500 },
-    position: { x: 0.5, y: 0.5 },
-    scale: 1.0,
-    rotation: 1.0,
-    product: {},
-    src: 'https://picsum.photos/500',
-    name: 'product',
-    id: '01',
-});
-
 const initialState = {
     selected: NaN, //
     items: [],

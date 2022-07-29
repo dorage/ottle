@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
@@ -14,9 +14,9 @@ import { OttleCreatePostingForm } from './Form';
 import { OttleCreatePostingFooter } from './Footer';
 import { OttleCreatePostingPreview } from './Preview';
 import { routes } from '../../configs/routes';
-import { uploadOttleImage } from '../../app/storage';
 import { selectUser } from '../../features/user/userSlice';
 import { setOttleDoc } from '../../app/firestore';
+import { selectOttleItem } from '../../features/ottleMaker/ottleItemSlice';
 
 //#region styled-components
 const Container = styled(FullScreenContainer)`
@@ -40,6 +40,7 @@ export const OttleCreatePosting = () => {
     const canvasRef = useRef();
 
     const { isOpend, form } = useSelector(selectOttlePosting);
+    const { items } = useSelector(selectOttleItem);
     const { user } = useSelector(selectUser);
 
     const onClickSave = () => {
@@ -57,6 +58,7 @@ export const OttleCreatePosting = () => {
                 setOttleDoc(user.uid, blob, {
                     title,
                     description,
+                    items,
                 }),
             'image/webp',
             1

@@ -1,7 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { clamp } from '../../configs/utils';
-import { selectArtboard } from './artboardSlice';
-import { selectOttleItem, updateItem } from './ottleItemSlice';
+import { selectOttleItem } from './ottleItemSlice';
 
 export const CANVAS_ACTIONS = {
     IDLE: 'idle',

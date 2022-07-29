@@ -1,8 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import { selectArtboard } from '../../features/ottleMaker/artboardSlice';
-import { CANVAS_ACTIONS } from '../../features/ottleMaker/ottleActionSlice';
 
 //#region styled-component
 
