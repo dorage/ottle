@@ -22,15 +22,9 @@ const Ottle = styled.img`
 `;
 //#endregion
 
-export const ProfileItems = ({ user }) => {
-    const dispatch = useDispatch();
+export const ProfileItems = ({ user, ottles }) => {
     const navigation = useNavigate();
-    const { uid, username } = user;
-    const { data, loading } = useSelector(selectMyOttles);
-
-    useEffect(() => {
-        dispatch(myOttlesAsyncAction(uid));
-    }, []);
+    const { username } = user;
 
     const onClickOttle = (username, ottleId) => () => {
         navigation(routes.ottleDetail(username, ottleId));
@@ -38,19 +32,15 @@ export const ProfileItems = ({ user }) => {
 
     return (
         <Container className='pad'>
-            {loading ? (
-                <></>
-            ) : data ? (
-                data.map(({ id, image }) => (
+            {ottles.map(({ id, image }, idx) => {
+                return (
                     <Ottle
-                        key={`${id}`}
+                        key={idx}
                         src={image.sm}
                         onClick={onClickOttle(username, id)}
                     />
-                ))
-            ) : (
-                <></>
-            )}
+                );
+            })}
         </Container>
     );
 };

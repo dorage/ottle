@@ -55,12 +55,8 @@ export const OttleItems = ({ items }) => {
                         <Thumbnail src={sm} />
                     </ThumbSection>
                     <InfoSection>
-                        <Brand>{brand} Engineered Garments</Brand>
-                        <Name className={'text-overflow'}>
-                            {name} 이건 얼마나 더 갈 수 있나 테스트 해보는 단계
-                            이므니다. 이만큼은 더 가야 터지나 안터지나 테스트를
-                            해보는 겁니다
-                        </Name>
+                        <Brand>{brand}</Brand>
+                        <Name className={'text-overflow'}>{name}</Name>
                     </InfoSection>
                     <IconSection>
                         <ExLinkedIconButton

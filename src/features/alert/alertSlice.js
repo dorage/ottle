@@ -7,6 +7,7 @@ export const ALERTS = {
         noTitle: `타이틀을 입력해주세요`,
     },
     ottleDetail: {
+        copied: '링크 복사완료',
         unknownSeller: '판매처가 확인되지 않습니다',
     },
 };

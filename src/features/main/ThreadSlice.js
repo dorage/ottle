@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { getMainThreadDocs } from '../../app/firestore';
 
-const initialState = { data: [], loading: true, error: false };
+const initialState = { lastPage: false, data: [], loading: true, error: false };
 
 export const threadAsyncAction = createAsyncThunk('thread/fetch', async () => {
     try {

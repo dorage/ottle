@@ -7,6 +7,7 @@ import {
     threadAsyncAction,
 } from '../../features/main/ThreadSlice';
 import { Ottle } from '../../components/Ottle';
+import { routes } from '../../configs/routes';
 
 //#region styled-components
 const Container = styled.div``;
@@ -29,7 +30,11 @@ export const MainThread = () => {
             {!error ? (
                 data.map((e, idx) => (
                     <Thread key={idx}>
-                        <Ottle loading={loading} data={e} />
+                        <Ottle
+                            to={routes.ottleDetail(e.user.username, e.ottle.id)}
+                            loading={loading}
+                            data={e}
+                        />
                     </Thread>
                 ))
             ) : (

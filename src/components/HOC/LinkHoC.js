@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 
 const StyledLink = styled(Link)`
     display: block;
+    color: inherit;
+    text-decoration: none;
 `;
 
 export const LinkHoC = (Component) => ({ to, className, ...props }) => {
@@ -17,6 +19,8 @@ export const LinkHoC = (Component) => ({ to, className, ...props }) => {
 
 const ExLink = styled.a`
     display: block;
+    color: inherit;
+    text-decoration: none;
 `;
 
 export const ExLinkHoC = (Component) => ({ to, className, ...props }) => {

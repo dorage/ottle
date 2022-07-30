@@ -10,10 +10,14 @@ import {
     Timestamp,
     where,
     orderBy,
+    startAt,
+    startAfter,
+    endBefore,
     limit,
     serverTimestamp,
     documentId,
 } from 'firebase/firestore';
+import { _ } from '../utils/fp';
 import { firestore } from './firebase';
 import { uploadOttleImage } from './storage';
 
@@ -23,6 +27,9 @@ export const C_ITEMS = 'items';
 export const C_OTTLES = 'ottles';
 export const C_OTTLELIKES = 'ottle_likes';
 export const C_ITEMLIKES = 'item_likes';
+
+const PAGE_SMALL = 4;
+const PAGE = 24;
 
 const timestampToDate = (timestamp) => {
     if (timestamp === null || timestamp === undefined) return `방금 전`;
@@ -113,7 +120,7 @@ export const getLikedOttles = async (uid) => {
         collection(firestore, C_OTTLELIKES),
         where('uid', '==', uid),
         orderBy('created_at', 'desc'),
-        limit(24)
+        limit(PAGE)
     );
     const querySnapshot = await getDocs(ref);
     const ottles = [];
@@ -128,59 +135,107 @@ export const getLikedOttles = async (uid) => {
 
     return ottles;
 };
+
+const paginationHoC = (func) => {
+    let lastRef = null;
+    const setRef = (docRef) => {
+        lastRef = docRef;
+    };
+    const getRef = () => {
+        return lastRef;
+    };
+    /**
+     *
+     * @param {Array} initialQueries
+     * @param {Query} pagingQuery
+     * @returns
+     */
+    const queryByRef = (initialQueries, pagingQuery) => {
+        return getDocs(
+            query(..._.conditionalArray(initialQueries, getRef(), pagingQuery))
+        );
+    };
+    return func({ setRef, getRef, queryByRef });
+};
+
 /**
  * uid 를 가진 유저의 모든 Ottle을 가져옵니다.
  * @param {*} uid
  * @returns
  */
-export const getOttlesOfUser = async (uid) => {
-    const ottlesQuery = query(
-        collection(firestore, C_OTTLES),
-        where('uid', '==', uid),
-        orderBy('created_at', 'desc')
-    );
-    const querySnapshot = await getDocs(ottlesQuery);
-    const ottles = [];
-    querySnapshot.forEach((doc) => {
-        const { created_at } = doc.data();
-        ottles.push({
-            id: doc.id,
-            ...doc.data(),
-            created_at: timestampToDate(created_at),
-        });
-    });
+export const getOttlesByUID = paginationHoC(
+    ({ setRef, getRef, queryByRef }) => async (uid) => {
+        const querySnapshot = await queryByRef(
+            [
+                collection(firestore, C_OTTLES),
+                where('uid', '==', uid),
+                orderBy('created_at', 'desc'),
+                _,
+                limit(PAGE),
+            ],
+            startAfter(getRef())
+        );
 
-    return ottles;
+        if (querySnapshot.empty) return [];
+        setRef(_.getLastIndex(querySnapshot.docs));
+
+        const ottles = [];
+        querySnapshot.forEach((doc) => {
+            const { created_at } = doc.data();
+            ottles.push({
+                id: doc.id,
+                ...doc.data(),
+                created_at: timestampToDate(created_at),
+            });
+        });
+
+        return ottles;
+    }
+);
+
+const getMainThread = ({ setRef, getRef }) => async () => {
+    try {
+        const mainThreadQuery = getRef()
+            ? query(
+                  collection(firestore, C_OTTLES),
+                  orderBy('created_at', 'desc'),
+                  startAfter(getRef()),
+                  limit(PAGE_SMALL)
+              )
+            : query(
+                  collection(firestore, C_OTTLES),
+                  orderBy('created_at', 'desc'),
+                  limit(PAGE_SMALL)
+              );
+        const ottleSnapshot = await getDocs(mainThreadQuery);
+        setRef(_.getLastIndex(ottleSnapshot.docs));
+        const threads = [];
+
+        for (const ottleDoc of ottleSnapshot.docs) {
+            const { uid, created_at, items } = ottleDoc.data();
+            const user = await getUserByUID(uid);
+            const like = await getOttleLike(uid, ottleDoc.id);
+            threads.push({
+                user,
+                ottle: {
+                    id: ottleDoc.id,
+                    ...ottleDoc.data(),
+                    created_at: timestampToDate(created_at),
+                },
+                like,
+            });
+        }
+        return threads;
+    } catch (err) {
+        console.log(err);
+    }
 };
 
 /**
  * 메인화면에 표시할 스레드들을 가져옵니다.
  * @returns
  */
-export const getMainThreadDocs = async () => {
-    const ottlesRef = query(
-        collection(firestore, C_OTTLES),
-        orderBy('created_at', 'desc'),
-        limit(10)
-    );
-    const ottleSnapshot = await getDocs(ottlesRef);
-    const threads = [];
-
-    for (const ottleDoc of ottleSnapshot.docs) {
-        const { uid, created_at, items } = ottleDoc.data();
-        const user = await getUserByUID(uid);
-        threads.push({
-            user,
-            ottle: {
-                id: ottleDoc.id,
-                ...ottleDoc.data(),
-                created_at: timestampToDate(created_at),
-            },
-            items: await getItemsById(items.slice(0, 3)),
-        });
-    }
-    return threads;
-};
+export const getMainThreadDocs = paginationHoC(getMainThread);
 
 /**
  * 아이템 카테고리 최상위 documents 를 가져옵니다.
@@ -237,7 +292,7 @@ export const getItemsById = async (itemIds = []) => {
  * @returns
  */
 export const getItemsRecommend = async () => {
-    const itemsQuery = query(collection(firestore, C_ITEMS), limit(24));
+    const itemsQuery = query(collection(firestore, C_ITEMS), limit(PAGE));
     const querySnapshot = await getDocs(itemsQuery);
     const items = [];
     querySnapshot.forEach((doc) => items.push({ id: doc.id, ...doc.data() }));
@@ -252,7 +307,7 @@ export const getItemsInCategory = async (categoryId) => {
     const itemsQuery = query(
         collection(firestore, C_ITEMS),
         where('category', 'array-contains', categoryId),
-        limit(24)
+        limit(PAGE)
     );
     const querySnapshot = await getDocs(itemsQuery);
     const items = [];

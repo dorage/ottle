@@ -1,15 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import {
-    HiOutlineClipboardCopy,
-    HiOutlineHeart,
-    HiOutlineChatAlt,
-} from 'react-icons/hi';
-import { IconButton } from '../Button/IconButton';
 import { Portrait } from '../Layout/Portrait';
 import { LoadingBlock } from '../OttleCreateItemDrawer/LoadingItem';
 import { LikeButton } from '../Button/LikeButton';
+import { CopyLinkButton } from './CopyLinkButton';
+import { LinkHoC } from '../HOC/LinkHoC';
 
 //#region styled-components
 const Container = styled.div``;
@@ -63,6 +59,10 @@ export const Ottle = ({ loading, data }) => {
             </ImageSection>
             <Control>
                 <LikeButton ottleId={data.ottle.id} initialValue={data.like} />
+                <CopyLinkButton
+                    username={data.user.username}
+                    ottleId={data.ottle.id}
+                />
             </Control>
             <Body>{data.ottle.description}</Body>
         </Container>

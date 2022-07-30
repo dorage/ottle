@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import PropTypes from 'prop-types';
 import { Outlet } from 'react-router-dom';
 import { FullScreenContainer } from '../../components/Layout/Container';
 import { HomeLayoutHeader } from './Header';
@@ -22,12 +21,28 @@ const FooterBlock = styled.div`
 `;
 
 export const HomeLayout = () => {
+    const pageRef = useRef();
+    let eventListener;
+
+    const setOnScrollEvent = (event) => {
+        if (eventListener) pageRef.current.removeEventListener(eventListener);
+        eventListener = pageRef.current.addEventListener(
+            'scroll',
+            event(pageRef)
+        );
+    };
+    const removeOnScrollEvent = (event) => {
+        if (eventListener) pageRef.current.removeEventListener(eventListener);
+    };
+
     return (
         <FullScreenContainer>
-            <Page>
+            <Page ref={pageRef}>
                 <HomeLayoutHeader />
                 <ContentSection>
-                    <Outlet />
+                    <Outlet
+                        context={{ setOnScrollEvent, removeOnScrollEvent }}
+                    />
                 </ContentSection>
                 <FooterBlock />
             </Page>
