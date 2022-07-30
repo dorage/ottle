@@ -16,6 +16,7 @@ import {
 } from '../../components/Button/IconButton';
 import { getOriginUrl, routes } from '../../configs/routes';
 import { selectUser } from '../../features/user/userSlice';
+import { selectScreen } from '../../features/screen/screenSlice';
 
 const Container = styled(FooterContainer)`
     justify-content: space-evenly;
@@ -34,7 +35,7 @@ export const HomeLayoutFooter = () => {
     const { pathname } = useLocation();
     const params = useParams();
     const [active, setActive] = useState(0);
-    const { loading, user, isAuth, error } = useSelector(selectUser);
+    const { w, h } = useSelector(selectScreen);
 
     useEffect(() => {
         switch (getOriginUrl(params, pathname)) {

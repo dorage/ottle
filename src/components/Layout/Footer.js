@@ -2,11 +2,14 @@ import styled from 'styled-components';
 
 export const FooterContainer = styled.div`
     position: sticky;
-    bottom: 0;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    height: 5rem;
     min-height: 5rem;
     max-height: 5rem;
 

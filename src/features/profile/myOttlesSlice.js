@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { getOttlesByUID } from '../../app/firestore';
+import { getOttlesByUID, PAGE } from '../../app/firestore';
 
-const initialState = { data: [], loading: true, error: null };
+const initialState = { lastPage: false, data: [], loading: true, error: null };
 
 export const myOttlesAsyncAction = createAsyncThunk(
     'myOttles/fetch',
@@ -19,13 +19,19 @@ const myOttlesSlice = createSlice({
     initialState,
     reducers: {},
     extraReducers(builder) {
+        builder.addCase(myOttlesAsyncAction.pending, (state, action) => {
+            state.loading = true;
+            state.error = null;
+        });
         builder.addCase(myOttlesAsyncAction.fulfilled, (state, action) => {
             state.loading = false;
+            state.lastPage = action.payload.length < PAGE;
             state.data = [...state.data, ...action.payload];
             state.error = null;
         });
         builder.addCase(myOttlesAsyncAction.rejected, (state, action) => {
             state.loading = false;
+            state.lastPage = action.payload <= PAGE;
             state.error = action.payload;
         });
     },

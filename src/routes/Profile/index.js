@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { useOutletContext } from 'react-router-dom';
-import { ProfileItems } from './Items';
+import { LoadingProfileItems, ProfileItems } from './Items';
 import { ProfileInfo } from './Info';
 import { selectUser } from '../../features/user/userSlice';
 import {
@@ -10,13 +10,19 @@ import {
     selectMyOttles,
 } from '../../features/profile/myOttlesSlice';
 
+const switcher = () => {
+    let loading = false;
+    return (func) => {};
+};
+
 export const Profile = () => {
     const dispatch = useDispatch();
     const { setOnScrollEvent } = useOutletContext();
     const { user } = useSelector(selectUser);
-    const { data, loading } = useSelector(selectMyOttles);
+    const { lastPage } = useSelector(selectMyOttles);
 
     const fetchData = () => {
+        if (lastPage) return;
         const { uid } = user;
         dispatch(myOttlesAsyncAction(uid));
     };
@@ -26,34 +32,20 @@ export const Profile = () => {
         setOnScrollEvent((pageRef) => (e) => {
             if (
                 pageRef.current.scrollHeight -
-                    (pageRef.current.scrollTop + pageRef.current.clientHeight) <
-                window.innerHeight / 2
+                    (pageRef.current.scrollTop +
+                        pageRef.current.clientHeight) ===
+                0
             ) {
-                console.log('fetch data');
-                //fetchData();
+                fetchData();
             }
         });
     }, []);
 
     return user ? (
-        <div>
+        <>
             <ProfileInfo user={user} />
-            {loading ? (
-                <></>
-            ) : data ? (
-                <ProfileItems user={user} ottles={data} />
-            ) : (
-                <></>
-            )}
-            <button
-                onClick={() => {
-                    const { uid } = user;
-                    dispatch(myOttlesAsyncAction(uid));
-                }}
-            >
-                load more
-            </button>
-        </div>
+            <ProfileItems user={user} />
+        </>
     ) : (
         <></>
     );

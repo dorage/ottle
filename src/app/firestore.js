@@ -28,8 +28,8 @@ export const C_OTTLES = 'ottles';
 export const C_OTTLELIKES = 'ottle_likes';
 export const C_ITEMLIKES = 'item_likes';
 
-const PAGE_SMALL = 4;
-const PAGE = 24;
+export const PAGE_SMALL = 4;
+export const PAGE = 24;
 
 const timestampToDate = (timestamp) => {
     if (timestamp === null || timestamp === undefined) return `방금 전`;
