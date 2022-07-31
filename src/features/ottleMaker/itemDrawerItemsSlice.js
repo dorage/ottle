@@ -73,6 +73,7 @@ const itemDrawerItemsSlice = createSlice({
             state.scrollTop = scrollTop;
         },
     },
+    // recommend item
     extraReducers(builder) {
         builder.addCase(
             itemDrawerRecommendItemsAsyncAction.pending,
@@ -86,7 +87,7 @@ const itemDrawerItemsSlice = createSlice({
             (state, action) => {
                 const { data } = action.payload;
                 state.loading = false;
-                state.lastPage = action.payload.length < PAGE;
+                state.lastPage = data.length < PAGE;
                 state.data = [...state.data, ...data];
                 state.error = false;
             }
@@ -99,6 +100,7 @@ const itemDrawerItemsSlice = createSlice({
                 state.error = true;
             }
         );
+        // category item
         builder.addCase(
             itemDrawerCategoryItemsAsyncAction.pending,
             (state, action) => {
@@ -129,6 +131,7 @@ const itemDrawerItemsSlice = createSlice({
                 state.error = true;
             }
         );
+        // category item pagination
         builder.addCase(
             itemDrawerCategoryItemsPagingAsyncAction.pending,
             (state, action) => {
@@ -141,7 +144,7 @@ const itemDrawerItemsSlice = createSlice({
             (state, action) => {
                 const { data } = action.payload;
                 state.loading = false;
-                state.lastPage = action.payload.length < PAGE;
+                state.lastPage = data.length < PAGE;
                 state.data = [...state.data, ...data];
                 state.error = false;
             }

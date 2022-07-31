@@ -81,11 +81,6 @@ export const OttleCreateItemDrawer = () => {
 
     useEffect(() => {
         setOnScrollEvent((scrollRef) => () => {
-            console.log(
-                scrollRef.current.scrollHeight -
-                    (scrollRef.current.scrollTop +
-                        scrollRef.current.clientHeight)
-            );
             if (
                 scrollRef.current.scrollHeight -
                     (scrollRef.current.scrollTop +
