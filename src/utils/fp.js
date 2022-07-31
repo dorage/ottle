@@ -37,6 +37,7 @@ _.conditionalArray = (arr, condition, val) =>
         if (curr === _ && condition) return [...acc, val];
         return [...acc, curr];
     }, []);
+
 /**
  * ms 마다 실행되게 쓰로틀링하는 함수
  * @param {Function} func
@@ -50,5 +51,18 @@ _.throttle = (func, ms) => {
         running = true;
         func(...args);
         setTimeout(() => (running = false), ms);
+    };
+};
+
+/**
+ * 몇 초 이내의 모든 이벤트를 묶어 마지막으로 호출된 이벤트 단 한 번만 실행합니다.
+ * @param {*} func
+ * @param {*} ms
+ */
+_.debouce = (func, ms) => {
+    let timeOut;
+    return (...args) => {
+        if (timeOut) clearTimeout(timeOut);
+        timeOut = setTimeout(() => func(...args), ms);
     };
 };
