@@ -31,7 +31,7 @@ const myOttlesSlice = createSlice({
         });
         builder.addCase(myOttlesAsyncAction.rejected, (state, action) => {
             state.loading = false;
-            state.lastPage = action.payload <= PAGE;
+            state.lastPage = true;
             state.error = action.payload;
         });
     },

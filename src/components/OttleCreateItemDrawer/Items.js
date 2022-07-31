@@ -102,24 +102,23 @@ const GridItem = ({ data, ...props }) => {
 };
 
 export const GridItems = () => {
-    const { loading: itemLoading, data, error } = useSelector(
+    const { lastPage, loading: itemLoading, data, error } = useSelector(
         selectItemDrawerItems
     );
     const { loading: categoryLoading } = useSelector(selectItemDrawerCategory);
 
+    if (!itemLoading && !categoryLoading && !data.length)
+        return <GridNoItems />;
+
     return (
         <>
-            {itemLoading || categoryLoading ? (
+            {!categoryLoading &&
+                data.map((e, idx) => <GridItem key={idx} data={e} />)}
+            {(itemLoading || categoryLoading) &&
+                !lastPage &&
                 Array(12)
                     .fill()
-                    .map((_, idx) => <LoadingBlock key={idx} />)
-            ) : error ? (
-                <></>
-            ) : data.length ? (
-                data.map((e, idx) => <GridItem key={idx} data={e} />)
-            ) : (
-                <GridNoItems />
-            )}
+                    .map((_, idx) => <LoadingBlock key={idx} />)}
         </>
     );
 };

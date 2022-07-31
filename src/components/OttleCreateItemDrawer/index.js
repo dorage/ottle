@@ -9,8 +9,18 @@ import {
 } from '../../features/ottleMaker/itemDrawerSlice';
 import { ItemDrawerHeader } from './Header';
 import { InputField } from '../Input/InputField';
-import { goBackItemDrawerCategory } from '../../features/ottleMaker/itemDrawerCategorySlice';
+import {
+    goBackItemDrawerCategory,
+    selectItemDrawerCategory,
+} from '../../features/ottleMaker/itemDrawerCategorySlice';
 import { ItemDrawerItemGrid, ItemDrawerCategoryGrid } from './Grid';
+import {
+    itemDrawerCategoryItemsAsyncAction,
+    itemDrawerCategoryItemsPagingAsyncAction,
+    itemDrawerRecommendItemsAsyncAction,
+    selectItemDrawerItems,
+} from '../../features/ottleMaker/itemDrawerItemsSlice';
+import { _ } from '../../utils/fp';
 
 //#region styled-components
 const Container = styled(FullScreenContainer)`
@@ -28,11 +38,21 @@ const SearchBarContainer = styled.div`
     justify-content: center;
     margin-bottom: ${(props) => props.theme.gap.gap_4};
 `;
+const ScrollContainer = styled.div`
+    width: 100%;
+    height: 100%;
+    overflow: scroll;
+`;
 //#endregion
 
-export const OttleCreateItemDrawer = ({ closeItemSelect }) => {
+let eventListener;
+
+export const OttleCreateItemDrawer = () => {
+    const scrollRef = useRef();
     const dispatch = useDispatch();
     const { isOpend } = useSelector(selectItemDrawer);
+    const { path } = useSelector(selectItemDrawerCategory);
+    const { lastPage } = useSelector(selectItemDrawerItems);
 
     const onClickBack = () => {
         dispatch(goBackItemDrawerCategory());
@@ -40,6 +60,42 @@ export const OttleCreateItemDrawer = ({ closeItemSelect }) => {
     const onClickClose = () => {
         dispatch(closeItemDrawer());
     };
+
+    const setOnScrollEvent = (event) => {
+        if (eventListener) scrollRef.current.removeEventListener(eventListener);
+        eventListener = scrollRef.current.addEventListener(
+            'scroll',
+            event(scrollRef)
+        );
+    };
+    const removeOnScrollEvent = (event) => {
+        if (eventListener) scrollRef.current.removeEventListener(eventListener);
+    };
+
+    const fetchRecommendItems = () => {
+        dispatch(itemDrawerRecommendItemsAsyncAction());
+    };
+    const fetchCategoryItems = (categoryId) => {
+        dispatch(itemDrawerCategoryItemsPagingAsyncAction(categoryId));
+    };
+
+    useEffect(() => {
+        setOnScrollEvent((scrollRef) => () => {
+            if (lastPage) return;
+            if (
+                scrollRef.current.scrollHeight -
+                    (scrollRef.current.scrollTop +
+                        scrollRef.current.clientHeight) ===
+                0
+            ) {
+                if (!path.length) {
+                    fetchRecommendItems();
+                    return;
+                }
+                fetchRecommendItems(_.getLastIndex(path));
+            }
+        });
+    }, []);
 
     return (
         <Container className={isOpend ? 'item-select-opend' : ''}>
@@ -50,8 +106,10 @@ export const OttleCreateItemDrawer = ({ closeItemSelect }) => {
             <SearchBarContainer>
                 <InputField placeholder='search brand, product' />
             </SearchBarContainer>
-            <ItemDrawerCategoryGrid />
-            <ItemDrawerItemGrid />
+            <ScrollContainer ref={scrollRef}>
+                <ItemDrawerCategoryGrid />
+                <ItemDrawerItemGrid />
+            </ScrollContainer>
         </Container>
     );
 };

@@ -138,6 +138,10 @@ export const getLikedOttles = async (uid) => {
 
 const paginationHoC = (func) => {
     let lastRef = null;
+    let context = {};
+    const initRef = () => {
+        lastRef = null;
+    };
     const setRef = (docRef) => {
         lastRef = docRef;
     };
@@ -155,7 +159,27 @@ const paginationHoC = (func) => {
             query(..._.conditionalArray(initialQueries, getRef(), pagingQuery))
         );
     };
-    return func({ setRef, getRef, queryByRef });
+    /**
+     * 기타 페이징 관련 정보를 저장합니다.
+     * @param {*} obj
+     */
+    const setContext = (obj) => {
+        if (typeof obj !== 'object') return;
+        context = { ...context, ...obj };
+    };
+    /**
+     * 기타 페이징 관련 정보를 불러옵니다.
+     * @returns
+     */
+    const getContext = () => ({ ...context });
+    return func({
+        initRef,
+        setRef,
+        getRef,
+        queryByRef,
+        setContext,
+        getContext,
+    });
 };
 
 /**
@@ -193,49 +217,49 @@ export const getOttlesByUID = paginationHoC(
     }
 );
 
-const getMainThread = ({ setRef, getRef }) => async () => {
-    try {
-        const mainThreadQuery = getRef()
-            ? query(
-                  collection(firestore, C_OTTLES),
-                  orderBy('created_at', 'desc'),
-                  startAfter(getRef()),
-                  limit(PAGE_SMALL)
-              )
-            : query(
-                  collection(firestore, C_OTTLES),
-                  orderBy('created_at', 'desc'),
-                  limit(PAGE_SMALL)
-              );
-        const ottleSnapshot = await getDocs(mainThreadQuery);
-        setRef(_.getLastIndex(ottleSnapshot.docs));
-        const threads = [];
-
-        for (const ottleDoc of ottleSnapshot.docs) {
-            const { uid, created_at, items } = ottleDoc.data();
-            const user = await getUserByUID(uid);
-            const like = await getOttleLike(uid, ottleDoc.id);
-            threads.push({
-                user,
-                ottle: {
-                    id: ottleDoc.id,
-                    ...ottleDoc.data(),
-                    created_at: timestampToDate(created_at),
-                },
-                like,
-            });
-        }
-        return threads;
-    } catch (err) {
-        console.log(err);
-    }
-};
-
 /**
  * 메인화면에 표시할 스레드들을 가져옵니다.
  * @returns
  */
-export const getMainThreadDocs = paginationHoC(getMainThread);
+export const getMainThreadDocs = paginationHoC(
+    ({ setRef, getRef }) => async () => {
+        try {
+            const mainThreadQuery = getRef()
+                ? query(
+                      collection(firestore, C_OTTLES),
+                      orderBy('created_at', 'desc'),
+                      startAfter(getRef()),
+                      limit(PAGE_SMALL)
+                  )
+                : query(
+                      collection(firestore, C_OTTLES),
+                      orderBy('created_at', 'desc'),
+                      limit(PAGE_SMALL)
+                  );
+            const ottleSnapshot = await getDocs(mainThreadQuery);
+            setRef(_.getLastIndex(ottleSnapshot.docs));
+            const threads = [];
+
+            for (const ottleDoc of ottleSnapshot.docs) {
+                const { uid, created_at, items } = ottleDoc.data();
+                const user = await getUserByUID(uid);
+                const like = await getOttleLike(uid, ottleDoc.id);
+                threads.push({
+                    user,
+                    ottle: {
+                        id: ottleDoc.id,
+                        ...ottleDoc.data(),
+                        created_at: timestampToDate(created_at),
+                    },
+                    like,
+                });
+            }
+            return threads;
+        } catch (err) {
+            console.log(err);
+        }
+    }
+);
 
 /**
  * 아이템 카테고리 최상위 documents 를 가져옵니다.
@@ -291,34 +315,62 @@ export const getItemsById = async (itemIds = []) => {
  * 카테고리 선정 이전에 표시될 아이템을 가져옵니다.
  * @returns
  */
-export const getItemsRecommend = async () => {
-    const itemsQuery = query(collection(firestore, C_ITEMS), limit(PAGE));
-    const querySnapshot = await getDocs(itemsQuery);
-    const items = [];
-    querySnapshot.forEach((doc) => items.push({ id: doc.id, ...doc.data() }));
-    return items;
-};
+export const getItemsRecommend = paginationHoC(
+    ({ setRef, getRef, queryByRef }) => async () => {
+        const querySnapshot = await queryByRef(
+            [collection(firestore, C_ITEMS), _, limit(PAGE)],
+            startAfter(getRef())
+        );
+
+        if (querySnapshot.empty) return [];
+        setRef(_.getLastIndex(querySnapshot.docs));
+
+        const items = [];
+        querySnapshot.forEach((doc) =>
+            items.push({ id: doc.id, ...doc.data() })
+        );
+        return items;
+    }
+);
 /**
  * 해당 카테고리에 포함된 아이템을 가져옵니다
  * @param {*} categoryId
  * @returns
  */
-export const getItemsInCategory = async (categoryId) => {
-    const itemsQuery = query(
-        collection(firestore, C_ITEMS),
-        where('category', 'array-contains', categoryId),
-        limit(PAGE)
-    );
-    const querySnapshot = await getDocs(itemsQuery);
-    const items = [];
-    querySnapshot.forEach((doc) => items.push({ id: doc.id, ...doc.data() }));
-    return items;
-};
+export const getItemsInCategory = paginationHoC(
+    ({ initRef, setRef, getRef, queryByRef, setContext, getContext }) => async (
+        categoryId,
+        firstPage = false
+    ) => {
+        if (firstPage) {
+            setContext({ categoryId: undefined });
+        }
+        if (getContext().categoryId !== categoryId) {
+            initRef();
+            setContext({ categoryId });
+        }
+        const querySnapshot = await queryByRef(
+            [
+                collection(firestore, C_ITEMS),
+                where('category', 'array-contains', categoryId),
+                _,
+                limit(PAGE),
+            ],
+            startAfter(getRef())
+        );
 
-export const getFollow = async () => {
-    const ref = doc(firestore, 'ottles', 'FEm5s5W8z6Z2OsSdsrBd');
-    const snap = await getDoc(ref);
-};
+        if (querySnapshot.empty) return [];
+        setRef(_.getLastIndex(querySnapshot.docs));
+
+        const items = [];
+        querySnapshot.forEach((doc) =>
+            items.push({ id: doc.id, ...doc.data() })
+        );
+        return items;
+    }
+);
+
+export const getFollow = async () => {};
 export const setFollow = async () => {};
 export const deleteFollow = async () => {};
 

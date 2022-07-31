@@ -10,11 +10,6 @@ import {
     selectMyOttles,
 } from '../../features/profile/myOttlesSlice';
 
-const switcher = () => {
-    let loading = false;
-    return (func) => {};
-};
-
 export const Profile = () => {
     const dispatch = useDispatch();
     const { setOnScrollEvent } = useOutletContext();

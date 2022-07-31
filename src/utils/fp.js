@@ -37,3 +37,13 @@ _.conditionalArray = (arr, condition, val) =>
         if (curr === _ && condition) return [...acc, val];
         return [...acc, curr];
     }, []);
+
+_.throttle = (func) => {
+    let running = false;
+    return () => {
+        if (running) return;
+        running = true;
+        func();
+        setTimeout(() => (running = false), 300);
+    };
+};

@@ -8,7 +8,7 @@ const Container = styled.div`
     max-width: 150px;
     aspect-ratio: 1/1;
     margin: 0 auto;
-    border-radius: 100% 100% 0 0;
+    border-radius: 100%;
     background-color: ${(props) => props.theme.color.black_600};
     background-image: url(${(props) => props.src});
     background-size: cover;

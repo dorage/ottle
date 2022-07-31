@@ -15,7 +15,7 @@ const CategoryContainer = styled.div`
     justify-content: center;
     align-items: center;
 
-    font-size: ${(props) => props.theme.font.p16};
+    font-size: ${(props) => props.theme.font.p14};
     font-weight: 700;
     overflow: hidden;
     border: 1px solid ${(props) => props.theme.color.black_600};
@@ -53,7 +53,7 @@ export const GridCategories = () => {
         <>
             {loading ? (
                 <>
-                    {Array(9)
+                    {Array(10)
                         .fill()
                         .map((_, idx) => (
                             <LoadingBlock key={idx} />

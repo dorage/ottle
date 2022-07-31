@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { selectMyOttles } from '../../features/profile/myOttlesSlice';
+import { NoItem } from './NoItem';
 
 //#region styled-components
 const Container = styled.div`
@@ -36,6 +37,8 @@ export const ProfileItems = ({ user }) => {
     const onClickOttle = (username, ottleId) => () => {
         navigation(routes.ottleDetail(username, ottleId));
     };
+
+    if (!loading && !ottles.length) return <NoItem />;
 
     return (
         <Container className='pad'>

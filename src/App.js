@@ -17,6 +17,7 @@ import { ScreenHoC } from './components/HOC/ScreenHoC';
 import { AuthHoC } from './components/HOC/AuthHoC';
 import { DesktopNotReady } from './routes/DesktopNotReady';
 import styled from 'styled-components';
+import { SignIn } from './routes/SignIn';
 
 export const Background = styled.div`
     display: flex;
@@ -43,7 +44,6 @@ function App() {
 
     return (
         <Background>
-            {process.env.NODE_ENV === 'development' && <RouterPanel />}
             <Routes>
                 <Route
                     path={routes.ottleCreate()}
@@ -59,15 +59,17 @@ function App() {
                     element={<Navigate to={routes.pageNotFound()} />}
                 />
                 <Route path={routes.main()} element={<HomeLayout />}>
-                    <Route path={routes.main()} element={<Main />} />
-                    <Route path={routes.groups()} element={<Groups />} />
+                    <Route
+                        path={routes.main()}
+                        element={<Navigate to={routes.profile()} />}
+                    />
                     <Route
                         path={routes.profile()}
                         element={
                             isAuth ? (
                                 <Navigate to={routes.user(user.username)} />
                             ) : (
-                                <Navigate to={routes.main()} />
+                                <SignIn />
                             )
                         }
                     />
@@ -77,7 +79,7 @@ function App() {
                             isAuth ? (
                                 <Profile />
                             ) : (
-                                <Navigate to={routes.main()} />
+                                <Navigate to={routes.profile()} />
                             )
                         }
                     />

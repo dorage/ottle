@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import { useDispatch } from 'react-redux';
 import { Portrait } from '../../components/Layout/Portrait';
 import { IconButton } from '../../components/Button/IconButton';
 import { BsCaretDownFill } from 'react-icons/bs';
 import { theme } from '../../assets/styles/GlobalStyles';
 import pic from '../../assets/images/temp.jpg';
+import { signOutAsyncAction } from '../../features/user/userSlice';
+import { signOutFirebase } from '../../app/auth';
 
 //#region styled-components
 const Container = styled.div`
@@ -29,6 +32,8 @@ const FigureGroup = styled.div`
     align-items: center;
 `;
 const Figure = styled.div`
+    display: flex;
+    align-items: center;
     margin-bottom: ${(props) => props.theme.gap.gap_4};
     font-weight: 700;
     font-size: ${(props) => props.theme.font.p16};
@@ -67,6 +72,7 @@ const PopOut = styled.div`
 //#endregion
 
 export const ProfileInfo = ({ user }) => {
+    const dispatch = useDispatch();
     const [actionBar, setActionBar] = useState(false);
 
     const onClickActionBar = () => {
@@ -74,7 +80,7 @@ export const ProfileInfo = ({ user }) => {
     };
 
     const onSignOut = () => {
-        console.log('signout');
+        dispatch(signOutAsyncAction(signOutFirebase()));
     };
 
     return (
@@ -84,6 +90,8 @@ export const ProfileInfo = ({ user }) => {
                     <Portrait src={user.profile_src} />
                 </div>
                 <FigureGroups className='flex-3'>
+                    <Figure>2개의 옷뜰을 만들었어요</Figure>
+                    {/*
                     <FigureGroup>
                         <Figure>2</Figure>
                         <FigureLabel>옷뜰</FigureLabel>
@@ -92,6 +100,7 @@ export const ProfileInfo = ({ user }) => {
                         <Figure>152</Figure>
                         <FigureLabel>좋아요</FigureLabel>
                     </FigureGroup>
+                    */}
                 </FigureGroups>
             </Row>
             <Row>

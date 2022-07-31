@@ -51,8 +51,7 @@ const PAGENOTFOUND = 'page-not-found';
 const main = () => URL();
 const profile = () => URL(PROFILE);
 const user = (username) => URL(param({ username }));
-const ottleCreate = (username, ottleId) =>
-    URL(user(username), OTTLE, param({ ottleId }), CREATE);
+const ottleCreate = (username) => URL(user(username), OTTLE, CREATE);
 const ottleDetail = (username, ottleId) =>
     URL(user(username), OTTLE, param({ ottleId }));
 const groups = (username) => URL(user(username), GROUP);

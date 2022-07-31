@@ -15,7 +15,6 @@ const Container = styled.div`
     padding-bottom: ${(props) => props.theme.gap.gap_16};
 
     background-color: white;
-    overflow-y: scroll;
 `;
 const Grid = styled.div`
     display: grid;
@@ -24,15 +23,16 @@ const Grid = styled.div`
     grid-auto-rows: 20rem;
 `;
 const ItemGrid = styled(Grid)`
+    grid-template-columns: repeat(3, 1fr);
     grid-auto-rows: calc((100vw - 3.2rem) / 3 + 4rem);
 `;
 const CategoryGrid = styled(Grid)`
-    grid-auto-rows: 5rem;
+    grid-template-columns: repeat(5, 1fr);
+    grid-auto-rows: 3rem;
 `;
 //#endregion
 
 export const ItemDrawerItemGrid = () => {
-    const { loading, data, error } = useSelector(selectItemDrawerCategory);
     return (
         <Container>
             <ItemGrid>

@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-    isOpend: true,
+    isOpend: false,
     form: {
         title: '',
         description: '',
