@@ -13,7 +13,7 @@ import {
 export const Profile = () => {
     const dispatch = useDispatch();
     const { setOnScrollEvent } = useOutletContext();
-    const { user } = useSelector(selectUser);
+    const { isAuth, user } = useSelector(selectUser);
     const { lastPage } = useSelector(selectMyOttles);
 
     const fetchData = () => {
@@ -21,6 +21,7 @@ export const Profile = () => {
         const { uid } = user;
         dispatch(myOttlesAsyncAction(uid));
     };
+    const fetchMyLikes = () => {};
 
     useEffect(() => {
         fetchData();

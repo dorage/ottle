@@ -9,6 +9,8 @@ import { theme } from '../../assets/styles/GlobalStyles';
 import pic from '../../assets/images/temp.jpg';
 import { signOutAsyncAction } from '../../features/user/userSlice';
 import { signOutFirebase } from '../../app/auth';
+import { ExLinkHoC } from '../../components/HOC/LinkHoC';
+import { CopyClipboardHoC } from '../../components/HOC/CopyClipboardHoC';
 
 //#region styled-components
 const Container = styled.div`
@@ -41,9 +43,12 @@ const Figure = styled.div`
 const FigureLabel = styled.div`
     font-size: ${(props) => props.theme.font.p14};
 `;
-const Username = styled.div`
+const Name = styled.span`
     font-weight: 700;
-    font-size: ${(props) => props.theme.font.p16};
+    font-size: ${(props) => props.theme.font.p14};
+`;
+const Username = styled.span`
+    font-size: ${(props) => props.theme.font.p10};
 `;
 const ActionBar = styled.div`
     display: flex;
@@ -57,6 +62,7 @@ const ActionButton = styled(IconButton)`
     }
 `;
 const Actions = styled.div`
+    display: flex;
     opacity: 0;
     transition: 0.3s linear;
     transform: translateX(30%);
@@ -67,7 +73,10 @@ const Actions = styled.div`
 `;
 const PopOut = styled.div`
     position: relative;
+    margin-left: ${(props) => props.theme.gap.gap_8};
 `;
+const CopyPopOut = CopyClipboardHoC(PopOut);
+const ExLinkPopOut = ExLinkHoC(PopOut);
 
 //#endregion
 
@@ -90,7 +99,7 @@ export const ProfileInfo = ({ user }) => {
                     <Portrait src={user.profile_src} />
                 </div>
                 <FigureGroups className='flex-3'>
-                    <Figure>{user.ottle_count}개의 옷뜰을 만들었어요</Figure>
+                    <Figure>{user.ottle_count} 개의 옷뜰을 만들었어요</Figure>
                     {/*
                     <FigureGroup>
                         <Figure>2</Figure>
@@ -104,10 +113,22 @@ export const ProfileInfo = ({ user }) => {
                 </FigureGroups>
             </Row>
             <Row>
-                <Username>{user.name || 'unnamed'}</Username>
+                <div>
+                    <Name>{user.name || 'unnamed'} BREAKING</Name>
+                    <br></br>
+                    <Username>{user.username}</Username>
+                </div>
                 <ActionBar>
                     <Actions className={actionBar && 'open'}>
                         <PopOut onClick={onSignOut}>로그아웃</PopOut>
+                        <CopyPopOut
+                            url={`${window.location.host}/${user.username}`}
+                        >
+                            공유하기
+                        </CopyPopOut>
+                        <ExLinkPopOut to='https://dorage.notion.site/1b9b37e0b0804e0b98fd9580c1b9797f'>
+                            도움말
+                        </ExLinkPopOut>
                     </Actions>
                     <ActionButton
                         className={actionBar && 'open'}

@@ -1,20 +1,13 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
-import { IconButton } from '../Button/IconButton';
-import { HiOutlineClipboardCopy } from 'react-icons/hi';
 import { ALERTS, broadcastAlert } from '../../features/alert/alertSlice';
 
-//#region styled-components
-//#endregion
-
-export const CopyLinkButton = ({ username, ottleId, url }) => {
+export const CopyClipboardHoC = (Component) => ({ url, ...props }) => {
     const dispatch = useDispatch();
 
     const copyUrl = () => {
         var el = document.createElement('input');
-        el.value = `${window.location.host}/${username}/o/${ottleId}`;
+        el.value = url;
         document.body.appendChild(el);
         el.select();
         document.execCommand('copy');
@@ -27,10 +20,8 @@ export const CopyLinkButton = ({ username, ottleId, url }) => {
     };
 
     return (
-        <IconButton
-            active={true}
-            onClick={onClickCopy}
-            icon={<HiOutlineClipboardCopy />}
-        />
+        <>
+            <Component onClick={onClickCopy} {...props} />
+        </>
     );
 };

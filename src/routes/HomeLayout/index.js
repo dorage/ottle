@@ -20,20 +20,11 @@ const FooterBlock = styled.div`
     margin-top: ${(props) => props.theme.gap.gap_32};
 `;
 
-let eventListener;
-
 export const HomeLayout = () => {
     const pageRef = useRef();
 
     const setOnScrollEvent = (event) => {
-        if (eventListener) pageRef.current.removeEventListener(eventListener);
-        eventListener = pageRef.current.addEventListener(
-            'scroll',
-            event(pageRef)
-        );
-    };
-    const removeOnScrollEvent = (event) => {
-        if (eventListener) pageRef.current.removeEventListener(eventListener);
+        pageRef.current.onscroll = event(pageRef);
     };
 
     return (
@@ -41,9 +32,7 @@ export const HomeLayout = () => {
             <Page ref={pageRef}>
                 <HomeLayoutHeader />
                 <ContentSection>
-                    <Outlet
-                        context={{ setOnScrollEvent, removeOnScrollEvent }}
-                    />
+                    <Outlet context={{ setOnScrollEvent }} />
                 </ContentSection>
                 <FooterBlock />
             </Page>

@@ -22,11 +22,13 @@ const Container = styled.div`
     border-radius: 10px;
 `;
 
+const accounts = [
+    { email: 'root@root.io', password: '123123' },
+    { email: 'test@test.io', password: '123123' },
+];
+
 export const EmailSignIn = () => {
-    const [data, setData] = useState({
-        email: 'root@root.io',
-        password: '123123',
-    });
+    const [data, setData] = useState(accounts[0]);
     const dispatch = useDispatch();
     const { isAuth, user, loading } = useSelector(selectUser);
 
@@ -44,18 +46,25 @@ export const EmailSignIn = () => {
         e.preventDefault();
         dispatch(signOutAsyncAction(signOutFirebase()));
     };
+    const onClickAccount = (idx) => {
+        setData(accounts[idx]);
+    };
 
     return (
         <Container>
             {isAuth ? (
                 <>
                     <div>Hello, {user.name || 'unnamed'}!</div>
-                    <SemiRoundButton onClick={onSignOut}>
-                        로그아웃
-                    </SemiRoundButton>
                 </>
             ) : (
                 <>
+                    <div>
+                        {accounts.map((_, idx) => (
+                            <button onClick={() => onClickAccount(idx)}>
+                                {idx}
+                            </button>
+                        ))}
+                    </div>
                     <div>
                         <h3>이메일</h3>
                         <InputField value={data.email} readOnly />
