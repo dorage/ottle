@@ -37,13 +37,18 @@ _.conditionalArray = (arr, condition, val) =>
         if (curr === _ && condition) return [...acc, val];
         return [...acc, curr];
     }, []);
-
-_.throttle = (func) => {
+/**
+ * ms 마다 실행되게 쓰로틀링하는 함수
+ * @param {Function} func
+ * @param {Number} ms
+ * @returns
+ */
+_.throttle = (func, ms) => {
     let running = false;
     return (...args) => {
         if (running) return;
         running = true;
         func(...args);
-        setTimeout(() => (running = false), 1000);
+        setTimeout(() => (running = false), ms);
     };
 };
