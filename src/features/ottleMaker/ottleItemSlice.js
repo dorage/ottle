@@ -12,6 +12,7 @@ export const ottleItemSlice = createSlice({
     name: 'ottleMaker/item',
     initialState,
     reducers: {
+        initialize: () => initialState,
         selectItem: (state, action) => {
             state.selected = action.payload;
         },
@@ -114,6 +115,7 @@ export const addItem = (product) => (dispatch, getState) => {
 export const checkItemCount = (items) => items.length >= MAX_ITEM_COUNT;
 export const itemHasSelected = (selected) => !isNaN(selected);
 export const {
+    initialize,
     selectItem,
     releaseItem,
     updateItem,

@@ -51,6 +51,7 @@ const itemDrawerCategorySlice = createSlice({
     name: 'itemDrawerCategory',
     initialState,
     reducers: {
+        initialize: () => initialState,
         goBackItemDrawerCategory: (state, action) => {
             state.data = state.history.pop();
             state.path.pop();
@@ -117,6 +118,6 @@ export const goBackItemDrawerCategory = () => (dispatch) => {
     dispatch(goBackItemDrawerItem());
 };
 
-export const {} = itemDrawerCategorySlice.actions;
+export const { initialize } = itemDrawerCategorySlice.actions;
 export const selectItemDrawerCategory = (state) => state.itemDrawerCategory;
 export default itemDrawerCategorySlice.reducer;

@@ -3,18 +3,21 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Canvas } from './Canvas';
 import { Inspector } from './Inspector';
 import {
+    initialize as initArtboardSlice,
     onMoveArtboard,
     onResizeArtboard,
     selectArtboard,
     updatePosition,
 } from '../../features/ottleMaker/artboardSlice';
 import {
+    initialize as initOttleItemSlice,
     itemHasSelected,
     selectOttleItem,
     updateItem,
 } from '../../features/ottleMaker/ottleItemSlice';
 import {
     CANVAS_ACTIONS,
+    initialize as initOttleActionSlice,
     selectOttleAction,
     setStartTouch,
     setMoveTouch,
@@ -23,7 +26,10 @@ import {
 } from '../../features/ottleMaker/ottleActionSlice';
 import { angle, clamp, distance, getElementCenter } from '../../configs/utils';
 import { OttleCreateHeader } from './Header';
-import { openPosting } from '../../features/ottleMaker/ottlePostingSlice';
+import {
+    initialize as initOttlePostingSlice,
+    openPosting,
+} from '../../features/ottleMaker/ottlePostingSlice';
 import { MODAL_TYPE, openModal } from '../../features/modal/modalSlice';
 import { routes } from '../../configs/routes';
 import { ALERTS, broadcastAlert } from '../../features/alert/alertSlice';
@@ -31,6 +37,10 @@ import { FullScreenContainer } from '../../components/Layout/Container';
 import { theme } from '../../assets/styles/GlobalStyles';
 import { OttleCreatePosting } from '../../components/OttleCreatePosting';
 import { OttleCreateItemDrawer } from '../../components/OttleCreateItemDrawer';
+import { selectScreen } from '../../features/screen/screenSlice';
+import { initialize as initItemDrawerItemsSlice } from '../../features/ottleMaker/itemDrawerItemsSlice';
+import { initialize as initItemDrawerCategorySlice } from '../../features/ottleMaker/itemDrawerCategorySlice';
+import { initialize as initItemDrawerSlice } from '../../features/ottleMaker/itemDrawerSlice';
 
 //#region styled-components
 //#endregion
@@ -54,18 +64,22 @@ export const OttleMaker = () => {
     } = useSelector(selectOttleAction);
     const selectedRef = useRef();
 
+    /**
+     * ottleCreate에서 사용하는 모든 redux의 상태를 초기화 시킵니다
+     */
+    const initializeOttleCreateRedux = () => {
+        dispatch(initArtboardSlice());
+        dispatch(initItemDrawerCategorySlice());
+        dispatch(initItemDrawerItemsSlice());
+        dispatch(initItemDrawerSlice());
+        dispatch(initOttleActionSlice());
+        dispatch(initOttleItemSlice());
+        dispatch(initOttlePostingSlice());
+    };
+
     useEffect(() => {
-        // resize artboard
-        dispatch(onResizeArtboard());
-        window.addEventListener('resize', () => dispatch(onResizeArtboard()));
-        /*
-        window.addEventListener('beforeunload', (event) => {
-            // 표준에 따라 기본 동작 방지
-            event.preventDefault();
-            // Chrome에서는 returnValue 설정이 필요함
-            event.returnValue = '';
-        });
-        */
+        console.log('initialize');
+        initializeOttleCreateRedux();
     }, []);
 
     // 이동을 구현

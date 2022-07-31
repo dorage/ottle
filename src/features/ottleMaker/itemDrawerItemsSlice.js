@@ -66,6 +66,7 @@ const itemDrawerItemsSlice = createSlice({
     name: 'itemDrawerItems',
     initialState,
     reducers: {
+        initialize: () => initialState,
         goBackItemDrawerItem: (state, action) => {
             const { lastPage, data, scrollTop } = state.history.pop();
             state.lastPage = lastPage;
@@ -160,6 +161,9 @@ const itemDrawerItemsSlice = createSlice({
     },
 });
 
-export const { goBackItemDrawerItem } = itemDrawerItemsSlice.actions;
+export const {
+    initialize,
+    goBackItemDrawerItem,
+} = itemDrawerItemsSlice.actions;
 export const selectItemDrawerItems = (state) => state.itemDrawerItems;
 export default itemDrawerItemsSlice.reducer;

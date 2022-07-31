@@ -26,6 +26,7 @@ const ottleActionSlice = createSlice({
     name: 'ottleMaker/action',
     initialState,
     reducers: {
+        initialize: () => initialState,
         setStartTouch: (state, action) => {
             state.startTouch = action.payload;
         },
@@ -111,7 +112,11 @@ export const setMoveTouch = (e) => (dispatch) => {
     dispatch(ottleActionSlice.actions.setMoveTouch(getTouchInfo(e.touches[0])));
 };
 
-export const { setAction, releaseStartTouch } = ottleActionSlice.actions;
+export const {
+    initialize,
+    setAction,
+    releaseStartTouch,
+} = ottleActionSlice.actions;
 export const selectOttleAction = (state) => state.ottleAction;
 
 export default ottleActionSlice.reducer;

@@ -13,6 +13,7 @@ const ottlePosting = createSlice({
     name: 'ottlePosting',
     initialState,
     reducers: {
+        initialize: () => initialState,
         openPosting: (state) => {
             state.isOpend = true;
         },
@@ -26,5 +27,10 @@ const ottlePosting = createSlice({
 });
 
 export const selectOttlePosting = (state) => state.ottlePosting;
-export const { openPosting, closePosting, updateForm } = ottlePosting.actions;
+export const {
+    initialize,
+    openPosting,
+    closePosting,
+    updateForm,
+} = ottlePosting.actions;
 export default ottlePosting.reducer;

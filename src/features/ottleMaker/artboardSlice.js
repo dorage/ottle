@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { clamp, scalePercent } from '../../configs/utils';
+import { selectScreen } from '../screen/screenSlice';
 import { selectOttleAction } from './ottleActionSlice';
 
 // artboard w,h => 화면이 바뀔 때마다 업데이트
@@ -7,7 +8,7 @@ import { selectOttleAction } from './ottleActionSlice';
 // selected
 
 // 렌더링용 사진의 사이즈는 1080 * 1920 (틱톡 영상 사이즈)
-// 편집에는 큰 용량이 필요없으니 2/3 사이즈(720px)에서 작업을 한다.
+// 편집에는 큰 사이즈가 필요없으니 2/3 사이즈(720px)에서 작업을 한다.
 const MIN_RATIO = 2 / 3;
 export const ARTBOARD_SIZE = 1080;
 const DEFAULT_SIZE = ARTBOARD_SIZE * MIN_RATIO;
@@ -26,6 +27,10 @@ export const artboardSlice = createSlice({
     name: 'ottleMaker/artboard',
     initialState,
     reducers: {
+        initialize: (state) => {
+            state.position = { x: 0, y: 0 };
+            state.multiple = 1.0;
+        },
         updateScreenSize: (state, action) => {
             const { size } = action.payload;
             state.size = size;
@@ -49,8 +54,7 @@ export const artboardSlice = createSlice({
  * @returns
  */
 export const onResizeArtboard = () => (dispatch, getState) => {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
+    const { w, h } = selectScreen(getState());
     let size = Math.min(Math.min(w, h), DEFAULT_SIZE, h / 2) - 2 * 16;
     dispatch(updateScreenSize({ size }));
 };
@@ -100,7 +104,11 @@ export const updateMulitple = (value) => (dispatch) => {
 
     if (multiple <= 1) dispatch(updatePosition({ x: 0, y: 0 }));
 };
-export const { updateScreenSize, updatePosition } = artboardSlice.actions;
+export const {
+    initialize,
+    updateScreenSize,
+    updatePosition,
+} = artboardSlice.actions;
 export const selectArtboard = (state) => state.artboard;
 
 export default artboardSlice.reducer;

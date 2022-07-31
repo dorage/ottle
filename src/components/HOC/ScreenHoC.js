@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { resizeScreen } from '../../features/screen/screenSlice';
+import { onResizeArtboard } from '../../features/ottleMaker/artboardSlice';
 
 export const ScreenHoC = (Component) => (props) => {
     const dispatch = useDispatch();
@@ -9,6 +10,7 @@ export const ScreenHoC = (Component) => (props) => {
     // 화면 크기 정보를 업데이트
     const updateScreenSize = () => {
         dispatch(resizeScreen({ w: window.innerWidth, h: window.innerHeight }));
+        dispatch(onResizeArtboard());
     };
 
     useEffect(() => {

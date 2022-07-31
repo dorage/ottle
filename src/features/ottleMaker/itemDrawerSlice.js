@@ -8,6 +8,7 @@ const itemDrawer = createSlice({
     name: 'itemDrawer',
     initialState,
     reducers: {
+        initialize: () => initialState,
         openItemDrawer: (state) => {
             state.isOpend = true;
         },
@@ -18,5 +19,9 @@ const itemDrawer = createSlice({
 });
 
 export const selectItemDrawer = (state) => state.itemDrawer;
-export const { openItemDrawer, closeItemDrawer } = itemDrawer.actions;
+export const {
+    initialize,
+    openItemDrawer,
+    closeItemDrawer,
+} = itemDrawer.actions;
 export default itemDrawer.reducer;
