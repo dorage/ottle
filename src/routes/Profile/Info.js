@@ -90,7 +90,7 @@ export const ProfileInfo = ({ user }) => {
                     <Portrait src={user.profile_src} />
                 </div>
                 <FigureGroups className='flex-3'>
-                    <Figure>2개의 옷뜰을 만들었어요</Figure>
+                    <Figure>{user.ottle_count}개의 옷뜰을 만들었어요</Figure>
                     {/*
                     <FigureGroup>
                         <Figure>2</Figure>

@@ -24,6 +24,21 @@ export const itemDrawerRecommendItemsAsyncAction = createAsyncThunk(
     'itemDrawerItems/fetch-recommend',
     async (_) => {
         try {
+            return { data: await getItemsRecommend(true) };
+        } catch (err) {
+            return err;
+        }
+    }
+);
+/**
+ * 이 async action은 itemDrawerCategory에서
+ * 메인 category 정보를 가져올 때 dispatch 됩니다.
+ * 또한, 페이징을 위해도 사용됩니다.
+ */
+export const itemDrawerRecommendItemsPagingAsyncAction = createAsyncThunk(
+    'itemDrawerItems/fetch-recommend-paging',
+    async (_) => {
+        try {
             return { data: await getItemsRecommend() };
         } catch (err) {
             return err;
@@ -89,12 +104,38 @@ const itemDrawerItemsSlice = createSlice({
                 const { data } = action.payload;
                 state.loading = false;
                 state.lastPage = data.length < PAGE;
-                state.data = [...state.data, ...data];
+                state.data = [...data];
                 state.error = false;
             }
         );
         builder.addCase(
             itemDrawerRecommendItemsAsyncAction.rejected,
+            (state, action) => {
+                state.loading = false;
+                state.lastPage = true;
+                state.error = true;
+            }
+        );
+        // recommend items for pagination
+        builder.addCase(
+            itemDrawerRecommendItemsPagingAsyncAction.pending,
+            (state, action) => {
+                state.loading = true;
+                state.error = false;
+            }
+        );
+        builder.addCase(
+            itemDrawerRecommendItemsPagingAsyncAction.fulfilled,
+            (state, action) => {
+                const { data } = action.payload;
+                state.loading = false;
+                state.lastPage = data.length < PAGE;
+                state.data = [...state.data, ...data];
+                state.error = false;
+            }
+        );
+        builder.addCase(
+            itemDrawerRecommendItemsPagingAsyncAction.rejected,
             (state, action) => {
                 state.loading = false;
                 state.lastPage = true;
@@ -132,7 +173,7 @@ const itemDrawerItemsSlice = createSlice({
                 state.error = true;
             }
         );
-        // category item pagination
+        // category item for pagination
         builder.addCase(
             itemDrawerCategoryItemsPagingAsyncAction.pending,
             (state, action) => {

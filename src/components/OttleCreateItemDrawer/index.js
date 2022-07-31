@@ -15,9 +15,8 @@ import {
 } from '../../features/ottleMaker/itemDrawerCategorySlice';
 import { ItemDrawerItemGrid, ItemDrawerCategoryGrid } from './Grid';
 import {
-    itemDrawerCategoryItemsAsyncAction,
     itemDrawerCategoryItemsPagingAsyncAction,
-    itemDrawerRecommendItemsAsyncAction,
+    itemDrawerRecommendItemsPagingAsyncAction,
     selectItemDrawerItems,
 } from '../../features/ottleMaker/itemDrawerItemsSlice';
 import { _ } from '../../utils/fp';
@@ -65,7 +64,7 @@ export const OttleCreateItemDrawer = () => {
         scrollRef.current.onscroll = event(scrollRef);
     };
     const fetchRecommendItems = () => {
-        dispatch(itemDrawerRecommendItemsAsyncAction());
+        dispatch(itemDrawerRecommendItemsPagingAsyncAction());
     };
     const fetchCategoryItems = (categoryId) => {
         dispatch(itemDrawerCategoryItemsPagingAsyncAction({ categoryId }));

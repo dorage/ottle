@@ -6,7 +6,9 @@ import {
     getDoc,
     getDocs,
     setDoc,
+    updateDoc,
     deleteDoc,
+    increment,
     Timestamp,
     where,
     orderBy,
@@ -94,12 +96,22 @@ export const getOttleDetail = async (username, ottleId) => {
 };
 
 /**
+ * 오뜰 개수 추가
+ * @param {*} uid
+ */
+const countUpOttleOfUser = async (uid) => {
+    const userRef = doc(firestore, C_USERS, uid);
+    await updateDoc(userRef, { ottle_count: increment(1) });
+};
+
+/**
  * uid의 유저에 새로운 Ottle을 포스팅합니다.
  * @param {*} param0
  */
 export const setOttleDoc = async (uid, blob, { title, description, items }) => {
     const ottleRef = collection(firestore, C_OTTLES);
     const { url, gsUrl } = await uploadOttleImage(uid, blob);
+    await countUpOttleOfUser(uid);
     await setDoc(doc(ottleRef), {
         uid,
         title,
@@ -316,7 +328,10 @@ export const getItemsById = async (itemIds = []) => {
  * @returns
  */
 export const getItemsRecommend = paginationHoC(
-    ({ setRef, getRef, queryByRef }) => async () => {
+    ({ initRef, setRef, getRef, queryByRef }) => async (firstPage) => {
+        if (firstPage) {
+            initRef();
+        }
         const querySnapshot = await queryByRef(
             [collection(firestore, C_ITEMS), _, limit(PAGE)],
             startAfter(getRef())
