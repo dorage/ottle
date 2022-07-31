@@ -15,16 +15,15 @@ const CategoryContainer = styled.div`
     justify-content: center;
     align-items: center;
 
-    font-size: ${(props) => props.theme.font.p14};
+    text-align: center;
+    font-size: ${(props) => props.theme.font.p12};
     font-weight: 700;
-    overflow: hidden;
     border: 1px solid ${(props) => props.theme.color.black_600};
     border-radius: 20px;
-    & > div {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     &:hover {
         background-color: ${(props) => props.theme.color.black_600};
@@ -55,7 +54,7 @@ export const GridCategories = ({ scrollRef }) => {
         <>
             {loading ? (
                 <>
-                    {Array(10)
+                    {Array(8)
                         .fill()
                         .map((_, idx) => (
                             <LoadingBlock key={idx} />

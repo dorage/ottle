@@ -27,7 +27,7 @@ const ItemGrid = styled(Grid)`
     grid-auto-rows: calc((100vw - 3.2rem) / 3 + 4rem);
 `;
 const CategoryGrid = styled(Grid)`
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     grid-auto-rows: 3rem;
 `;
 //#endregion
