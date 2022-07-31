@@ -42,11 +42,11 @@ export const ItemDrawerItemGrid = () => {
     );
 };
 
-export const ItemDrawerCategoryGrid = () => {
+export const ItemDrawerCategoryGrid = ({ scrollRef }) => {
     return (
         <Container>
             <CategoryGrid h={5}>
-                <GridCategories />
+                <GridCategories scrollRef={scrollRef} />
             </CategoryGrid>
         </Container>
     );

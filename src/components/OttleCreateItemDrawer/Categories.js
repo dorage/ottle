@@ -37,7 +37,7 @@ const CategoryContainer = styled.div`
 `;
 //#endregion
 
-export const GridCategories = () => {
+export const GridCategories = ({ scrollRef }) => {
     const dispatch = useDispatch();
     const { loading, data, error } = useSelector(selectItemDrawerCategory);
 
@@ -45,8 +45,10 @@ export const GridCategories = () => {
         dispatch(itemDrawerMainCategoryAsyncAction());
     }, []);
 
-    const onClickCategory = (id) => () => {
-        dispatch(itemDrawerSubCategoryAsyncAction(id));
+    const onClickCategory = (categoryId) => () => {
+        const { scrollTop } = scrollRef.current;
+        dispatch(itemDrawerSubCategoryAsyncAction({ categoryId, scrollTop }));
+        scrollRef.current.scrollTo(0, 0);
     };
 
     return (

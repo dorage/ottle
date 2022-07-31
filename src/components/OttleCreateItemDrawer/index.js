@@ -52,7 +52,7 @@ export const OttleCreateItemDrawer = () => {
     const dispatch = useDispatch();
     const { isOpend } = useSelector(selectItemDrawer);
     const { path } = useSelector(selectItemDrawerCategory);
-    const { lastPage } = useSelector(selectItemDrawerItems);
+    const { scrollTop } = useSelector(selectItemDrawerItems);
 
     const onClickBack = () => {
         dispatch(goBackItemDrawerCategory());
@@ -60,42 +60,45 @@ export const OttleCreateItemDrawer = () => {
     const onClickClose = () => {
         dispatch(closeItemDrawer());
     };
-
+    // scroll Event를 등록하는 함수
     const setOnScrollEvent = (event) => {
-        if (eventListener) scrollRef.current.removeEventListener(eventListener);
-        eventListener = scrollRef.current.addEventListener(
-            'scroll',
-            event(scrollRef)
-        );
+        scrollRef.current.onscroll = event(scrollRef);
     };
-    const removeOnScrollEvent = (event) => {
-        if (eventListener) scrollRef.current.removeEventListener(eventListener);
-    };
-
     const fetchRecommendItems = () => {
         dispatch(itemDrawerRecommendItemsAsyncAction());
     };
     const fetchCategoryItems = (categoryId) => {
-        dispatch(itemDrawerCategoryItemsPagingAsyncAction(categoryId));
+        dispatch(itemDrawerCategoryItemsPagingAsyncAction({ categoryId }));
     };
+    // 일정 거리 이상 넘겼을때 실행할 쓰로틀링되는 fetch 함수 생성
+    const onOverThreshold = _.throttle((path) => {
+        if (!path.length) {
+            fetchRecommendItems();
+            return;
+        }
+        fetchCategoryItems(_.getLastIndex(path));
+    }, 1000);
 
     useEffect(() => {
         setOnScrollEvent((scrollRef) => () => {
-            if (lastPage) return;
+            console.log(
+                scrollRef.current.scrollHeight -
+                    (scrollRef.current.scrollTop +
+                        scrollRef.current.clientHeight)
+            );
             if (
                 scrollRef.current.scrollHeight -
                     (scrollRef.current.scrollTop +
-                        scrollRef.current.clientHeight) ===
-                0
+                        scrollRef.current.clientHeight) <=
+                10
             ) {
-                if (!path.length) {
-                    fetchRecommendItems();
-                    return;
-                }
-                fetchRecommendItems(_.getLastIndex(path));
+                onOverThreshold(path);
             }
         });
-    }, []);
+    }, [path]);
+    useEffect(() => {
+        scrollRef.current.scrollTo(0, scrollTop);
+    }, [scrollTop]);
 
     return (
         <Container className={isOpend ? 'item-select-opend' : ''}>
@@ -103,11 +106,13 @@ export const OttleCreateItemDrawer = () => {
                 onClickBack={onClickBack}
                 onClickClose={onClickClose}
             />
+            {/*
             <SearchBarContainer>
                 <InputField placeholder='search brand, product' />
             </SearchBarContainer>
+            */}
+            <ItemDrawerCategoryGrid scrollRef={scrollRef} />
             <ScrollContainer ref={scrollRef}>
-                <ItemDrawerCategoryGrid />
                 <ItemDrawerItemGrid />
             </ScrollContainer>
         </Container>

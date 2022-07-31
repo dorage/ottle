@@ -40,10 +40,10 @@ _.conditionalArray = (arr, condition, val) =>
 
 _.throttle = (func) => {
     let running = false;
-    return () => {
+    return (...args) => {
         if (running) return;
         running = true;
-        func();
-        setTimeout(() => (running = false), 300);
+        func(...args);
+        setTimeout(() => (running = false), 1000);
     };
 };

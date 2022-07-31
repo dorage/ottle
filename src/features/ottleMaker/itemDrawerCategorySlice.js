@@ -22,7 +22,7 @@ export const itemDrawerMainCategoryAsyncAction = createAsyncThunk(
     async (_, { dispatch }) => {
         try {
             dispatch(itemDrawerRecommendItemsAsyncAction());
-            return await getMainItemCategoryDocs();
+            return { data: await getMainItemCategoryDocs() };
         } catch (err) {
             return err;
         }
@@ -30,11 +30,13 @@ export const itemDrawerMainCategoryAsyncAction = createAsyncThunk(
 );
 export const itemDrawerSubCategoryAsyncAction = createAsyncThunk(
     'itemDrawerCategory/fetch-sub-category',
-    async (categoryId, { dispatch, getState }) => {
+    async ({ categoryId, scrollTop }, { dispatch, getState }) => {
         try {
             const { path } = selectItemDrawerCategory(getState());
 
-            dispatch(itemDrawerCategoryItemsAsyncAction(categoryId));
+            dispatch(
+                itemDrawerCategoryItemsAsyncAction({ categoryId, scrollTop })
+            );
             return {
                 path: categoryId,
                 data: await getSubItemCategoryDocs([...path, categoryId]),
@@ -66,8 +68,9 @@ const itemDrawerCategorySlice = createSlice({
         builder.addCase(
             itemDrawerMainCategoryAsyncAction.fulfilled,
             (state, action) => {
+                const { data } = action.payload;
                 state.loading = false;
-                state.data = action.payload;
+                state.data = data;
                 state.error = null;
             }
         );
@@ -83,6 +86,7 @@ const itemDrawerCategorySlice = createSlice({
             itemDrawerSubCategoryAsyncAction.pending,
             (state, action) => {
                 state.loading = true;
+                state.history = [...state.history, state.data];
             }
         );
         builder.addCase(
@@ -91,7 +95,6 @@ const itemDrawerCategorySlice = createSlice({
                 const { path, data } = action.payload;
                 state.loading = false;
                 state.path = [...state.path, path];
-                state.history = [...state.history, state.data];
                 state.data = data;
                 state.error = null;
             }
@@ -102,7 +105,6 @@ const itemDrawerCategorySlice = createSlice({
                 const { path, data } = action.payload;
                 state.loading = false;
                 state.path = [...state.path, path];
-                state.history = [...state.history, state.data];
                 state.data = [];
                 state.error = data;
             }

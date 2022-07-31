@@ -4,8 +4,10 @@ import {
     getItemsRecommend,
     PAGE,
 } from '../../app/firestore';
+import { _ } from '../../utils/fp';
 
 const initialState = {
+    scrollTop: 0,
     lastPage: false,
     history: [],
     data: [],
@@ -20,9 +22,9 @@ const initialState = {
  */
 export const itemDrawerRecommendItemsAsyncAction = createAsyncThunk(
     'itemDrawerItems/fetch-recommend',
-    async () => {
+    async (_) => {
         try {
-            return await getItemsRecommend();
+            return { data: await getItemsRecommend() };
         } catch (err) {
             return err;
         }
@@ -34,9 +36,12 @@ export const itemDrawerRecommendItemsAsyncAction = createAsyncThunk(
  */
 export const itemDrawerCategoryItemsAsyncAction = createAsyncThunk(
     'itemDrawerItems/fetch-category',
-    async (categoryId) => {
+    async ({ categoryId, scrollTop }) => {
         try {
-            return await getItemsInCategory(categoryId, true);
+            return {
+                scrollTop: scrollTop,
+                data: await getItemsInCategory(categoryId, true),
+            };
         } catch (err) {
             return err;
         }
@@ -48,9 +53,9 @@ export const itemDrawerCategoryItemsAsyncAction = createAsyncThunk(
  */
 export const itemDrawerCategoryItemsPagingAsyncAction = createAsyncThunk(
     'itemDrawerItems/fetch-category-paging',
-    async (categoryId) => {
+    async ({ categoryId }) => {
         try {
-            return await getItemsInCategory(categoryId);
+            return { data: await getItemsInCategory(categoryId) };
         } catch (err) {
             return err;
         }
@@ -62,9 +67,10 @@ const itemDrawerItemsSlice = createSlice({
     initialState,
     reducers: {
         goBackItemDrawerItem: (state, action) => {
-            const { lastPage, data } = state.history.pop();
+            const { lastPage, data, scrollTop } = state.history.pop();
             state.lastPage = lastPage;
             state.data = data;
+            state.scrollTop = scrollTop;
         },
     },
     extraReducers(builder) {
@@ -78,9 +84,10 @@ const itemDrawerItemsSlice = createSlice({
         builder.addCase(
             itemDrawerRecommendItemsAsyncAction.fulfilled,
             (state, action) => {
+                const { data } = action.payload;
                 state.loading = false;
                 state.lastPage = action.payload.length < PAGE;
-                state.data = [...state.data, ...action.payload];
+                state.data = [...state.data, ...data];
                 state.error = false;
             }
         );
@@ -108,8 +115,10 @@ const itemDrawerItemsSlice = createSlice({
         builder.addCase(
             itemDrawerCategoryItemsAsyncAction.fulfilled,
             (state, action) => {
+                const { scrollTop, data } = action.payload;
                 state.loading = false;
-                state.data = action.payload;
+                state.data = data;
+                state.history[state.history.length - 1].scrollTop = scrollTop;
                 state.error = false;
             }
         );
@@ -130,9 +139,10 @@ const itemDrawerItemsSlice = createSlice({
         builder.addCase(
             itemDrawerCategoryItemsPagingAsyncAction.fulfilled,
             (state, action) => {
+                const { data } = action.payload;
                 state.loading = false;
                 state.lastPage = action.payload.length < PAGE;
-                state.data = [...state.data, ...action.payload];
+                state.data = [...state.data, ...data];
                 state.error = false;
             }
         );

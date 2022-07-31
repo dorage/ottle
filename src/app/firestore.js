@@ -343,11 +343,11 @@ export const getItemsInCategory = paginationHoC(
         firstPage = false
     ) => {
         if (firstPage) {
-            setContext({ categoryId: undefined });
-        }
-        if (getContext().categoryId !== categoryId) {
+            setContext({ [categoryId]: undefined });
             initRef();
-            setContext({ categoryId });
+        }
+        if (getContext()[categoryId]) {
+            setRef(getContext()[categoryId]);
         }
         const querySnapshot = await queryByRef(
             [
@@ -360,7 +360,7 @@ export const getItemsInCategory = paginationHoC(
         );
 
         if (querySnapshot.empty) return [];
-        setRef(_.getLastIndex(querySnapshot.docs));
+        setContext({ [categoryId]: _.getLastIndex(querySnapshot.docs) });
 
         const items = [];
         querySnapshot.forEach((doc) =>
