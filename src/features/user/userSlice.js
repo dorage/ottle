@@ -1,10 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { getUserByUID } from '../../app/firestore';
 
 const userData = {
     isAuth: false,
     user: null,
     loading: true,
-    error: null,
+    error: false,
 };
 
 export const signInAsyncAction = createAsyncThunk(
@@ -19,6 +20,17 @@ export const signOutAsyncAction = createAsyncThunk(
     async (signOutFn) => {
         if (await signOutFn()) return;
         throw Error('You failed to sign out');
+    }
+);
+
+export const loadUserAsyncAction = createAsyncThunk(
+    'user/loadUser',
+    async ({ uid }) => {
+        try {
+            return { user: await getUserByUID(uid) };
+        } catch (err) {
+            return { error: err };
+        }
     }
 );
 
@@ -48,6 +60,18 @@ const userSlice = createSlice({
         builder.addCase(signOutAsyncAction.fulfilled, (state) => {
             state.isAuth = false;
             state.user = null;
+        });
+        builder.addCase(loadUserAsyncAction.pending, (state) => {
+            state.loading = true;
+
+            state.error = false;
+        });
+        builder.addCase(loadUserAsyncAction.fulfilled, (state, action) => {
+            const { user } = action.payload;
+            state.user = user;
+        });
+        builder.addCase(loadUserAsyncAction.rejected, (state, action) => {
+            state.error = true;
         });
     },
 });

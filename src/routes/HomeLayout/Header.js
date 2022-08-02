@@ -8,6 +8,8 @@ import { routes } from '../../configs/routes';
 import { LinkedGradientButton } from '../../components/Button/GradientButton';
 import { selectUser } from '../../features/user/userSlice';
 
+const Container = styled(HeaderContainer)``;
+
 const Logo = styled.div`
     width: 7rem;
     height: 3.2rem;
@@ -21,13 +23,14 @@ const Logo = styled.div`
 export const HomeLayoutHeader = () => {
     const { isAuth, user } = useSelector(selectUser);
     return (
-        <HeaderContainer>
+        <Container>
             <Logo src={ottle_black_512} />
             <LinkedGradientButton
-                to={isAuth && routes.ottleCreate(user.username, '123')}
+                //to={isAuth && routes.ottleCreate(user.username, '123')}
+                to={routes.ottleCreate()}
             >
                 Create
             </LinkedGradientButton>
-        </HeaderContainer>
+        </Container>
     );
 };

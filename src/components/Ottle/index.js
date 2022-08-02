@@ -44,9 +44,6 @@ export const Ottle = ({ loading, data }) => {
     return (
         <Container>
             <Header>
-                <ProfileSection>
-                    <Portrait src={data.user.profile_src} />
-                </ProfileSection>
                 <div>
                     <div>
                         <b>{data.user.name}</b>

@@ -92,6 +92,7 @@ export const theme = {
         black_500: '#bbbbbb',
         black_600: '#eeeeee',
         highlight: '#0FC2C0',
+        error: '#FF0000',
     },
     gap: {
         gap_4: '0.4rem',

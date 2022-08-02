@@ -1,12 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
 import { SemiRoundButton } from '../Button/RoundButton';
 import { theme } from '../../assets/styles/GlobalStyles';
-import { closePosting } from '../../features/ottleMaker/ottlePostingSlice';
 import { GradientSemiRoundButton } from '../Button/GradientButton';
-import { routes } from '../../configs/routes';
 import { FooterContainer } from '../Layout/Footer';
 
 //#region styled-components

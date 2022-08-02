@@ -6,7 +6,6 @@ import { Portrait } from '../../components/Layout/Portrait';
 import { IconButton } from '../../components/Button/IconButton';
 import { BsCaretDownFill } from 'react-icons/bs';
 import { theme } from '../../assets/styles/GlobalStyles';
-import pic from '../../assets/images/temp.jpg';
 import { signOutAsyncAction } from '../../features/user/userSlice';
 import { signOutFirebase } from '../../app/auth';
 import { ExLinkHoC } from '../../components/HOC/LinkHoC';
@@ -94,13 +93,13 @@ export const ProfileInfo = ({ user }) => {
 
     return (
         <Container className='pad'>
+            {/*
             <Row>
                 <div className='flex-1'>
                     <Portrait src={user.profile_src} />
                 </div>
                 <FigureGroups className='flex-3'>
                     <Figure>{user.ottle_count} 개의 옷뜰을 만들었어요</Figure>
-                    {/*
                     <FigureGroup>
                         <Figure>2</Figure>
                         <FigureLabel>옷뜰</FigureLabel>
@@ -109,12 +108,12 @@ export const ProfileInfo = ({ user }) => {
                         <Figure>152</Figure>
                         <FigureLabel>좋아요</FigureLabel>
                     </FigureGroup>
-                    */}
                 </FigureGroups>
             </Row>
+            */}
             <Row>
                 <div>
-                    <Name>{user.name || 'unnamed'} BREAKING</Name>
+                    <Name>{user.name || 'unnamed'}</Name>
                     <br></br>
                     <Username>{user.username}</Username>
                 </div>

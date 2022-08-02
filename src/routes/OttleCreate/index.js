@@ -223,8 +223,10 @@ export const OttleMaker = () => {
                     );
                 }}
                 onSubmit={() => {
-                    // TODO; 나중에 지우기
-                    if (items.length < 2) {
+                    if (
+                        process.env.NODE_ENV === 'production' &&
+                        items.length < 2
+                    ) {
                         dispatch(broadcastAlert(ALERTS.ottleCreate.noItem));
                         return;
                     }

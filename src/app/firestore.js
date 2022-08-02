@@ -42,6 +42,21 @@ const dateToTimestamp = (date) => {
     return Timestamp.fromDate(date);
 };
 
+export const checkUsername = async (username) => {
+    const ref = query(
+        collection(firestore, C_USERS),
+        where('username', '==', username)
+    );
+    const snapshot = await getDocs(ref);
+    return !snapshot.empty;
+};
+
+export const setUserInfo = async (uid, { name, username }) => {
+    const docRef = doc(firestore, C_USERS, uid);
+    await updateDoc(docRef, { is_registered: true, name, username });
+    return true;
+};
+
 /**
  * user 정보를 가져옵니다
  * @param {*} uid

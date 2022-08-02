@@ -18,6 +18,7 @@ import { AuthHoC } from './components/HOC/AuthHoC';
 import { DesktopNotReady } from './routes/DesktopNotReady';
 import styled from 'styled-components';
 import { SignIn } from './routes/SignIn';
+import { Registration } from './routes/Registration';
 
 export const Background = styled.div`
     display: flex;
@@ -40,7 +41,12 @@ function App() {
         );
     }, []);
 
-    if (userLoading) return <></>;
+    if (isAuth && !user.is_registered)
+        return (
+            <Background>
+                <Registration />
+            </Background>
+        );
 
     return (
         <Background>
