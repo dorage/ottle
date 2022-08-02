@@ -24,35 +24,51 @@ export const OttleCreatePostingPreview = ({ canvasRef }) => {
     const { items } = useSelector(selectOttleItem);
     const { isOpend, form } = useSelector(selectOttlePosting);
 
-    useEffect(() => {
+    const loadImages = (itemArr) => {
+        return itemArr.map((item) => {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.src = item.product.image.original;
+                img.crossOrigin = 'Anonymous'; // html canvas toDataURL 오류
+                img.onload = () => {
+                    resolve({ item, img });
+                };
+            });
+        });
+    };
+
+    const loadPreview = async () => {
         const ctx = canvasRef.current.getContext('2d');
-        ctx.clearRect(0, 0, 1080, 1080);
         ctx.fillStyle = 'white';
         ctx.fillRect(0, 0, 1080, 1080);
-        [...items].reverse().forEach((item) => {
-            const img = new Image();
-            img.src = item.product.image.original;
-            img.crossOrigin = 'Anonymous'; // html canvas toDataURL 오류
-            img.onload = () => {
-                const {
-                    position: { x, y },
-                    rotation,
-                    scale,
-                    size: { w, h },
-                } = item;
 
-                const dw = w * scale;
-                const dh = h * scale;
-                const dx = x * ARTBOARD_SIZE;
-                const dy = y * ARTBOARD_SIZE;
+        const itemArr = [...items].reverse();
+        const promises = loadImages(itemArr);
+        const imgs = await Promise.all(promises);
 
-                ctx.save();
-                ctx.translate(dx, dy);
-                ctx.rotate((Math.PI / 180) * (rotation * 360));
-                ctx.drawImage(img, dw / -2, dh / -2, dw, dh);
-                ctx.restore();
-            };
+        imgs.forEach(({ item, img }) => {
+            const {
+                position: { x, y },
+                rotation,
+                scale,
+                size: { w, h },
+            } = item;
+
+            const dw = w * scale;
+            const dh = h * scale;
+            const dx = x * ARTBOARD_SIZE;
+            const dy = y * ARTBOARD_SIZE;
+
+            ctx.save();
+            ctx.translate(dx, dy);
+            ctx.rotate((Math.PI / 180) * (rotation * 360));
+            ctx.drawImage(img, dw / -2, dh / -2, dw, dh);
+            ctx.restore();
         });
+    };
+
+    useEffect(() => {
+        loadPreview();
     }, [isOpend]);
 
     return (

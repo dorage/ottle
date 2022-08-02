@@ -215,7 +215,12 @@ const paginationHoC = (func) => {
  * @returns
  */
 export const getOttlesByUID = paginationHoC(
-    ({ setRef, getRef, queryByRef }) => async (uid) => {
+    ({ initRef, setRef, getRef, queryByRef }) => async (
+        uid,
+        firstPage = false
+    ) => {
+        if (firstPage) initRef();
+        console.log(getRef());
         const querySnapshot = await queryByRef(
             [
                 collection(firestore, C_OTTLES),
@@ -239,7 +244,7 @@ export const getOttlesByUID = paginationHoC(
                 created_at: timestampToDate(created_at),
             });
         });
-
+        console.log(ottles);
         return ottles;
     }
 );

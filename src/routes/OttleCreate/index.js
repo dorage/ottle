@@ -78,7 +78,6 @@ export const OttleMaker = () => {
     };
 
     useEffect(() => {
-        console.log('initialize');
         initializeOttleCreateRedux();
     }, []);
 

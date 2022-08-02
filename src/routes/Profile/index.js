@@ -13,18 +13,17 @@ import {
 export const Profile = () => {
     const dispatch = useDispatch();
     const { setOnScrollEvent } = useOutletContext();
-    const { isAuth, user } = useSelector(selectUser);
+    const { user } = useSelector(selectUser);
     const { lastPage } = useSelector(selectMyOttles);
 
-    const fetchData = () => {
-        if (lastPage) return;
+    const fetchData = (firstPage) => {
+        if (!firstPage && lastPage) return;
         const { uid } = user;
-        dispatch(myOttlesAsyncAction(uid));
+        dispatch(myOttlesAsyncAction({ uid, firstPage: true }));
     };
-    const fetchMyLikes = () => {};
 
     useEffect(() => {
-        fetchData();
+        fetchData(true);
         setOnScrollEvent((pageRef) => (e) => {
             if (
                 pageRef.current.scrollHeight -
@@ -37,12 +36,10 @@ export const Profile = () => {
         });
     }, []);
 
-    return user ? (
+    return (
         <>
             <ProfileInfo user={user} />
             <ProfileItems user={user} />
         </>
-    ) : (
-        <></>
     );
 };

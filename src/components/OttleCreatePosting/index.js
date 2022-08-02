@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
@@ -39,6 +39,7 @@ export const OttleCreatePosting = () => {
     const navigator = useNavigate();
     const canvasRef = useRef();
 
+    const [saving, setSaving] = useState(false);
     const { isOpend, form } = useSelector(selectOttlePosting);
     const { items } = useSelector(selectOttleItem);
     const { user } = useSelector(selectUser);
@@ -47,22 +48,28 @@ export const OttleCreatePosting = () => {
         if (process.env.NODE_ENV === 'development') navigator(routes.main());
     };
 
-    const onClickPublish = () => {
+    const onClickPublish = async () => {
+        if (saving) return;
+        setSaving(true);
         const { title, description } = form;
 
         const link = document.createElement('a');
         link.download = `download_${Number(new Date())}.webp`;
         link.href = canvasRef.current.toDataURL();
-        canvasRef.current.toBlob(
-            (blob) =>
-                setOttleDoc(user.uid, blob, {
-                    title,
-                    description,
-                    items,
-                }),
-            'image/webp',
-            1
-        );
+        await new Promise((resolve) => {
+            canvasRef.current.toBlob(
+                async (blob) => {
+                    await setOttleDoc(user.uid, blob, {
+                        title,
+                        description,
+                        items,
+                    });
+                    resolve();
+                },
+                'image/webp',
+                1
+            );
+        });
         link.click();
         link.remove();
 
