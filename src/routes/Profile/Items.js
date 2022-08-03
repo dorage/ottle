@@ -1,11 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { routes } from '../../configs/routes';
-import { useDispatch, useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
-import { selectMyOttles } from '../../features/profile/myOttlesSlice';
+import { useNavigate, useParams } from 'react-router-dom';
 import { NoItem } from './NoItem';
+import { UserOttleContext } from './UserOttleContext';
 
 //#region styled-components
 const Container = styled.div`
@@ -29,35 +27,49 @@ const LoadingThumb = styled.div`
 `;
 //#endregion
 
-export const ProfileItems = ({ user }) => {
+export const ProfileItems = () => {
     const navigation = useNavigate();
-    const { username } = user;
-    const { lastPage, data: ottles, loading } = useSelector(selectMyOttles);
+    const { username } = useParams();
+    const { lastPage, loading, ottles, error } = useContext(UserOttleContext);
 
-    const onClickOttle = (username, ottleId) => () => {
+    const onClickOttle = (ottleId) => () => {
         navigation(routes.ottleDetail(username, ottleId));
     };
 
+    if (!lastPage && loading && !ottles.length)
+        return (
+            <Container className='pad'>
+                {Array(9)
+                    .fill()
+                    .map((_, idx) => (
+                        <LoadingThumb key={idx} />
+                    ))}
+            </Container>
+        );
+
+    if (ottles.length)
+        return (
+            <Container className='pad'>
+                {ottles.map(({ id, image }, idx) => {
+                    return (
+                        <OttleThumb
+                            key={idx}
+                            src={image.sm}
+                            onClick={onClickOttle(id)}
+                        />
+                    );
+                })}
+                {!lastPage && loading && (
+                    <>
+                        <LoadingThumb />
+                        <LoadingThumb />
+                        <LoadingThumb />
+                    </>
+                )}
+            </Container>
+        );
+
     if (!loading && !ottles.length) return <NoItem />;
 
-    return (
-        <Container className='pad'>
-            {ottles.map(({ id, image }, idx) => {
-                return (
-                    <OttleThumb
-                        key={idx}
-                        src={image.sm}
-                        onClick={onClickOttle(username, id)}
-                    />
-                );
-            })}
-            {!lastPage && loading && (
-                <>
-                    <LoadingThumb />
-                    <LoadingThumb />
-                    <LoadingThumb />
-                </>
-            )}
-        </Container>
-    );
+    if (error) return <></>;
 };

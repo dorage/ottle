@@ -15,6 +15,7 @@ const Center = styled.div`
 const Symbol = styled.div`
     width: 30vw;
     height: 12vw;
+    max-height: 10rem;
 
     background-image: url(${(props) => props.src});
     background-size: contain;

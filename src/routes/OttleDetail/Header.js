@@ -30,6 +30,7 @@ const Block = styled.div`
 
 export const OttleDetailHeader = ({ loading, data }) => {
     const navigation = useNavigate();
+
     if (loading) return <></>;
     return (
         <Container>

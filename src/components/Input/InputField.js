@@ -32,9 +32,20 @@ const Message = styled.div`
 `;
 //#endregion
 
-export const InputField = ({ value, setValue, error, msg, ...props }) => {
+export const InputField = ({
+    value,
+    setValue,
+    error,
+    msg,
+    blank,
+    ...props
+}) => {
     const onChangeInput = (e) => {
+        console.log(e.key);
         setValue(e.currentTarget.value);
+    };
+    const onKeyDown = (e) => {
+        if ((!blank && e.key === ' ') || !e.key.length) e.preventDefault();
     };
 
     return (
@@ -42,6 +53,7 @@ export const InputField = ({ value, setValue, error, msg, ...props }) => {
             <Input
                 error={error}
                 value={value}
+                onKeyDown={onKeyDown}
                 onChange={onChangeInput}
                 {...props}
             />

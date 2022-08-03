@@ -24,11 +24,13 @@ export const signOutAsyncAction = createAsyncThunk(
 );
 
 export const loadUserAsyncAction = createAsyncThunk(
-    'user/loadUser',
+    'user/load-user',
     async ({ uid }) => {
+        console.log(uid);
         try {
-            return { user: await getUserByUID(uid) };
+            return await getUserByUID(uid);
         } catch (err) {
+            console.log(err);
             return { error: err };
         }
     }
@@ -63,12 +65,11 @@ const userSlice = createSlice({
         });
         builder.addCase(loadUserAsyncAction.pending, (state) => {
             state.loading = true;
-
             state.error = false;
         });
         builder.addCase(loadUserAsyncAction.fulfilled, (state, action) => {
-            const { user } = action.payload;
-            state.user = user;
+            console.log(action.payload);
+            //state.user = user;
         });
         builder.addCase(loadUserAsyncAction.rejected, (state, action) => {
             state.error = true;

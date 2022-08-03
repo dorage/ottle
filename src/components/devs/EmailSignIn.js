@@ -60,7 +60,10 @@ export const EmailSignIn = () => {
                 <>
                     <div>
                         {accounts.map((_, idx) => (
-                            <button onClick={() => onClickAccount(idx)}>
+                            <button
+                                key={idx}
+                                onClick={() => onClickAccount(idx)}
+                            >
                                 {idx}
                             </button>
                         ))}

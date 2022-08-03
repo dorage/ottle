@@ -65,7 +65,6 @@ export const setUserInfo = async (uid, { name, username }) => {
 export const getUserByUID = async (uid) => {
     const docRef = doc(firestore, C_USERS, uid);
     const docSnap = await getDoc(docRef);
-
     if (docSnap.exists()) {
         return { uid: docSnap.id, ...docSnap.data() };
     } else {
@@ -220,7 +219,6 @@ export const getOttlesByUID = paginationHoC(
         firstPage = false
     ) => {
         if (firstPage) initRef();
-        console.log(getRef());
         const querySnapshot = await queryByRef(
             [
                 collection(firestore, C_OTTLES),
@@ -244,7 +242,44 @@ export const getOttlesByUID = paginationHoC(
                 created_at: timestampToDate(created_at),
             });
         });
-        console.log(ottles);
+        return ottles;
+    }
+);
+/**
+ * uid 를 가진 유저의 모든 Ottle을 가져옵니다.
+ * @param {*} uid
+ * @returns
+ */
+export const getOttlesByUsername = paginationHoC(
+    ({ initRef, setRef, getRef, queryByRef }) => async (
+        username,
+        firstPage = false
+    ) => {
+        if (firstPage) initRef();
+        const { uid } = await getUserByUsername(username);
+        const querySnapshot = await queryByRef(
+            [
+                collection(firestore, C_OTTLES),
+                where('uid', '==', uid),
+                orderBy('created_at', 'desc'),
+                _,
+                limit(PAGE),
+            ],
+            startAfter(getRef())
+        );
+
+        if (querySnapshot.empty) return [];
+        setRef(_.getLastIndex(querySnapshot.docs));
+
+        const ottles = [];
+        querySnapshot.forEach((doc) => {
+            const { created_at } = doc.data();
+            ottles.push({
+                id: doc.id,
+                ...doc.data(),
+                created_at: timestampToDate(created_at),
+            });
+        });
         return ottles;
     }
 );

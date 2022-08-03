@@ -36,27 +36,53 @@ const SubmitButton = styled(GradientSemiRoundButton)`
 `;
 //#endregion
 
+const errors = {
+    none: { error: false, message: '' },
+    length: { error: false, message: '최소 4자 최대 15자의 ID를 만들어주세요' },
+    exist: { error: true, message: '이미 사용중인 ID 입니다' },
+    valid: {
+        error: true,
+        message: '알파벳 a-z A-Z 특수기호 _ - 만 사용가능합니다',
+    },
+};
+
 export const Registration = () => {
     const dispatch = useDispatch();
     const { user } = useSelector(selectUser);
-    const [error, setError] = useState(false);
+    const [error, setError] = useState(errors.none);
     const [loading, setLoading] = useState(false);
     const [name, setName] = useState(user.name);
     const [username, setUsername] = useState(user.username);
 
+    const validateUsername = async () => {
+        if (username.length < 4) {
+            setError(errors.length);
+            return false;
+        }
+        const match = username.match(/^[a-zA-Z_-]*$/g);
+        if (!match) {
+            setError(errors.valid);
+            return false;
+        }
+        const exist = await checkUsername(username);
+        if (exist) {
+            setError(errors.exist);
+            return false;
+        }
+        return true;
+    };
+
     const onSubmit = async () => {
         if (loading) return;
-        setError(false);
+        setError(errors.none);
         try {
             setLoading(true);
-            const exist = await checkUsername(username);
-            if (exist) {
+            if (!(await validateUsername())) {
                 setLoading(false);
-                setError(exist);
                 return;
             }
             await setUserInfo(user.uid, { name, username });
-            dispatch(loadUserAsyncAction(user.uid));
+            dispatch(loadUserAsyncAction({ uid: user.uid }));
         } catch (err) {
             console.log(err);
         }
@@ -68,15 +94,22 @@ export const Registration = () => {
                 <h1>필수정보 입력</h1>
                 <InputGroup>
                     <h2>이름</h2>
-                    <InputField value={name} setValue={setName} />
+                    <InputField
+                        value={name}
+                        setValue={setName}
+                        maxLength={10}
+                        blank={false}
+                    />
                 </InputGroup>
                 <InputGroup>
                     <h2>ID</h2>
                     <InputField
-                        error={error}
-                        msg={'이미 사용중인 ID 입니다'}
+                        error={error.error}
+                        msg={error.message}
                         value={username}
                         setValue={setUsername}
+                        maxLength={15}
+                        blank={false}
                     />
                 </InputGroup>
             </div>

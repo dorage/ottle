@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
@@ -10,6 +10,11 @@ import { signOutAsyncAction } from '../../features/user/userSlice';
 import { signOutFirebase } from '../../app/auth';
 import { ExLinkHoC } from '../../components/HOC/LinkHoC';
 import { CopyClipboardHoC } from '../../components/HOC/CopyClipboardHoC';
+import { UserContext } from './UserContext';
+import {
+    LoadingBlock,
+    LoadingFlex,
+} from '../../components/OttleCreateItemDrawer/LoadingItem';
 
 //#region styled-components
 const Container = styled.div`
@@ -21,26 +26,6 @@ const Row = styled.div`
     display: flex;
     justify-content: space-between;
     margin-bottom: ${(props) => props.theme.gap.gap_8};
-`;
-const FigureGroups = styled.div`
-    display: flex;
-    justify-content: space-evenly;
-`;
-const FigureGroup = styled.div`
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-`;
-const Figure = styled.div`
-    display: flex;
-    align-items: center;
-    margin-bottom: ${(props) => props.theme.gap.gap_4};
-    font-weight: 700;
-    font-size: ${(props) => props.theme.font.p16};
-`;
-const FigureLabel = styled.div`
-    font-size: ${(props) => props.theme.font.p14};
 `;
 const Name = styled.span`
     font-weight: 700;
@@ -79,9 +64,10 @@ const ExLinkPopOut = ExLinkHoC(PopOut);
 
 //#endregion
 
-export const ProfileInfo = ({ user }) => {
+export const ProfileInfo = () => {
     const dispatch = useDispatch();
     const [actionBar, setActionBar] = useState(false);
+    const { isMe, loading, user, error } = useContext(UserContext);
 
     const onClickActionBar = () => {
         setActionBar(!actionBar);
@@ -91,53 +77,86 @@ export const ProfileInfo = ({ user }) => {
         dispatch(signOutAsyncAction(signOutFirebase()));
     };
 
-    return (
-        <Container className='pad'>
-            {/*
-            <Row>
-                <div className='flex-1'>
-                    <Portrait src={user.profile_src} />
-                </div>
-                <FigureGroups className='flex-3'>
-                    <Figure>{user.ottle_count} 개의 옷뜰을 만들었어요</Figure>
-                    <FigureGroup>
-                        <Figure>2</Figure>
-                        <FigureLabel>옷뜰</FigureLabel>
-                    </FigureGroup>
-                    <FigureGroup>
-                        <Figure>152</Figure>
-                        <FigureLabel>좋아요</FigureLabel>
-                    </FigureGroup>
-                </FigureGroups>
-            </Row>
-            */}
-            <Row>
-                <div>
-                    <Name>{user.name || 'unnamed'}</Name>
-                    <br></br>
-                    <Username>{user.username}</Username>
-                </div>
-                <ActionBar>
-                    <Actions className={actionBar && 'open'}>
-                        <PopOut onClick={onSignOut}>로그아웃</PopOut>
-                        <CopyPopOut
-                            url={`${window.location.host}/${user.username}`}
-                        >
-                            공유하기
-                        </CopyPopOut>
-                        <ExLinkPopOut to='https://dorage.notion.site/1b9b37e0b0804e0b98fd9580c1b9797f'>
-                            도움말
-                        </ExLinkPopOut>
-                    </Actions>
-                    <ActionButton
-                        className={actionBar && 'open'}
-                        h={theme.font.p16}
-                        active={true}
-                        icon={<BsCaretDownFill />}
-                        onClick={onClickActionBar}
-                    />
-                </ActionBar>
-            </Row>
-        </Container>
-    );
+    if (loading)
+        return (
+            <Container className='pad'>
+                <Row>
+                    <div>
+                        <LoadingFlex length={10} fontSize={theme.font.p14} />
+                        <br></br>
+                        <LoadingFlex length={8} fontSize={theme.font.p10} />
+                    </div>
+                    <ActionBar>
+                        <LoadingBlock length={5} fontSize={theme.font.p10} />
+                    </ActionBar>
+                </Row>
+            </Container>
+        );
+
+    if (isMe)
+        return (
+            <Container className='pad'>
+                <Row>
+                    <div>
+                        <Name>{user.name || 'unnamed'}</Name>
+                        <br></br>
+                        <Username>{user.username}</Username>
+                    </div>
+                    <ActionBar>
+                        <Actions className={actionBar && 'open'}>
+                            <PopOut onClick={onSignOut}>로그아웃</PopOut>
+                            <CopyPopOut
+                                url={`${window.location.host}/${user.username}`}
+                            >
+                                공유하기
+                            </CopyPopOut>
+                            <ExLinkPopOut to='https://dorage.notion.site/1b9b37e0b0804e0b98fd9580c1b9797f'>
+                                도움말
+                            </ExLinkPopOut>
+                        </Actions>
+                        <ActionButton
+                            className={actionBar && 'open'}
+                            h={theme.font.p16}
+                            active={true}
+                            icon={<BsCaretDownFill />}
+                            onClick={onClickActionBar}
+                        />
+                    </ActionBar>
+                </Row>
+            </Container>
+        );
+
+    if (user)
+        return (
+            <Container className='pad'>
+                <Row>
+                    <div>
+                        <Name>{user.name || 'unnamed'}</Name>
+                        <br></br>
+                        <Username>{user.username}</Username>
+                    </div>
+                    <ActionBar>
+                        <Actions className={actionBar && 'open'}>
+                            <CopyPopOut
+                                url={`${window.location.host}/${user.username}`}
+                            >
+                                공유하기
+                            </CopyPopOut>
+                            <ExLinkPopOut to='https://dorage.notion.site/1b9b37e0b0804e0b98fd9580c1b9797f'>
+                                도움말
+                            </ExLinkPopOut>
+                        </Actions>
+                        <ActionButton
+                            className={actionBar && 'open'}
+                            h={theme.font.p16}
+                            active={true}
+                            icon={<BsCaretDownFill />}
+                            onClick={onClickActionBar}
+                        />
+                    </ActionBar>
+                </Row>
+            </Container>
+        );
+
+    if (error) return <></>;
 };

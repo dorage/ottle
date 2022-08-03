@@ -1,6 +1,24 @@
 export const _ = {};
 
 /**
+ * Object의 key들을 반환합니다.
+ * @param {*} o
+ * @returns
+ */
+_.keys = (o) => Object.keys(o);
+
+/**
+ * 오브젝트 o를 deep copy 해서 반환합니다.
+ * @param {*} o
+ * @returns
+ */
+_.deepCopy = (o) =>
+    _.keys(o).reduce((newO, k) => {
+        if (typeof o[k] === 'object') return { ...newO, [k]: _.deepCopy(o[k]) };
+        return { ...newO, [k]: o[k] };
+    }, {});
+
+/**
  * n번째 값을 가져옵니다.
  * n이 음수인 경우 역순
  * @param {Array} arr

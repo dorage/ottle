@@ -19,14 +19,8 @@ import { DesktopNotReady } from './routes/DesktopNotReady';
 import styled from 'styled-components';
 import { SignIn } from './routes/SignIn';
 import { Registration } from './routes/Registration';
-
-export const Background = styled.div`
-    display: flex;
-    justify-content: center;
-    width: 100vw;
-    height: 100vh;
-    background-color: ${(props) => props.theme.color.black_600};
-`;
+import { FullScreenContainer } from './components/Layout/Container';
+import { MobileScreenHoC } from './components/HOC/MobileScreenHoC';
 
 function App() {
     const [isMobile, setIsMobile] = useState(false);
@@ -41,58 +35,45 @@ function App() {
         );
     }, []);
 
-    if (isAuth && !user.is_registered)
-        return (
-            <Background>
-                <Registration />
-            </Background>
-        );
+    if (isAuth && !user.is_registered) return <Registration />;
 
     return (
-        <Background>
-            <Routes>
+        <Routes>
+            <Route
+                path={routes.ottleCreate()}
+                element={isMobile ? <OttleMaker /> : <DesktopNotReady />}
+            />
+            <Route path={routes.ottleDetail()} element={<OttleDetail />} />
+            <Route path={routes.pageNotFound()} element={<PageNotFound />} />
+            <Route path='*' element={<Navigate to={routes.pageNotFound()} />} />
+            <Route path={routes.main()} element={<HomeLayout />}>
                 <Route
-                    path={routes.ottleCreate()}
-                    element={isMobile ? <OttleMaker /> : <DesktopNotReady />}
-                />
-                <Route path={routes.ottleDetail()} element={<OttleDetail />} />
-                <Route
-                    path={routes.pageNotFound()}
-                    element={<PageNotFound />}
+                    path={routes.main()}
+                    element={<Navigate to={routes.profile()} />}
                 />
                 <Route
-                    path='*'
-                    element={<Navigate to={routes.pageNotFound()} />}
+                    path={routes.profile()}
+                    element={
+                        isAuth ? (
+                            <Navigate to={routes.user(user.username)} />
+                        ) : (
+                            <SignIn />
+                        )
+                    }
                 />
-                <Route path={routes.main()} element={<HomeLayout />}>
-                    <Route
-                        path={routes.main()}
-                        element={<Navigate to={routes.profile()} />}
-                    />
-                    <Route
-                        path={routes.profile()}
-                        element={
-                            isAuth ? (
-                                <Navigate to={routes.user(user.username)} />
-                            ) : (
-                                <SignIn />
-                            )
-                        }
-                    />
-                    <Route
-                        path={routes.user()}
-                        element={
-                            isAuth ? (
-                                <Profile />
-                            ) : (
-                                <Navigate to={routes.profile()} />
-                            )
-                        }
-                    />
-                </Route>
-            </Routes>
-        </Background>
+                <Route
+                    path={routes.user()}
+                    element={
+                        isAuth ? (
+                            <Profile />
+                        ) : (
+                            <Navigate to={routes.profile()} />
+                        )
+                    }
+                />
+            </Route>
+        </Routes>
     );
 }
 
-export default AuthHoC(ScreenHoC(App));
+export default MobileScreenHoC(AuthHoC(ScreenHoC(App)));
