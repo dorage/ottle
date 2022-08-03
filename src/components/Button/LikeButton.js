@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { IconButton } from './IconButton';
 import { HiHeart, HiOutlineHeart } from 'react-icons/hi';
 import { deleteOttleLike, setOttleLike } from '../../app/firestore';
 import { selectUser } from '../../features/user/userSlice';
+import { MODAL_TYPE, openModal } from '../../features/modal/modalSlice';
 
 //#region styled-components
 //#endregion
 
 let timer;
 export const LikeButton = ({ initialValue, ottleId }) => {
+    const dispatch = useDispatch();
     const { isAuth, user } = useSelector(selectUser);
     const [like, setLike] = useState(initialValue);
 
@@ -31,6 +33,7 @@ export const LikeButton = ({ initialValue, ottleId }) => {
     const onClickLike = () => {
         if (!isAuth) {
             // TODO ; sign in 모달 On
+            dispatch(openModal({ type: MODAL_TYPE.SIGN_IN }));
             return;
         }
         toggleLike();

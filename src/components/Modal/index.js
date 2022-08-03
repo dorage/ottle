@@ -37,13 +37,14 @@ const ModalContainer = styled.div`
     background-color: white;
 `;
 const Content = styled.div`
-    padding-top: ${(props) => props.theme.gap.gap_16};
-    padding-bottom: ${(props) => props.theme.gap.gap_16};
+    padding-top: ${(props) => props.theme.gap.gap_32};
+    padding-bottom: ${(props) => props.theme.gap.gap_32};
     padding-right: ${(props) => props.theme.gap.gap_16};
     padding-left: ${(props) => props.theme.gap.gap_16};
 
     text-align: center;
-    font-size: ${(props) => props.theme.font.p18};
+    font-size: ${(props) => props.theme.font.p16};
+    font-weight: 600;
 `;
 const ButtonRow = styled.div`
     display: flex;
@@ -55,7 +56,7 @@ const Button = styled.div`
     padding-right: ${(props) => props.theme.gap.gap_16};
     padding-left: ${(props) => props.theme.gap.gap_16};
 
-    border: 1px solid ${(props) => props.theme.color.black_600};
+    border-top: 1px solid ${(props) => props.theme.color.black_600};
     font-size: ${(props) => props.theme.font.p14};
     text-align: center;
     &.highlight {
@@ -84,10 +85,29 @@ const ModalSwitcher = () => {
     switch (type) {
         case MODAL_TYPE.YES_OR_NO:
             return <ModalYesOrNo message={message} />;
+        case MODAL_TYPE.SIGN_IN:
+            return <ModalSignIn />;
         default:
             dispatch(closeModal());
             return <></>;
     }
+};
+
+const ModalSignIn = () => {
+    const dispatch = useDispatch();
+
+    const onClickYes = async () => {
+        dispatch(closeModal());
+    };
+
+    return (
+        <ModalContainer>
+            <Content>로그인 후 '좋아요'가 가능합니다</Content>
+            <ButtonRow>
+                <Button onClick={onClickYes}>OK</Button>
+            </ButtonRow>
+        </ModalContainer>
+    );
 };
 
 const ModalYesOrNo = ({ message }) => {

@@ -48,6 +48,7 @@ export const OttleCreatePostingForm = ({ data }) => {
                     onChange={onChangeInput('title')}
                 />
             </InputGroup>
+            {/*
             <InputGroup>
                 <h2>설명 (선택사항)</h2>
                 <TextArea
@@ -56,6 +57,7 @@ export const OttleCreatePostingForm = ({ data }) => {
                     onChange={onChangeInput('description')}
                 />
             </InputGroup>
+            */}
             <ConfigGroup>
                 <Label>사진 저장하기</Label>
                 <Toggle

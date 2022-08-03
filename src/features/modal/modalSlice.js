@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 export const MODAL_TYPE = {
     YES_OR_NO: 'modal-yes_or_no',
+    SIGN_IN: 'modal-sign_in',
 };
 /**
  * ENUM 오브젝트 범위안의 값인지 확인합니다.
