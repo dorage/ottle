@@ -61,16 +61,7 @@ function App() {
                         )
                     }
                 />
-                <Route
-                    path={routes.user()}
-                    element={
-                        isAuth ? (
-                            <Profile />
-                        ) : (
-                            <Navigate to={routes.profile()} />
-                        )
-                    }
-                />
+                <Route path={routes.user()} element={<Profile />} />
             </Route>
         </Routes>
     );

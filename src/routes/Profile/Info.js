@@ -1,12 +1,12 @@
 import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Portrait } from '../../components/Layout/Portrait';
 import { IconButton } from '../../components/Button/IconButton';
 import { BsCaretDownFill } from 'react-icons/bs';
 import { theme } from '../../assets/styles/GlobalStyles';
-import { signOutAsyncAction } from '../../features/user/userSlice';
+import { selectUser, signOutAsyncAction } from '../../features/user/userSlice';
 import { signOutFirebase } from '../../app/auth';
 import { ExLinkHoC } from '../../components/HOC/LinkHoC';
 import { CopyClipboardHoC } from '../../components/HOC/CopyClipboardHoC';
@@ -74,6 +74,7 @@ export const ProfileInfo = () => {
     };
 
     const onSignOut = () => {
+        console.log('sign out');
         dispatch(signOutAsyncAction(signOutFirebase()));
     };
 

@@ -95,21 +95,6 @@ export const addItem = (product) => (dispatch, getState) => {
             )
         );
     };
-
-    /*
-    TODO;
-    item은 상품의 정보만 담고 있으니까
-    여기서는 변경을 다음과 같이 해줘야 한다.
-    {
-        position, rotation, scale,
-        product:{
-            id, name, brand, price, link, category
-            img_src:{
-                thumbnail, edit, original
-            }
-        }
-    }
-    */
 };
 
 export const checkItemCount = (items) => items.length >= MAX_ITEM_COUNT;

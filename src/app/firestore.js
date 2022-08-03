@@ -1,3 +1,4 @@
+import { nanoid } from '@reduxjs/toolkit';
 import {
     collection,
     collectionGroup,
@@ -127,6 +128,7 @@ export const setOttleDoc = async (uid, blob, { title, description, items }) => {
     const { url, gsUrl } = await uploadOttleImage(uid, blob);
     await countUpOttleOfUser(uid);
     await setDoc(doc(ottleRef), {
+        nanoid: await nanoid(6),
         uid,
         title,
         description,

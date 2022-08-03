@@ -25,12 +25,12 @@ export const UserContext = React.createContext(initialContext);
 export const UserContextProvider = ({ children }) => {
     const navigator = useNavigate();
     const [context, setContext] = useState(initialContext);
-    const { user } = useSelector(selectUser);
+    const { isAuth, user } = useSelector(selectUser);
     const { username } = useParams();
 
     const fetchUser = async () => {
         try {
-            if (user.username === username) {
+            if (isAuth && user.username === username) {
                 setContext(
                     createContext({
                         ...context,
@@ -64,7 +64,7 @@ export const UserContextProvider = ({ children }) => {
 
     useEffect(() => {
         fetchUser();
-    }, []);
+    }, [user]);
 
     useEffect(() => {
         if (context.error) navigator(routes.pageNotFound());
