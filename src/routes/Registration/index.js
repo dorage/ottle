@@ -4,12 +4,17 @@ import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { FullScreenContainer } from '../../components/Layout/Container';
 import { InputField } from '../../components/Input/InputField';
-import { loadUserAsyncAction, selectUser } from '../../features/user/userSlice';
+import {
+    loadUserAsyncAction,
+    selectUser,
+    signOutAsyncAction,
+} from '../../features/user/userSlice';
 import { GradientSemiRoundButton } from '../../components/Button/GradientButton';
 import { FooterContainer } from '../../components/Layout/Footer';
 import { SemiRoundButton } from '../../components/Button/RoundButton';
 import { checkUsername, setUserInfo } from '../../app/firestore';
 import { useNavigate } from 'react-router-dom';
+import { signOutFirebase } from '../../app/auth';
 
 //#region styled-components
 const Container = styled(FullScreenContainer)`
@@ -72,6 +77,11 @@ export const Registration = () => {
         return true;
     };
 
+    // TODO: 테스트 이후에 삭제하기
+    const onSignOut = () => {
+        dispatch(signOutAsyncAction(signOutFirebase));
+    };
+
     const onSubmit = async () => {
         if (loading) return;
         setError(errors.none);
@@ -114,7 +124,9 @@ export const Registration = () => {
                 </InputGroup>
             </div>
             <Footer>
-                <Button className='flex-1'>{'ㅤ'}</Button>
+                <Button className='flex-1' onClick={onSignOut}>
+                    {'ㅤ'}
+                </Button>
                 <SubmitButton className='flex-1' onClick={onSubmit}>
                     {loading ? '확인중..' : '가입완료'}
                 </SubmitButton>
