@@ -31,25 +31,26 @@ const Divider = styled.div`
 `;
 //#endregion
 
-export const OttleDetail = (props) => {
+export const OttleDetail = () => {
     const [{ data, loading, error }, fetchData] = useState({
         data: null,
         loading: true,
         error: false,
     });
-    const { user } = useSelector(selectUser);
     const { username, ottleId } = useParams();
 
+    const fetchOttle = async () => {
+        try {
+            const data = await getOttleDetail(username, ottleId);
+            fetchData({ data, loading: false, error: false });
+        } catch (err) {
+            console.log(err);
+            fetchData({ data: null, loading: false, error: true });
+        }
+    };
+
     useEffect(() => {
-        let promise = getOttleDetail(username, ottleId);
-        promise
-            .then((data) => {
-                fetchData({ data, loading: false, error: false });
-            })
-            .catch((error) => {
-                console.log(error);
-                fetchData({ data: null, loading: false, error: true });
-            });
+        fetchOttle();
     }, []);
 
     return (
