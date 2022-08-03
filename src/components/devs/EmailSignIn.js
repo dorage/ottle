@@ -52,6 +52,7 @@ export const EmailSignIn = () => {
 
     return (
         <Container>
+            {process.env.NODE_ENV}
             {isAuth ? (
                 <>
                     <div>Hello, {user.name || 'unnamed'}!</div>
