@@ -4,8 +4,11 @@ import styled from 'styled-components';
 import { Portrait } from '../Layout/Portrait';
 import { LoadingBlock } from '../OttleCreateItemDrawer/LoadingItem';
 import { LikeButton } from '../Button/LikeButton';
-import { CopyLinkButton } from './CopyLinkButton';
 import { LinkHoC } from '../HOC/LinkHoC';
+import { CopyClipboardHoC } from '../HOC/CopyClipboardHoC';
+import { IconButton } from '../Button/IconButton';
+import { HiOutlineClipboardCopy } from 'react-icons/hi';
+import { routes } from '../../configs/routes';
 
 //#region styled-components
 const Container = styled.div``;
@@ -39,6 +42,7 @@ const Image = styled.div`
     background-size: cover;
 `;
 //#endregion
+const CopyLinkIconButton = CopyClipboardHoC(IconButton);
 
 export const Ottle = ({ loading, data }) => {
     return (
@@ -56,9 +60,13 @@ export const Ottle = ({ loading, data }) => {
             </ImageSection>
             <Control>
                 <LikeButton ottleId={data.ottle.id} initialValue={data.like} />
-                <CopyLinkButton
-                    username={data.user.username}
-                    ottleId={data.ottle.id}
+                <CopyLinkIconButton
+                    url={`${window.location.host}${routes.ottleDetail(
+                        data.user.username,
+                        data.ottle.nanoid
+                    )}`}
+                    active={true}
+                    icon={<HiOutlineClipboardCopy />}
                 />
             </Control>
             <Body>{data.ottle.description}</Body>

@@ -7,6 +7,7 @@ import { HiHeart, HiOutlineHeart } from 'react-icons/hi';
 import { deleteOttleLike, setOttleLike } from '../../app/firestore';
 import { selectUser } from '../../features/user/userSlice';
 import { MODAL_TYPE, openModal } from '../../features/modal/modalSlice';
+import { logEventFirebase } from '../../app/analytics';
 
 //#region styled-components
 //#endregion
@@ -31,6 +32,7 @@ export const LikeButton = ({ initialValue, ottleId }) => {
     };
 
     const onClickLike = () => {
+        logEventFirebase('like_ottle');
         if (!isAuth) {
             // TODO ; sign in 모달 On
             dispatch(openModal({ type: MODAL_TYPE.SIGN_IN }));

@@ -20,6 +20,7 @@ import { selectOttleItem } from '../../features/ottleMaker/ottleItemSlice';
 import watermark from '../../assets/images/ottle_logo_watermark.png';
 import { ARTBOARD_SIZE } from '../../features/ottleMaker/artboardSlice';
 import { getCtx, loadImage } from '../../configs/utils';
+import { logEventFirebase } from '../../app/analytics';
 
 //#region styled-components
 const Container = styled(FullScreenContainer)`
@@ -94,6 +95,7 @@ export const OttleCreatePosting = () => {
         link.click();
         link.remove();
 
+        logEventFirebase('post_new_ottle');
         navigator(routes.main());
     };
 

@@ -13,6 +13,7 @@ import {
     getOttleDetailByNanoID,
 } from '../../app/firestore';
 import { OttleItems } from '../../components/Ottle/Items';
+import { logEventFirebase } from '../../app/analytics';
 
 //#region styled-components
 const Container = styled.div`
@@ -54,6 +55,7 @@ export const OttleDetail = () => {
     };
 
     useEffect(() => {
+        logEventFirebase('watch_ottle');
         fetchOttle();
     }, []);
 

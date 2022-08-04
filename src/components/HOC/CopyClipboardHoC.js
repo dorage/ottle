@@ -1,5 +1,6 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
+import { logEventFirebase } from '../../app/analytics';
 import { ALERTS, broadcastAlert } from '../../features/alert/alertSlice';
 
 export const CopyClipboardHoC = (Component) => ({ url, ...props }) => {
@@ -15,6 +16,7 @@ export const CopyClipboardHoC = (Component) => ({ url, ...props }) => {
     };
 
     const onClickCopy = () => {
+        logEventFirebase('copy_link', { url });
         copyUrl();
         dispatch(broadcastAlert(ALERTS.ottleDetail.copied));
     };

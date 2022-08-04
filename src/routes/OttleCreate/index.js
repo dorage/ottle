@@ -41,6 +41,8 @@ import { selectScreen } from '../../features/screen/screenSlice';
 import { initialize as initItemDrawerItemsSlice } from '../../features/ottleMaker/itemDrawerItemsSlice';
 import { initialize as initItemDrawerCategorySlice } from '../../features/ottleMaker/itemDrawerCategorySlice';
 import { initialize as initItemDrawerSlice } from '../../features/ottleMaker/itemDrawerSlice';
+import { logEvent } from 'firebase/analytics';
+import { logEventFirebase } from '../../app/analytics';
 
 //#region styled-components
 //#endregion
@@ -78,6 +80,7 @@ export const OttleMaker = () => {
     };
 
     useEffect(() => {
+        logEventFirebase('start_create_ottle');
         initializeOttleCreateRedux();
     }, []);
 

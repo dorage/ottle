@@ -8,6 +8,7 @@ import {
     HiOutlineShoppingBag,
     HiOutlineLink,
 } from 'react-icons/hi';
+import { logEventFirebase } from '../../app/analytics';
 
 //#region styled-components
 const Container = styled.div`
@@ -64,6 +65,13 @@ export const OttleItems = ({ items }) => {
                             w={16}
                             h={16}
                             icon={<HiOutlineLink />}
+                            onClick={() => {
+                                logEventFirebase('item_link', {
+                                    brand,
+                                    name,
+                                    link,
+                                });
+                            }}
                         />
                     </IconSection>
                 </Container>
