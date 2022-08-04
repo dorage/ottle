@@ -17,7 +17,10 @@ export const RoundButton = styled.button`
 export const LinkedRoundButton = LinkHoC(RoundButton);
 
 export const SemiRoundButton = styled.button`
-    padding: 0.4rem 1.6rem;
+    padding-top: ${(props) => props.theme.gap.gap_4};
+    padding-bottom: ${(props) => props.theme.gap.gap_4};
+    padding-left: ${(props) => props.theme.gap.gap_16};
+    padding-right: ${(props) => props.theme.gap.gap_16};
 
     color: ${(props) => props.color || 'white'};
     font-size: 1.4rem;

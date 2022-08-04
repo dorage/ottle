@@ -6,11 +6,14 @@ import { HomeLayoutHeader } from './Header';
 import { HomeLayoutFooter } from './Footer';
 
 const Page = styled.div`
+    display: flex;
+    flex-direction: column;
     min-height: 100vh;
     overflow-y: scroll;
 `;
 
 const ContentSection = styled.div`
+    flex: 1;
     padding-top: ${(props) => props.theme.gap.gap_32};
     padding-bottom: ${(props) => props.theme.gap.gap_64};
 `;
@@ -34,7 +37,6 @@ export const HomeLayout = () => {
                 <ContentSection>
                     <Outlet context={{ setOnScrollEvent }} />
                 </ContentSection>
-                <FooterBlock />
             </Page>
         </FullScreenContainer>
     );

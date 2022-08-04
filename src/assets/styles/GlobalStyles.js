@@ -93,6 +93,7 @@ export const theme = {
         black_600: '#eeeeee',
         highlight: '#0FC2C0',
         error: '#FF0000',
+        auth: { google: '#dd4b39', facebook: '#3B5998' },
     },
     gap: {
         gap_4: '0.4rem',
