@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { InputField } from '../Input/InputField';
-import { TextArea } from '../Input/TextArea';
 import { Toggle } from '../Input/Toggle';
 import { updateForm } from '../../features/ottleMaker/ottlePostingSlice';
 
@@ -31,10 +30,10 @@ export const OttleCreatePostingForm = ({ data }) => {
     const { title, description, saveAsImage } = data;
     const dispatch = useDispatch();
 
-    const onChangeInput = (name) => (e) => {
-        dispatch(updateForm({ ...data, [name]: e.currentTarget.value }));
+    const onChangeInput = (name) => (v) => {
+        dispatch(updateForm({ ...data, [name]: v }));
     };
-    const onChangeToggle = (name) => (e) => {
+    const onChangeToggle = (name) => () => {
         dispatch(updateForm({ ...data, [name]: !data[name] }));
     };
 
@@ -44,8 +43,8 @@ export const OttleCreatePostingForm = ({ data }) => {
                 <h2>어떤 룩인가요?</h2>
                 <InputField
                     value={title}
+                    setValue={onChangeInput('title')}
                     placeholder='ex) 2022년 여름 바캉스룩'
-                    onChange={onChangeInput('title')}
                 />
             </InputGroup>
             {/*

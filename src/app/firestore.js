@@ -1,4 +1,3 @@
-import { nanoid } from '@reduxjs/toolkit';
 import {
     collection,
     collectionGroup,
@@ -93,6 +92,33 @@ export const getOttleById = async (ottleId) => {
     const ottleSnap = await getDoc(ottleRef);
     return { id: ottleSnap.id, ...ottleSnap.data() };
 };
+/**
+ * nanoId와 uid로 ottle의 정보를 가져옵니다.
+ * @param {*} uid
+ * @param {*} nanoId
+ * @returns
+ */
+export const getOttleByNanoId = async (uid, nanoid) => {
+    const ottleRef = query(
+        collection(firestore, C_OTTLES),
+        where('uid', '==', uid),
+        where('nanoid', '==', nanoid)
+    );
+    const ottleSnap = await getDocs(ottleRef);
+
+    if (ottleSnap.empty) return null;
+
+    const ottles = [];
+    ottleSnap.forEach((doc) => {
+        const { created_at } = doc.data();
+        ottles.push({
+            id: doc.id,
+            ...doc.data(),
+            created_at: timestampToDate(created_at),
+        });
+    });
+    return ottles.shift();
+};
 
 /**
  * 오뜰의 상세 정보를 가져옵니다
@@ -111,6 +137,22 @@ export const getOttleDetail = async (username, ottleId) => {
 };
 
 /**
+ * 오뜰의 상세 정보를 가져옵니다
+ * @param {*} username
+ * @param {*} nanoid
+ * @returns
+ */
+export const getOttleDetailByNanoID = async (username, nanoid) => {
+    const user = await getUserByUsername(username);
+    const ottle = await getOttleByNanoId(user.uid, nanoid);
+    const items = await getItemsById(ottle.items);
+    const like = await getOttleLike(user.uid, ottle.id);
+    // TODO; like여부나 댓글등의 자료도 가져와야함.
+
+    return { user, ottle, items, like };
+};
+
+/**
  * 오뜰 개수 추가
  * @param {*} uid
  */
@@ -123,12 +165,16 @@ const countUpOttleOfUser = async (uid) => {
  * uid의 유저에 새로운 Ottle을 포스팅합니다.
  * @param {*} param0
  */
-export const setOttleDoc = async (uid, blob, { title, description, items }) => {
+export const setOttleDoc = async (
+    uid,
+    blob,
+    { title, description, items, nanoid }
+) => {
     const ottleRef = collection(firestore, C_OTTLES);
     const { url, gsUrl } = await uploadOttleImage(uid, blob);
     await countUpOttleOfUser(uid);
     await setDoc(doc(ottleRef), {
-        nanoid: await nanoid(6),
+        nanoid,
         uid,
         title,
         description,

@@ -50,12 +50,12 @@ export const ProfileItems = () => {
     if (ottles.length)
         return (
             <Container className='pad'>
-                {ottles.map(({ id, image }, idx) => {
+                {ottles.map(({ id, image, nanoid }) => {
                     return (
                         <OttleThumb
-                            key={idx}
+                            key={id}
                             src={image.sm}
-                            onClick={onClickOttle(id)}
+                            onClick={onClickOttle(nanoid)}
                         />
                     );
                 })}

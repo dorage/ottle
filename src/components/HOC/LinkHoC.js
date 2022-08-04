@@ -24,8 +24,10 @@ const ExLink = styled.a`
 `;
 
 export const ExLinkHoC = (Component) => ({ to, className, ...props }) => {
+    let url = to;
+    if (!to.match(/(http:\/\/)|(https:\/\/)/g)) url = `https://${to}`;
     return (
-        <ExLink href={to} target='_blank'>
+        <ExLink href={url} target='_blank'>
             <Component {...props} />
         </ExLink>
     );

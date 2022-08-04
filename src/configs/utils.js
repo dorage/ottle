@@ -53,3 +53,26 @@ export const scalePercent = (val, min, max) => {
     if (min > max) return null;
     return val / (100 / (max - min)) + min;
 };
+
+/**
+ * context를 가져옵니다
+ * @param {*} canvasRef
+ * @returns
+ */
+export const getCtx = (canvasRef) => canvasRef.current.getContext('2d');
+
+/**
+ * 이미지 소스를 받아 Image를 로드합니다
+ * @param {String} src : ;
+ * @param {Function} callback
+ * @returns
+ */
+export const loadImage = (src, callback = (resolve, img) => resolve(img)) =>
+    new Promise((resolve) => {
+        const img = new Image();
+        img.src = src;
+        img.crossOrigin = 'Anonymous'; // html canvas toDataURL 오류
+        img.onload = () => {
+            callback(resolve, img);
+        };
+    });

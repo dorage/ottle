@@ -31,13 +31,14 @@ const Block = styled.div`
 export const OttleDetailHeader = ({ loading, data }) => {
     const navigation = useNavigate();
 
+    const onClickBack = () => {
+        navigation(routes.user(data.user.username));
+    };
+
     if (loading) return <></>;
     return (
         <Container>
-            <IconButton
-                icon={<HiChevronLeft />}
-                onClick={() => navigation(-1)}
-            />
+            <IconButton icon={<HiChevronLeft />} onClick={onClickBack} />
             <TitleSection>
                 <Pagename>
                     <b>{data.user.name}</b> 님의 옷뜰

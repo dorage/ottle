@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { EmailSignIn } from '../../components/devs/EmailSignIn';
@@ -22,7 +22,6 @@ export const SignIn = () => {
     };
     return (
         <Container>
-            <EmailSignIn />
             <button onClick={onClickGoogleSignIn}>google 로그인</button>
             <button onClick={onClickFacebookSignIn}>facebook 로그인</button>
         </Container>

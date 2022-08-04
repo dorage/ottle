@@ -52,8 +52,8 @@ const main = () => URL();
 const profile = () => URL(PROFILE);
 const user = (username) => URL(param({ username }));
 const ottleCreate = (username) => URL(user(username), OTTLE, CREATE);
-const ottleDetail = (username, ottleId) =>
-    URL(user(username), OTTLE, param({ ottleId }));
+const ottleDetail = (username, nanoid) =>
+    URL(user(username), OTTLE, param({ nanoid }));
 const groups = (username) => URL(user(username), GROUP);
 const group = (username, groupId) =>
     URL(user(username), GROUP, param({ groupId }));

@@ -43,55 +43,77 @@ const SubmitButton = styled(GradientSemiRoundButton)`
 
 const errors = {
     none: { error: false, message: '' },
-    length: { error: false, message: '최소 4자 최대 15자의 ID를 만들어주세요' },
+    length: (min, max) => ({
+        error: true,
+        message: `최소 ${min}자, 최대 ${max}자를 적어주세요`,
+    }),
     exist: { error: true, message: '이미 사용중인 ID 입니다' },
     valid: {
         error: true,
-        message: '알파벳 a-z A-Z 특수기호 _ - 만 사용가능합니다',
+        message: '영문자 a-z A-Z 특수기호 _ - 만 사용가능합니다',
     },
 };
+
+const initialState = ({ value = '', error = false, message = '' }) => ({
+    value,
+    error,
+    message,
+});
 
 export const Registration = () => {
     const dispatch = useDispatch();
     const { user } = useSelector(selectUser);
-    const [error, setError] = useState(errors.none);
-    const [loading, setLoading] = useState(false);
-    const [name, setName] = useState(user.name);
-    const [username, setUsername] = useState(user.username);
+    const [validating, setValidating] = useState(false);
+    const [nameState, setNameState] = useState(initialState({}));
+    const [usernameState, setUsernameState] = useState(initialState({}));
 
-    const validateUsername = async () => {
-        if (username.length < 4) {
-            setError(errors.length);
+    const nameValidator = async (value) => {
+        if (value.length < 4) {
+            setNameState({ ...nameState, ...errors.length(4, 15) });
             return false;
         }
-        const match = username.match(/^[a-zA-Z_-]*$/g);
-        if (!match) {
-            setError(errors.valid);
-            return false;
-        }
-        const exist = await checkUsername(username);
-        if (exist) {
-            setError(errors.exist);
-            return false;
-        }
+        setNameState({ ...nameState, ...errors.none });
         return true;
     };
 
-    // TODO: 테스트 이후에 삭제하기
-    const onSignOut = () => {
-        dispatch(signOutAsyncAction(signOutFirebase));
+    const usernameValidator = async (value) => {
+        const match = value.match(/^[a-zA-Z_-]*$/g);
+        if (!match) {
+            setUsernameState({ ...usernameState, ...errors.valid });
+            return false;
+        }
+        if (value.length < 4) {
+            setUsernameState({ ...usernameState, ...errors.length(4, 15) });
+            return false;
+        }
+        const exist = await checkUsername(value);
+        if (exist) {
+            setUsernameState({ ...usernameState, ...errors.exist });
+            return false;
+        }
+        setUsernameState({ ...usernameState, ...errors.none });
+        return true;
     };
 
     const onSubmit = async () => {
-        if (loading) return;
-        setError(errors.none);
+        setNameState({ ...nameState, error: false });
+        setUsernameState({ ...usernameState, error: false });
+        if (validating) return;
         try {
-            setLoading(true);
-            if (!(await validateUsername())) {
-                setLoading(false);
+            setValidating(true);
+            if (
+                [
+                    await nameValidator(nameState.value),
+                    await usernameValidator(usernameState.value),
+                ].some((e) => !e)
+            ) {
+                setValidating(false);
                 return;
             }
-            await setUserInfo(user.uid, { name, username });
+            await setUserInfo(user.uid, {
+                name: nameState.value,
+                username: usernameState.value,
+            });
             dispatch(loadUserAsyncAction({ uid: user.uid }));
         } catch (err) {
             console.log(err);
@@ -105,30 +127,36 @@ export const Registration = () => {
                 <InputGroup>
                     <h2>이름</h2>
                     <InputField
-                        value={name}
-                        setValue={setName}
-                        maxLength={10}
+                        {...nameState}
+                        setValue={(value) =>
+                            setNameState({
+                                ...nameState,
+                                value,
+                            })
+                        }
+                        maxLength={15}
                         blank={false}
                     />
                 </InputGroup>
                 <InputGroup>
                     <h2>ID</h2>
                     <InputField
-                        error={error.error}
-                        msg={error.message}
-                        value={username}
-                        setValue={setUsername}
+                        {...usernameState}
+                        setValue={(value) =>
+                            setUsernameState({
+                                ...usernameState,
+                                value,
+                            })
+                        }
                         maxLength={15}
                         blank={false}
                     />
                 </InputGroup>
             </div>
             <Footer>
-                <Button className='flex-1' onClick={onSignOut}>
-                    {'ㅤ'}
-                </Button>
+                <Button className='flex-1'>{'ㅤ'}</Button>
                 <SubmitButton className='flex-1' onClick={onSubmit}>
-                    {loading ? '확인중..' : '가입완료'}
+                    {validating ? '확인중..' : '가입완료'}
                 </SubmitButton>
             </Footer>
         </Container>

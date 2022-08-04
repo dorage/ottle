@@ -5,6 +5,8 @@ import { useSelector } from 'react-redux';
 import { selectOttleItem } from '../../features/ottleMaker/ottleItemSlice';
 import { ARTBOARD_SIZE } from '../../features/ottleMaker/artboardSlice';
 import { selectOttlePosting } from '../../features/ottleMaker/ottlePostingSlice';
+import { useParams } from 'react-router-dom';
+import { getCtx, loadImage } from '../../configs/utils';
 
 //#region styled-components
 const Container = styled.div`
@@ -21,50 +23,49 @@ const Canvas = styled.canvas`
 //#endregion
 
 export const OttleCreatePostingPreview = ({ canvasRef }) => {
+    const { username } = useParams();
     const { items } = useSelector(selectOttleItem);
-    const { isOpend, form } = useSelector(selectOttlePosting);
+    const { isOpend } = useSelector(selectOttlePosting);
 
-    const loadImages = (itemArr) => {
-        return itemArr.map((item) => {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.src = item.product.image.original;
-                img.crossOrigin = 'Anonymous'; // html canvas toDataURL 오류
-                img.onload = () => {
-                    resolve({ item, img });
-                };
-            });
-        });
+    const loadItems = (itemArr) => {
+        return itemArr.map((item) =>
+            loadImage(item.product.image.original, (resolve, img) => {
+                resolve({ item, img });
+            })
+        );
+    };
+
+    const drawImage = (ctx) => ({ item, img }) => {
+        const {
+            position: { x, y },
+            rotation,
+            scale,
+            size: { w, h },
+        } = item;
+
+        const dw = w * scale;
+        const dh = h * scale;
+        const dx = x * ARTBOARD_SIZE;
+        const dy = y * ARTBOARD_SIZE;
+
+        ctx.save();
+        ctx.translate(dx, dy);
+        ctx.rotate((Math.PI / 180) * (rotation * 360));
+        ctx.drawImage(img, dw / -2, dh / -2, dw, dh);
+        ctx.restore();
     };
 
     const loadPreview = async () => {
-        const ctx = canvasRef.current.getContext('2d');
+        if (!canvasRef) return;
+        const ctx = getCtx(canvasRef);
         ctx.fillStyle = 'white';
         ctx.fillRect(0, 0, 1080, 1080);
 
         const itemArr = [...items].reverse();
-        const promises = loadImages(itemArr);
+        const promises = loadItems(itemArr);
         const imgs = await Promise.all(promises);
 
-        imgs.forEach(({ item, img }) => {
-            const {
-                position: { x, y },
-                rotation,
-                scale,
-                size: { w, h },
-            } = item;
-
-            const dw = w * scale;
-            const dh = h * scale;
-            const dx = x * ARTBOARD_SIZE;
-            const dy = y * ARTBOARD_SIZE;
-
-            ctx.save();
-            ctx.translate(dx, dy);
-            ctx.rotate((Math.PI / 180) * (rotation * 360));
-            ctx.drawImage(img, dw / -2, dh / -2, dw, dh);
-            ctx.restore();
-        });
+        imgs.forEach(drawImage(ctx));
     };
 
     useEffect(() => {

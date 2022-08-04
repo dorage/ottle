@@ -1,11 +1,12 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, nanoid } from '@reduxjs/toolkit';
 
 const initialState = {
-    isOpend: false,
+    isOpend: true,
     form: {
         title: '',
         description: '',
         saveAsImage: true,
+        nanoid: nanoid(6),
     },
 };
 

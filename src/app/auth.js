@@ -56,17 +56,9 @@ export const signInWithEmailPassword = (email, password) => async () => {
     if (process.env.NODE_ENV === 'production') return;
     if (checkSignedIn()) return;
 
-    try {
-        const credential = await signInWithEmailAndPassword(
-            auth,
-            email,
-            password
-        );
-        const user = await getUserByUID(credential.user.uid);
-        return { ...user, uid: credential.user.uid };
-    } catch (err) {
-        console.err(err);
-    }
+    const credential = await signInWithEmailAndPassword(auth, email, password);
+    const user = await getUserByUID(credential.user.uid);
+    return { ...user, uid: credential.user.uid };
 };
 
 /**
@@ -76,37 +68,19 @@ export const signInWithEmailPassword = (email, password) => async () => {
 export const signInWithGoogle = () => async () => {
     if (checkSignedIn()) return;
 
-    try {
-        const result = await signInWithPopup(auth, googleProvider);
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-        const user = result.user;
-        console.log(token, user);
-        return { ...user, uid: credential.user.uid };
-    } catch (err) {
-        const errorCode = err.code;
-        const errorMessage = err.message;
-        const email = err.customData.email;
-        console.log(err);
-    }
+    const result = await signInWithPopup(auth, googleProvider);
+    const credential = GoogleAuthProvider.credentialFromResult(result);
+    const user = result.user;
+    return { ...user, uid: credential.user.uid };
 };
 
 export const signInWithFacebook = () => async () => {
     if (checkSignedIn()) return;
 
-    try {
-        const result = await signInWithPopup(auth, facebookProvider);
-        const credential = FacebookAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-        const user = result.user;
-        console.log(token, user);
-        return { ...user, uid: credential.user.uid };
-    } catch (err) {
-        const errorCode = err.code;
-        const errorMessage = err.message;
-        const email = err.customData.email;
-        console.log(err);
-    }
+    const result = await signInWithPopup(auth, facebookProvider);
+    const credential = FacebookAuthProvider.credentialFromResult(result);
+    const user = result.user;
+    return { ...user, uid: credential.user.uid };
 };
 
 /**

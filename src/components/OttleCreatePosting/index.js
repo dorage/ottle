@@ -17,6 +17,9 @@ import { routes } from '../../configs/routes';
 import { selectUser } from '../../features/user/userSlice';
 import { setOttleDoc } from '../../app/firestore';
 import { selectOttleItem } from '../../features/ottleMaker/ottleItemSlice';
+import watermark from '../../assets/images/ottle_logo_watermark.png';
+import { ARTBOARD_SIZE } from '../../features/ottleMaker/artboardSlice';
+import { getCtx, loadImage } from '../../configs/utils';
 
 //#region styled-components
 const Container = styled(FullScreenContainer)`
@@ -48,14 +51,26 @@ export const OttleCreatePosting = () => {
         if (process.env.NODE_ENV === 'development') navigator(routes.main());
     };
 
+    const drawWatermark = async () => {
+        const ctx = getCtx(canvasRef);
+        const img = await loadImage(watermark, (resolve, img) => resolve(img));
+        ctx.save();
+        ctx.drawImage(
+            img,
+            ARTBOARD_SIZE - img.width - 16,
+            ARTBOARD_SIZE - img.height - 16,
+            img.width,
+            img.height
+        );
+        ctx.restore();
+    };
+
     const onClickPublish = async () => {
         if (saving) return;
         setSaving(true);
-        const { title, description } = form;
+        const { title, description, nanoid } = form;
 
-        const link = document.createElement('a');
-        link.download = `download_${Number(new Date())}.webp`;
-        link.href = canvasRef.current.toDataURL();
+        // 이미지 DB에 저장
         await new Promise((resolve) => {
             canvasRef.current.toBlob(
                 async (blob) => {
@@ -63,6 +78,7 @@ export const OttleCreatePosting = () => {
                         title,
                         description,
                         items,
+                        nanoid,
                     });
                     resolve();
                 },
@@ -70,6 +86,11 @@ export const OttleCreatePosting = () => {
                 1
             );
         });
+
+        await drawWatermark();
+        const link = document.createElement('a');
+        link.download = `download_${Number(new Date())}.webp`;
+        link.href = canvasRef.current.toDataURL();
         link.click();
         link.remove();
 

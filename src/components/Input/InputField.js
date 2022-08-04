@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
@@ -36,14 +36,14 @@ export const InputField = ({
     value,
     setValue,
     error,
-    msg,
+    message,
     blank,
     ...props
 }) => {
     const onChangeInput = (e) => {
-        console.log(e.key);
         setValue(e.currentTarget.value);
     };
+
     const onKeyDown = (e) => {
         if ((!blank && e.key === ' ') || !e.key.length) e.preventDefault();
     };
@@ -51,13 +51,13 @@ export const InputField = ({
     return (
         <Container>
             <Input
-                error={error}
                 value={value}
                 onKeyDown={onKeyDown}
                 onChange={onChangeInput}
+                error={error}
                 {...props}
             />
-            <Message error={error}>{error && msg}</Message>
+            <Message error={error}>{error && message}</Message>
         </Container>
     );
 };

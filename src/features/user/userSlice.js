@@ -28,7 +28,7 @@ export const loadUserAsyncAction = createAsyncThunk(
     async ({ uid }) => {
         console.log(uid);
         try {
-            return await getUserByUID(uid);
+            return { user: await getUserByUID(uid) };
         } catch (err) {
             console.log(err);
             return { error: err };
@@ -68,10 +68,12 @@ const userSlice = createSlice({
             state.error = false;
         });
         builder.addCase(loadUserAsyncAction.fulfilled, (state, action) => {
-            console.log(action.payload);
-            //state.user = user;
+            const { user } = action.payload;
+            state.loading = false;
+            state.user = user;
         });
         builder.addCase(loadUserAsyncAction.rejected, (state, action) => {
+            state.loading = false;
             state.error = true;
         });
     },

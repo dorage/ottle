@@ -74,7 +74,6 @@ export const ProfileInfo = () => {
     };
 
     const onSignOut = () => {
-        console.log('sign out');
         dispatch(signOutAsyncAction(signOutFirebase()));
     };
 

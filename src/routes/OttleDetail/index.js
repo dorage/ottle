@@ -7,7 +7,11 @@ import { OttleDetailHeader } from './Header';
 import { FullScreenContainer } from '../../components/Layout/Container';
 import { Ottle } from '../../components/Ottle';
 import { selectUser } from '../../features/user/userSlice';
-import { getMyOttle, getOttleDetail } from '../../app/firestore';
+import {
+    getMyOttle,
+    getOttleDetail,
+    getOttleDetailByNanoID,
+} from '../../app/firestore';
 import { OttleItems } from '../../components/Ottle/Items';
 
 //#region styled-components
@@ -37,11 +41,11 @@ export const OttleDetail = () => {
         loading: true,
         error: false,
     });
-    const { username, ottleId } = useParams();
+    const { username, nanoid } = useParams();
 
     const fetchOttle = async () => {
         try {
-            const data = await getOttleDetail(username, ottleId);
+            const data = await getOttleDetailByNanoID(username, nanoid);
             fetchData({ data, loading: false, error: false });
         } catch (err) {
             console.log(err);
