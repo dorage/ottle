@@ -68,8 +68,8 @@ export const Registration = () => {
     const [usernameState, setUsernameState] = useState(initialState({}));
 
     const nameValidator = async (value) => {
-        if (value.length < 4) {
-            setNameState({ ...nameState, ...errors.length(4, 15) });
+        if (value.length < 2) {
+            setNameState({ ...nameState, ...errors.length(2, 15) });
             return false;
         }
         setNameState({ ...nameState, ...errors.none });
