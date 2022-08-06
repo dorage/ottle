@@ -31,8 +31,6 @@ export const UserOttleContextProvider = ({ children }) => {
     const { setOnScrollEvent } = useOutletContext();
     const { loading: userLoading, user } = useContext(UserContext);
 
-    const getContext = () => context;
-
     const fetchOttles = async (context, firstPage) => {
         if (context.lastPage) return;
         try {
@@ -51,6 +49,7 @@ export const UserOttleContextProvider = ({ children }) => {
                 })
             );
         } catch (err) {
+            console.error(err);
             // rejected
             setContext(
                 createContext({
@@ -68,6 +67,7 @@ export const UserOttleContextProvider = ({ children }) => {
         // loading 중인 경우
         if (userLoading) return;
         // 첫번째 ottle 데이터 불러오기
+        console.log('useeffect by user');
         fetchOttles(context, true);
     }, [user]);
 
