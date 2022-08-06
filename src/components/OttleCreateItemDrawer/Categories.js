@@ -50,23 +50,35 @@ export const GridCategories = ({ scrollRef }) => {
         scrollRef.current.scrollTo(0, 0);
     };
 
-    return (
-        <>
-            {loading ? (
-                <>
-                    {Array(8)
-                        .fill()
-                        .map((_, idx) => (
-                            <LoadingBlock key={idx} />
-                        ))}
-                </>
-            ) : (
-                data.map(({ name, id }, idx) => (
-                    <CategoryContainer onClick={onClickCategory(id)} key={idx}>
-                        {name}
-                    </CategoryContainer>
-                ))
-            )}
-        </>
-    );
+    if (loading) {
+        return (
+            <>
+                {Array(8)
+                    .fill()
+                    .map((_, idx) => (
+                        <LoadingBlock key={idx} />
+                    ))}
+            </>
+        );
+    }
+
+    if (error) {
+        return <>error</>;
+    }
+
+    if (data) {
+        return (
+            <>
+                {data &&
+                    data.map(({ name, id }, idx) => (
+                        <CategoryContainer
+                            onClick={onClickCategory(id)}
+                            key={idx}
+                        >
+                            {name}
+                        </CategoryContainer>
+                    ))}
+            </>
+        );
+    }
 };

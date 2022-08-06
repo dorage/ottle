@@ -534,69 +534,102 @@ export const deleteOttleLike = async (uid, ottleId) => {
 // ██████████████████████████████████████████████████████████████
 
 if (process.env.NODE_ENV === 'development') {
-    const genCategory = (level, id, name, children = []) => ({
+    const genCategory = (id, name, children = []) => ({
         id,
         name,
-        level,
         children,
     });
 
     const categories = [
-        genCategory(0, 'top', '상의', [
-            genCategory('shirt', '셔츠'),
-            genCategory('tshirt', '티셔츠'),
-            genCategory('hoodie', '후드티'),
-            genCategory('sweater', '스웨터'),
+        genCategory('top', '상의', [
+            genCategory('short-sleeve', '반팔'),
+            genCategory('long-sleeve', '긴팔'),
+            genCategory('none-sleeve', '민소매'),
+            genCategory('sweat-shirt', '맨투맨'),
+            genCategory('knit', '니트'),
+            genCategory('shirts', '셔츠'),
+            genCategory('top-etc', '기타'),
         ]),
-        genCategory(1, 'top', '하의', [
-            genCategory('denim', '데님팬츠'),
-            genCategory('cotton', '코튼팬츠'),
+        genCategory('bottom', '하의', [
+            genCategory('denim', '데님'),
+            genCategory('cotton', '코튼'),
             genCategory('slacks', '정장/슬랙스'),
             genCategory('slacks', '스커트'),
-            genCategory('trainer', '트레이닝팬츠'),
-            genCategory('shorts', '숏팬츠'),
+            genCategory('bottom-trainer', '트레이너'),
+            genCategory('shorts', '숏'),
+            genCategory('bottom-etc', '기타'),
         ]),
-        genCategory(2, 'outer', '아우터', [
+        genCategory('outer', '아우터', [
             genCategory('hoodie-zipup', '후드집업'),
             genCategory('cardigan', '가디건'),
             genCategory('coat', '코트'),
             genCategory('jacket', '자켓'),
             genCategory('blazer', '블레이저'),
+            genCategory('puffer', '패딩'),
+            genCategory('outer-trainer', '트레이너'),
+            genCategory('outer-etc', '기타'),
         ]),
-        genCategory(3, 'set', '세트', [
+        genCategory('set', '세트', [
+            genCategory('set-trainer', '트레이너'),
             genCategory('dress', '원피스'),
             genCategory('suit', '정장/수트'),
             genCategory('sweater', '점프슈트'),
-            genCategory('set_etc', '기타세트'),
+            genCategory('set-etc', '기타'),
         ]),
-        genCategory(4, 'footwear', '신발', [
+        genCategory('footwear', '신발', [
             genCategory('sneaker', '운동화'),
             genCategory('shoes', '구두'),
             genCategory('canvas', '단화/캔버스'),
             genCategory('boots', '부츠'),
             genCategory('sandal', '샌달'),
+            genCategory('footwear-etc', '기타'),
         ]),
-        genCategory(5, 'accessory', '악세서리', [
-            genCategory('hat', '모자'),
+        genCategory('headwear', '모자', [
+            genCategory('cap', '야구모자'),
+            genCategory('bucket', '버킷햇'),
+            genCategory('fedora', '페도라'),
+            genCategory('beanie', '비니'),
+            genCategory('headwear-etc', '기타'),
+        ]),
+        genCategory('eyewear', '선글라스/안경테', [
+            genCategory('glasses', '안경'),
+            genCategory('sunglasses', '선글라스'),
+            genCategory('eyewear-etc', '기타'),
+        ]),
+        genCategory('bag', '가방', [
+            genCategory('backpack', '백팩'),
+            genCategory('messenger', '메신저'),
+            genCategory('waistback', '웨이스트'),
+            genCategory('tote', '토트'),
+            genCategory('clutch', '클러치'),
+            genCategory('pouch', '파우치'),
+            genCategory('luggage', '캐리어'),
+            genCategory('bag-etc', '기타'),
+        ]),
+        genCategory('bag-woman', '여성가방', [
+            genCategory('woman-backpack', '숄더'),
+            genCategory('woman-cross', '크로스'),
+            genCategory('woman-waist', '웨이스트'),
+            genCategory('woman-tote', '토트'),
+            genCategory('woman-clutch', '클러치'),
+            genCategory('woman-pouch', '파우치'),
+            genCategory('woman-etc', '기타'),
+        ]),
+        genCategory('accessory', '악세서리', [
             genCategory('sock', '양말'),
             genCategory('glove', '장갑'),
             genCategory('scarf', '목도리/스카프'),
-            genCategory('eyewear', '안경'),
             genCategory('wallet', '지갑'),
             genCategory('watch', '시계'),
-            genCategory('bag', '가방'),
         ]),
-        genCategory(6, 'jewerly', '쥬얼리', [
+        genCategory('jewerly', '쥬얼리', [
             genCategory('necklace', '목걸이'),
             genCategory('ring', '반지'),
             genCategory('earring', '귀걸이'),
             genCategory('bracelet', '팔찌/발찌'),
         ]),
-        genCategory(7, 'sticker', '스티커', [
-            genCategory('brand', '브랜드'),
-            genCategory('reality', '실사'),
-        ]),
     ];
+
     const tempCategory = [
         genCategory(0, 'top', '상의', [
             genCategory(1, 'shirt', '셔츠'),
@@ -608,8 +641,8 @@ if (process.env.NODE_ENV === 'development') {
             genCategory(1, 'denim', '데님팬츠'),
             genCategory(1, 'cotton', '코튼팬츠'),
             genCategory(1, 'slacks', '정장/슬랙스'),
-            genCategory(1, 'slacks', '스커트'),
-            genCategory(1, 'trainer', '트레이닝팬츠'),
+            genCategory(1, 'skirt', '스커트'),
+            genCategory(1, 'bottom-trainer', '트레이'),
             genCategory(1, 'shorts', '숏팬츠'),
         ]),
         genCategory(0, 'outer', '아우터', [
@@ -629,7 +662,7 @@ if (process.env.NODE_ENV === 'development') {
             await setDoc(doc(itemCategoriesRef, main.id), {
                 name: main.name,
                 order: i,
-                level: main.level,
+                level: 0,
             });
             for (let j = 0; j < main.children.length; j++) {
                 const sub = main.children[j];
@@ -640,7 +673,7 @@ if (process.env.NODE_ENV === 'development') {
                 await setDoc(doc(subCategoriesRef, sub.id), {
                     name: sub.name,
                     order: j,
-                    level: sub.level,
+                    level: 1,
                 });
             }
         }
