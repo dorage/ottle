@@ -14,36 +14,26 @@ const initialState = {
     history: [],
     data: [],
     loading: true,
-    error: null,
+    error: false,
 };
 
 export const itemDrawerMainCategoryAsyncAction = createAsyncThunk(
     'itemDrawerCategory/fetch-main-category',
     async (_, { dispatch }) => {
-        try {
-            dispatch(itemDrawerRecommendItemsAsyncAction());
-            return { data: await getMainItemCategoryDocs() };
-        } catch (err) {
-            return err;
-        }
+        dispatch(itemDrawerRecommendItemsAsyncAction());
+        return { data: await getMainItemCategoryDocs() };
     }
 );
 export const itemDrawerSubCategoryAsyncAction = createAsyncThunk(
     'itemDrawerCategory/fetch-sub-category',
     async ({ categoryId, scrollTop }, { dispatch, getState }) => {
-        try {
-            const { path } = selectItemDrawerCategory(getState());
+        const { path } = selectItemDrawerCategory(getState());
 
-            dispatch(
-                itemDrawerCategoryItemsAsyncAction({ categoryId, scrollTop })
-            );
-            return {
-                path: categoryId,
-                data: await getSubItemCategoryDocs([...path, categoryId]),
-            };
-        } catch (err) {
-            return err;
-        }
+        dispatch(itemDrawerCategoryItemsAsyncAction({ categoryId, scrollTop }));
+        return {
+            path: categoryId,
+            data: await getSubItemCategoryDocs([...path, categoryId]),
+        };
     }
 );
 
@@ -63,7 +53,7 @@ const itemDrawerCategorySlice = createSlice({
             (state, action) => {
                 state.loading = true;
                 state.data = [];
-                state.error = null;
+                state.error = false;
             }
         );
         builder.addCase(
@@ -72,7 +62,7 @@ const itemDrawerCategorySlice = createSlice({
                 const { data } = action.payload;
                 state.loading = false;
                 state.data = data;
-                state.error = null;
+                state.error = false;
             }
         );
         builder.addCase(
@@ -80,7 +70,7 @@ const itemDrawerCategorySlice = createSlice({
             (state, action) => {
                 state.loading = false;
                 state.data = [];
-                state.error = action.payload;
+                state.error = true;
             }
         );
         builder.addCase(
@@ -88,6 +78,7 @@ const itemDrawerCategorySlice = createSlice({
             (state, action) => {
                 state.loading = true;
                 state.history = [...state.history, state.data];
+                state.error = false;
             }
         );
         builder.addCase(
@@ -97,17 +88,15 @@ const itemDrawerCategorySlice = createSlice({
                 state.loading = false;
                 state.path = [...state.path, path];
                 state.data = data;
-                state.error = null;
+                state.error = false;
             }
         );
         builder.addCase(
             itemDrawerSubCategoryAsyncAction.rejected,
             (state, action) => {
-                const { path, data } = action.payload;
                 state.loading = false;
-                state.path = [...state.path, path];
                 state.data = [];
-                state.error = data;
+                state.error = true;
             }
         );
     },
