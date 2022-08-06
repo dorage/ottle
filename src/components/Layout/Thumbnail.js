@@ -8,7 +8,7 @@ const Container = styled.div`
     aspect-ratio: 1/1;
     margin: 0 auto;
     background-image: url(${(props) => props.src});
-    background-size: cover;
+    background-size: contain;
     background-position: center;
 `;
 //#endregion

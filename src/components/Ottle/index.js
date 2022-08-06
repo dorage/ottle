@@ -39,7 +39,7 @@ const Image = styled.div`
     height: 100%;
     background-image: url(${(props) => props.src});
     background-position: center;
-    background-size: cover;
+    background-size: contain;
 `;
 //#endregion
 const CopyLinkIconButton = CopyClipboardHoC(IconButton);

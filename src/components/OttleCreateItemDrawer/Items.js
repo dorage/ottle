@@ -31,7 +31,7 @@ const Thumb = styled.div`
     border-radius: ${(props) => props.theme.gap.gap_8};
 
     background-image: url(${(props) => props.src});
-    background-size: cover;
+    background-size: contain;
     background-repeat: no-repeat;
 `;
 const Brand = styled.div`

@@ -21,7 +21,7 @@ const Ottle = styled.div`
 
     background-color: #ffffff;
     background-image: url(${(props) => props.src});
-    background-size: cover;
+    background-size: contain;
     border: 1px solid ${(props) => props.theme.color.black_600};
     border-radius: ${(props) => props.theme.gap.gap_8};
 

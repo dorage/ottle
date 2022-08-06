@@ -27,7 +27,7 @@ const Image = styled.div.attrs((props) => ({
     },
 }))`
     background-image: url(${(props) => props.imgSrc});
-    background-size: cover;
+    background-size: contain;
     background-repeat: no-repeat;
 `;
 

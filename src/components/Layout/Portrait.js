@@ -11,7 +11,7 @@ const Container = styled.div`
     border-radius: 100%;
     background-color: ${(props) => props.theme.color.black_600};
     background-image: url(${(props) => props.src});
-    background-size: cover;
+    background-size: contain;
     background-position: center;
 `;
 //#endregion
