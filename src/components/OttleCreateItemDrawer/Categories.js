@@ -69,15 +69,11 @@ export const GridCategories = ({ scrollRef }) => {
     if (data) {
         return (
             <>
-                {data &&
-                    data.map(({ name, id }, idx) => (
-                        <CategoryContainer
-                            onClick={onClickCategory(id)}
-                            key={idx}
-                        >
-                            {name}
-                        </CategoryContainer>
-                    ))}
+                {data.map(({ name, id }) => (
+                    <CategoryContainer onClick={onClickCategory(id)} key={id}>
+                        {name}
+                    </CategoryContainer>
+                ))}
             </>
         );
     }
