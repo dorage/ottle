@@ -381,16 +381,21 @@ export const getMainThreadDocs = paginationHoC(
  * @returns
  */
 export const getMainItemCategoryDocs = async () => {
-    const itemCategoriesQuery = query(
-        collection(firestore, C_ITEM_CATEGORIES),
-        orderBy('order')
-    );
-    const querySnapshot = await getDocs(itemCategoriesQuery);
-    const itemCategories = [];
-    querySnapshot.forEach((doc) =>
-        itemCategories.push({ id: doc.id, ...doc.data() })
-    );
-    return itemCategories;
+    try {
+        const itemCategoriesQuery = query(
+            collection(firestore, C_ITEM_CATEGORIES),
+            orderBy('order')
+        );
+        const querySnapshot = await getDocs(itemCategoriesQuery);
+        const itemCategories = [];
+        querySnapshot.forEach((doc) =>
+            itemCategories.push({ id: doc.id, ...doc.data() })
+        );
+        return itemCategories;
+    } catch (err) {
+        console.error(err);
+        return [];
+    }
 };
 /**
  * 해당 categoryId를 가진 카테고리의 서브카테고리 documents 를 가져옵니다
