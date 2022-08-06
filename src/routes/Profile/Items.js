@@ -54,7 +54,7 @@ export const ProfileItems = () => {
                     return (
                         <OttleThumb
                             key={id}
-                            src={image.sm}
+                            src={image.original}
                             onClick={onClickOttle(nanoid)}
                         />
                     );

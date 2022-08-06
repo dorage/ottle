@@ -65,7 +65,7 @@ const GridItem = ({ data, ...props }) => {
     const {
         brand,
         id,
-        image: { sm },
+        image: { original },
         name,
     } = data;
 
@@ -92,7 +92,7 @@ const GridItem = ({ data, ...props }) => {
                 </Added>
             ) : (
                 <>
-                    <Thumb src={sm} />
+                    <Thumb src={original} />
                     <Brand>{brand}</Brand>
                     <Title>{name}</Title>
                 </>

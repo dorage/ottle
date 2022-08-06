@@ -178,7 +178,7 @@ export const setOttleDoc = async (
         uid,
         title,
         description,
-        image: { sm: url, md: url, lg: url, original: gsUrl },
+        image: { original: gsUrl },
         items: items.map((e) => e.product.id),
         created_at: serverTimestamp(),
     });
@@ -694,7 +694,7 @@ if (process.env.NODE_ENV === 'development') {
         category,
         brand,
         name,
-        image: { sm: image, md: image, lg: image, original: image },
+        image: { original: image },
         link,
     });
 
@@ -749,9 +749,6 @@ if (process.env.NODE_ENV === 'development') {
         description,
         items: ['7NnBHVC1HkPKJSF8Pay2'],
         image: {
-            sm: image,
-            md: image,
-            lg: image,
             original: image,
         },
     });

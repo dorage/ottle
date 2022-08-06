@@ -56,7 +56,7 @@ export const Ottle = ({ loading, data }) => {
                 </div>
             </Header>
             <ImageSection>
-                <Image src={data.ottle.image.lg} />
+                <Image src={data.ottle.image.original} />
             </ImageSection>
             <Control>
                 <LikeButton ottleId={data.ottle.id} initialValue={data.like} />

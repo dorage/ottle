@@ -50,10 +50,10 @@ const IconSection = styled.div`
 export const OttleItems = ({ items }) => {
     return (
         <>
-            {items.map(({ image: { sm }, name, brand, link }, idx) => (
+            {items.map(({ image: { original }, name, brand, link }, idx) => (
                 <Container key={idx}>
                     <ThumbSection>
-                        <Thumbnail src={sm} />
+                        <Thumbnail src={original} />
                     </ThumbSection>
                     <InfoSection>
                         <Brand>{brand}</Brand>

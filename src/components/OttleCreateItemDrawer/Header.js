@@ -24,7 +24,7 @@ export const ItemDrawerHeader = ({ onClickBack, onClickClose }) => {
                         icon={<HiChevronLeft />}
                         onClick={onClickBack}
                     />
-                    <Path>{path.join(' / ')}</Path>
+                    <Path>{path.join(' > ')}</Path>
                 </>
             ) : (
                 <IconButton />
