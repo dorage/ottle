@@ -105,8 +105,8 @@ export const OttleCreateItemDrawer = () => {
                 <InputField placeholder='search brand, product' />
             </SearchBarContainer>
             */}
-            <ItemDrawerCategoryGrid scrollRef={scrollRef} />
             <ScrollContainer ref={scrollRef}>
+                <ItemDrawerCategoryGrid scrollRef={scrollRef} />
                 <ItemDrawerItemGrid />
             </ScrollContainer>
         </Container>

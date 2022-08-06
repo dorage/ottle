@@ -8,14 +8,24 @@ import { HiChevronLeft, HiX } from 'react-icons/hi';
 import { selectItemDrawerCategory } from '../../features/ottleMaker/itemDrawerCategorySlice';
 
 //#region styled-components
+const Path = styled.div`
+    font-size: ${(props) => props.theme.font.p14};
+    font-weight: 600;
+`;
 //#endregion
 
 export const ItemDrawerHeader = ({ onClickBack, onClickClose }) => {
-    const { history } = useSelector(selectItemDrawerCategory);
+    const { history, path } = useSelector(selectItemDrawerCategory);
     return (
         <HeaderContainer>
             {history.length ? (
-                <IconButton icon={<HiChevronLeft />} onClick={onClickBack} />
+                <>
+                    <IconButton
+                        icon={<HiChevronLeft />}
+                        onClick={onClickBack}
+                    />
+                    <Path>{path.join(' / ')}</Path>
+                </>
             ) : (
                 <IconButton />
             )}

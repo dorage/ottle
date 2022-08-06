@@ -44,9 +44,11 @@ export const GridCategories = ({ scrollRef }) => {
         dispatch(itemDrawerMainCategoryAsyncAction());
     }, []);
 
-    const onClickCategory = (categoryId) => () => {
+    const onClickCategory = (categoryId, name) => () => {
         const { scrollTop } = scrollRef.current;
-        dispatch(itemDrawerSubCategoryAsyncAction({ categoryId, scrollTop }));
+        dispatch(
+            itemDrawerSubCategoryAsyncAction({ categoryId, name, scrollTop })
+        );
         scrollRef.current.scrollTo(0, 0);
     };
 
@@ -70,7 +72,10 @@ export const GridCategories = ({ scrollRef }) => {
         return (
             <>
                 {data.map(({ name, id }) => (
-                    <CategoryContainer onClick={onClickCategory(id)} key={id}>
+                    <CategoryContainer
+                        onClick={onClickCategory(id, name)}
+                        key={id}
+                    >
                         {name}
                     </CategoryContainer>
                 ))}
