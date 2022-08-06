@@ -171,14 +171,14 @@ export const setOttleDoc = async (
     { title, description, items, nanoid }
 ) => {
     const ottleRef = collection(firestore, C_OTTLES);
-    const { url, gsUrl } = await uploadOttleImage(uid, blob);
+    const { url } = await uploadOttleImage(uid, blob);
     await countUpOttleOfUser(uid);
     await setDoc(doc(ottleRef), {
         nanoid,
         uid,
         title,
         description,
-        image: { original: gsUrl },
+        image: { original: url },
         items: items.map((e) => e.product.id),
         created_at: serverTimestamp(),
     });
