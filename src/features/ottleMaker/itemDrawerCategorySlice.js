@@ -95,6 +95,7 @@ const itemDrawerCategorySlice = createSlice({
             itemDrawerSubCategoryAsyncAction.rejected,
             (state, action) => {
                 state.loading = false;
+                state.path = [...state.path, 'error'];
                 state.data = [];
                 state.error = true;
             }

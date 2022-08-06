@@ -402,20 +402,25 @@ export const getMainItemCategoryDocs = async () => {
  * @param {String[]} path
  */
 export const getSubItemCategoryDocs = async (path) => {
-    const pathString = path.reduce(
-        (acc, curr) => `${acc}/${curr}/${C_ITEM_CATEGORIES}`,
-        C_ITEM_CATEGORIES
-    );
-    const itemCategoriesQuery = query(
-        collection(firestore, pathString),
-        orderBy('order')
-    );
-    const querySnapshot = await getDocs(itemCategoriesQuery);
-    const itemCategories = [];
-    querySnapshot.forEach((doc) =>
-        itemCategories.push({ id: doc.id, ...doc.data() })
-    );
-    return itemCategories;
+    try {
+        const pathString = path.reduce(
+            (acc, curr) => `${acc}/${curr}/${C_ITEM_CATEGORIES}`,
+            C_ITEM_CATEGORIES
+        );
+        const itemCategoriesQuery = query(
+            collection(firestore, pathString),
+            orderBy('order')
+        );
+        const querySnapshot = await getDocs(itemCategoriesQuery);
+        const itemCategories = [];
+        querySnapshot.forEach((doc) =>
+            itemCategories.push({ id: doc.id, ...doc.data() })
+        );
+        return itemCategories;
+    } catch (err) {
+        console.error(err);
+        return [];
+    }
 };
 /**
  * itemIds에 포함된 아이템의 리스트를 가져옵니다.
