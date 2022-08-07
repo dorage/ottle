@@ -38,19 +38,27 @@ function App() {
     if (isAuth && !user.is_registered) return <Registration />;
 
     if (!isAuth) {
-        <Routes>
-            <Route path={routes.ottleDetail()} element={<OttleDetail />} />
-            <Route path={routes.pageNotFound()} element={<PageNotFound />} />
-            <Route path='*' element={<Navigate to={routes.pageNotFound()} />} />
-            <Route path={routes.main()} element={<HomeLayout />}>
+        return (
+            <Routes>
+                <Route path={routes.ottleDetail()} element={<OttleDetail />} />
                 <Route
-                    path={routes.main()}
-                    element={<Navigate to={routes.profile()} />}
+                    path={routes.pageNotFound()}
+                    element={<PageNotFound />}
                 />
-                <Route path={routes.profile()} element={<SignIn />} />
-                <Route path={routes.user()} element={<Profile />} />
-            </Route>
-        </Routes>;
+                <Route
+                    path='*'
+                    element={<Navigate to={routes.pageNotFound()} />}
+                />
+                <Route path={routes.main()} element={<HomeLayout />}>
+                    <Route
+                        path={routes.main()}
+                        element={<Navigate to={routes.profile()} />}
+                    />
+                    <Route path={routes.profile()} element={<SignIn />} />
+                    <Route path={routes.user()} element={<Profile />} />
+                </Route>
+            </Routes>
+        );
     }
 
     return (
