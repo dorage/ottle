@@ -26,7 +26,6 @@ export const signOutAsyncAction = createAsyncThunk(
 export const loadUserAsyncAction = createAsyncThunk(
     'user/load-user',
     async ({ uid }) => {
-        console.log(uid);
         try {
             return { user: await getUserByUID(uid) };
         } catch (err) {

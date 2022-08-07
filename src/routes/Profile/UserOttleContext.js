@@ -67,7 +67,6 @@ export const UserOttleContextProvider = ({ children }) => {
         // loading 중인 경우
         if (userLoading) return;
         // 첫번째 ottle 데이터 불러오기
-        console.log('useeffect by user');
         fetchOttles(context, true);
     }, [user]);
 

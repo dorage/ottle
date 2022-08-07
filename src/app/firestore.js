@@ -278,9 +278,6 @@ export const getOttlesByUID = paginationHoC(
             startAfter(getRef())
         );
 
-        console.log(querySnapshot.empty);
-        console.log(querySnapshot.docs);
-
         if (querySnapshot.empty) return [];
         setRef(_.getLastIndex(querySnapshot.docs));
 
@@ -489,7 +486,6 @@ export const getItemsInCategory = paginationHoC(
             ],
             startAfter(getRef())
         );
-        console.log(categoryId, firstPage, querySnapshot.docs);
 
         if (querySnapshot.empty) return [];
         setContext({ [categoryId]: _.getLastIndex(querySnapshot.docs) });
