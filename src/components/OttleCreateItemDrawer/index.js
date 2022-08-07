@@ -59,6 +59,7 @@ export const OttleCreateItemDrawer = () => {
     const onClickClose = () => {
         dispatch(closeItemDrawer());
     };
+
     // scroll Event를 등록하는 함수
     const setOnScrollEvent = (event) => {
         scrollRef.current.onscroll = event(scrollRef);
@@ -69,13 +70,14 @@ export const OttleCreateItemDrawer = () => {
     const fetchCategoryItems = (categoryId) => {
         dispatch(itemDrawerCategoryItemsPagingAsyncAction({ categoryId }));
     };
+
     // 일정 거리 이상 넘겼을때 실행할 쓰로틀링되는 fetch 함수 생성
     const onOverThreshold = _.throttle((path) => {
         if (!path.length) {
             fetchRecommendItems();
             return;
         }
-        fetchCategoryItems(_.getLastIndex(path));
+        fetchCategoryItems(_.getLastIndex(path).id);
     }, 1000);
 
     useEffect(() => {
@@ -90,6 +92,7 @@ export const OttleCreateItemDrawer = () => {
             }
         });
     }, [path]);
+
     useEffect(() => {
         scrollRef.current.scrollTo(0, scrollTop);
     }, [scrollTop]);

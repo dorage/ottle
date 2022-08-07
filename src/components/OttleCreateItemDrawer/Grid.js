@@ -1,8 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { useSelector } from 'react-redux';
-import { selectItemDrawerCategory } from '../../features/ottleMaker/itemDrawerCategorySlice';
 import { GridCategories } from './Categories';
 import { GridItems } from './Items';
 

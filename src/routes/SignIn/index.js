@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { ImGoogle2, ImFacebook2 } from 'react-icons/im';
 import { SemiRoundButton } from '../../components/Button/RoundButton';
 import { theme } from '../../assets/styles/GlobalStyles';
+import { EmailSignIn } from '../../components/devs/EmailSignIn';
 
 //#region styled-components
 const Container = styled.div``;
@@ -50,6 +51,7 @@ export const SignIn = () => {
     return (
         <Container className='pad'>
             <h1>로그인 및 회원가입</h1>
+            {process.env.NODE_ENV === 'development' ? <EmailSignIn /> : <></>}
 
             <SocialSignIn
                 name='구글'

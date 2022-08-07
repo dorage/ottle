@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 import { HeaderContainer } from '../Layout/Header';
@@ -24,7 +23,7 @@ export const ItemDrawerHeader = ({ onClickBack, onClickClose }) => {
                         icon={<HiChevronLeft />}
                         onClick={onClickBack}
                     />
-                    <Path>{path.join(' > ')}</Path>
+                    <Path>{path.map((e) => e.name).join(' > ')}</Path>
                 </>
             ) : (
                 <IconButton />

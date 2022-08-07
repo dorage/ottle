@@ -31,7 +31,7 @@ export const itemDrawerSubCategoryAsyncAction = createAsyncThunk(
 
         dispatch(itemDrawerCategoryItemsAsyncAction({ categoryId, scrollTop }));
         return {
-            path: name,
+            path: { id: categoryId, name },
             data: await getSubItemCategoryDocs([...path, categoryId]),
         };
     }
