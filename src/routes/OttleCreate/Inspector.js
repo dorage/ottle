@@ -10,7 +10,7 @@ import {
     itemHasSelected,
 } from '../../features/ottleMaker/ottleItemSlice';
 import { ProductLayer } from './ProductLayer';
-import { Textbutton } from '../../components/Button/TextButton';
+import { TextButton } from '../../components/Button/TextButton';
 import { RoundButton } from '../../components/Button/RoundButton';
 import { openItemDrawer } from '../../features/ottleMaker/itemDrawerSlice';
 
@@ -68,9 +68,9 @@ export const Inspector = () => {
                 <HeaderControls>
                     {deleteMode ? (
                         <>
-                            <Textbutton onClick={turnOffDeleteMode}>
+                            <TextButton onClick={turnOffDeleteMode}>
                                 완료
-                            </Textbutton>
+                            </TextButton>
                         </>
                     ) : (
                         <>

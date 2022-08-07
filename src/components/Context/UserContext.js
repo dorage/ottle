@@ -54,7 +54,6 @@ export const UserContextProvider = ({ children }) => {
             setContext(
                 createContext({
                     ...context,
-                    isMe: false,
                     loading: false,
                     error: true,
                 })
@@ -74,3 +73,9 @@ export const UserContextProvider = ({ children }) => {
         <UserContext.Provider value={context}>{children}</UserContext.Provider>
     );
 };
+
+export const UserContextProviderHoC = (Component) => (props) => (
+    <UserContextProvider>
+        <Component {...props} />
+    </UserContextProvider>
+);

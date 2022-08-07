@@ -1,11 +1,12 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { routes } from '../../configs/routes';
 import styled from 'styled-components';
 import { HeaderContainer } from '../../components/Layout/Header';
 import { IconButton } from '../../components/Button/IconButton';
 import { HiChevronLeft } from 'react-icons/hi';
+import { UserContext } from '../../components/Context/UserContext';
+import { LoadingBlock } from '../../components/OttleCreateItemDrawer/LoadingItem';
 
 //#region styled-components
 const Container = styled(HeaderContainer)`
@@ -28,20 +29,32 @@ const Block = styled.div`
 `;
 //#endregion
 
-export const OttleDetailHeader = ({ loading, data }) => {
+export const OttleDetailHeader = () => {
     const navigation = useNavigate();
+    const { loading, user } = useContext(UserContext);
 
     const onClickBack = () => {
-        navigation(routes.user(data.user.username));
+        navigation(routes.user(user.username));
     };
 
-    if (loading) return <></>;
+    if (loading) {
+        return (
+            <Container>
+                <IconButton icon={<HiChevronLeft />} onClick={onClickBack} />
+                <TitleSection>
+                    <LoadingBlock />
+                </TitleSection>
+                <Block></Block>
+            </Container>
+        );
+    }
+
     return (
         <Container>
             <IconButton icon={<HiChevronLeft />} onClick={onClickBack} />
             <TitleSection>
                 <Pagename>
-                    <b>{data.user.name}</b> 님의 옷뜰
+                    <b>{user.name}</b> 님의 옷뜰
                 </Pagename>
             </TitleSection>
             <Block></Block>

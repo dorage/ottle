@@ -1,16 +1,16 @@
 import React from 'react';
 import { ProfileItems } from './Items';
 import { ProfileInfo } from './Info';
-import { UserContextProvider } from './UserContext';
-import { UserOttleContextProvider } from './UserOttleContext';
+import { UserContextProvider } from '../../components/Context/UserContext';
+import { UserOttlesContextProvider } from '../../components/Context/UserOttlesContext';
 
 export const Profile = () => {
     return (
         <UserContextProvider>
-            <UserOttleContextProvider>
+            <UserOttlesContextProvider>
                 <ProfileInfo />
                 <ProfileItems />
-            </UserOttleContextProvider>
+            </UserOttlesContextProvider>
         </UserContextProvider>
     );
 };

@@ -1,19 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import { OttleDetailHeader } from './Header';
 import { FullScreenContainer } from '../../components/Layout/Container';
 import { Ottle } from '../../components/Ottle';
-import { selectUser } from '../../features/user/userSlice';
-import {
-    getMyOttle,
-    getOttleDetail,
-    getOttleDetailByNanoID,
-} from '../../app/firestore';
-import { OttleItems } from '../../components/Ottle/Items';
+import { OttleItems } from './Items';
 import { logEventFirebase } from '../../app/analytics';
+import {
+    OttleContext,
+    OttleContextProvierHoc,
+} from '../../components/Context/OttleContext';
+import { OttleItemsContextProvierHoC } from '../../components/Context/OttleItemsContext';
+import {
+    UserContext,
+    UserContextProviderHoC,
+} from '../../components/Context/UserContext';
+import { Divider } from '../HomeLayout/Divider';
 
 //#region styled-components
 const Container = styled.div`
@@ -27,60 +29,31 @@ const OttleSection = styled.div`
     padding-top: ${(props) => props.theme.gap.gap_16};
     margin-bottom: ${(props) => props.theme.gap.gap_32};
 `;
-const ItemSection = styled.div``;
-const Divider = styled.div`
-    margin-bottom: ${(props) => props.theme.gap.gap_32};
-    & > hr {
-        color: ${(props) => props.theme.color.black_600};
-    }
-`;
 //#endregion
 
-export const OttleDetail = () => {
-    const [{ data, loading, error }, fetchData] = useState({
-        data: null,
-        loading: true,
-        error: false,
-    });
-    const { username, nanoid } = useParams();
-
-    const fetchOttle = async () => {
-        try {
-            const data = await getOttleDetailByNanoID(username, nanoid);
-            fetchData({ data, loading: false, error: false });
-        } catch (err) {
-            console.log(err);
-            fetchData({ data: null, loading: false, error: true });
-        }
-    };
+const Component = () => {
+    const { loading, ottle } = useContext(OttleContext);
+    const { user } = useContext(UserContext);
 
     useEffect(() => {
-        logEventFirebase('watch_ottle');
-        fetchOttle();
+        logEventFirebase('watch_ottle_detail', { isMe: false });
     }, []);
 
     return (
         <FullScreenContainer>
             <Container>
-                {loading ? (
-                    <></>
-                ) : !error ? (
-                    <>
-                        <OttleDetailHeader data={data} />
-                        <OttleSection className='pad'>
-                            <Ottle data={data} />
-                        </OttleSection>
-                        <Divider className='pad'>
-                            <hr />
-                        </Divider>
-                        <ItemSection className='pad'>
-                            <OttleItems items={data.items} />
-                        </ItemSection>
-                    </>
-                ) : (
-                    <></>
-                )}
+                <OttleDetailHeader />
+                <OttleSection className='pad'>
+                    <Ottle loading={loading} user={user} ottle={ottle} />
+                </OttleSection>
+
+                <h1 className='pad'>Items</h1>
+                <OttleItems />
             </Container>
         </FullScreenContainer>
     );
 };
+
+export const OttleDetail = UserContextProviderHoC(
+    OttleContextProvierHoc(OttleItemsContextProvierHoC(Component))
+);
