@@ -1,5 +1,4 @@
 import React, { useContext, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { OttleDetailHeader } from './Header';
 import { FullScreenContainer } from '../../components/Layout/Container';
@@ -15,7 +14,6 @@ import {
     UserContext,
     UserContextProviderHoC,
 } from '../../components/Context/UserContext';
-import { Divider } from '../HomeLayout/Divider';
 
 //#region styled-components
 const Container = styled.div`

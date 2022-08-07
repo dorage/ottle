@@ -5,6 +5,7 @@ export const HeaderContainer = styled.div`
     justify-content: space-between;
     align-items: center;
     height: 5rem;
+    min-height: 5rem;
     padding-left: ${(props) => props.theme.gap.gap_16};
     padding-right: ${(props) => props.theme.gap.gap_16};
 
