@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
+import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getOttleDetailByNanoID } from '../../app/firestore';
+import { getOttleByNanoId } from '../../app/firestore';
+import { UserContext } from './UserContext';
 
 const initialContext = {
     loading: true,
@@ -15,17 +15,18 @@ const createContext = ({ loading, ottle, error }) => ({
     error,
 });
 
-const OttleDetailContext = React.createContext(initialContext);
+export const OttleContext = React.createContext(initialContext);
 
 export const OttleContextProvier = ({ children }) => {
     const [context, setContext] = useState(initialContext);
-    const { username, nanoid } = useParams();
+    const { nanoid } = useParams();
+    const { loading: userloading, user } = useContext(UserContext);
 
     const fetchOttle = async () => {
         try {
             // loading
             setContext(initialContext);
-            const data = await getOttleDetailByNanoID(username, nanoid);
+            const data = await getOttleByNanoId(user.uid, nanoid);
             // fulfilled
             setContext(
                 createContext({ ...context, loading: false, ottle: data })
@@ -45,12 +46,19 @@ export const OttleContextProvier = ({ children }) => {
     };
 
     useEffect(() => {
+        if (userloading) return;
         fetchOttle();
-    });
+    }, [userloading]);
 
     return (
-        <OttleDetailContext.Provider value={context}>
+        <OttleContext.Provider value={context}>
             {children}
-        </OttleDetailContext.Provider>
+        </OttleContext.Provider>
     );
 };
+
+export const OttleContextProvierHoc = (Component) => (props) => (
+    <OttleContextProvier>
+        <Component {...props} />
+    </OttleContextProvier>
+);

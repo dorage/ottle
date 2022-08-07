@@ -24,9 +24,9 @@ const createContext = ({ lastPage, loading, ottles, error }) => ({
     error,
 });
 
-export const UserOttleContext = React.createContext(initialContext);
+export const UserOttlesContext = React.createContext(initialContext);
 
-export const UserOttleContextProvider = ({ children }) => {
+export const UserOttlesContextProvider = ({ children }) => {
     const [context, setContext] = useState(initialContext);
     const { setOnScrollEvent } = useOutletContext();
     const { loading: userLoading, user } = useContext(UserContext);
@@ -87,8 +87,8 @@ export const UserOttleContextProvider = ({ children }) => {
     }, [context.loading]);
 
     return (
-        <UserOttleContext.Provider value={context}>
+        <UserOttlesContext.Provider value={context}>
             {children}
-        </UserOttleContext.Provider>
+        </UserOttlesContext.Provider>
     );
 };

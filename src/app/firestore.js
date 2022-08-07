@@ -137,22 +137,6 @@ export const getOttleDetail = async (username, ottleId) => {
 };
 
 /**
- * 오뜰의 상세 정보를 가져옵니다
- * @param {*} username
- * @param {*} nanoid
- * @returns
- */
-export const getOttleDetailByNanoID = async (username, nanoid) => {
-    const user = await getUserByUsername(username);
-    const ottle = await getOttleByNanoId(user.uid, nanoid);
-    const items = await getItemsById(ottle.items);
-    const like = await getOttleLike(user.uid, ottle.id);
-    // TODO; like여부나 댓글등의 자료도 가져와야함.
-
-    return { user, ottle, items, like };
-};
-
-/**
  * 오뜰 개수 추가
  * @param {*} uid
  */
@@ -424,7 +408,7 @@ export const getSubItemCategoryDocs = async (path) => {
 };
 /**
  * itemIds에 포함된 아이템의 리스트를 가져옵니다.
- * @param {*} itemIds
+ * @param {Array} itemIds
  */
 export const getItemsById = async (itemIds = []) => {
     const itemsRef = query(

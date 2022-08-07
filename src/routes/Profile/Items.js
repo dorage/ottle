@@ -3,7 +3,7 @@ import { routes } from '../../configs/routes';
 import styled from 'styled-components';
 import { useNavigate, useParams } from 'react-router-dom';
 import { NoItem } from './NoItem';
-import { UserOttleContext } from './UserOttleContext';
+import { UserOttlesContext } from '../../components/Context/UserOttlesContext';
 
 //#region styled-components
 const Container = styled.div`
@@ -30,7 +30,7 @@ const LoadingThumb = styled.div`
 export const ProfileItems = () => {
     const navigation = useNavigate();
     const { username } = useParams();
-    const { lastPage, loading, ottles, error } = useContext(UserOttleContext);
+    const { lastPage, loading, ottles, error } = useContext(UserOttlesContext);
 
     const onClickOttle = (ottleId) => () => {
         navigation(routes.ottleDetail(username, ottleId));

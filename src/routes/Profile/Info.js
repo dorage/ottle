@@ -10,7 +10,7 @@ import { selectUser, signOutAsyncAction } from '../../features/user/userSlice';
 import { signOutFirebase } from '../../app/auth';
 import { ExLinkHoC } from '../../components/HOC/LinkHoC';
 import { CopyClipboardHoC } from '../../components/HOC/CopyClipboardHoC';
-import { UserContext } from './UserContext';
+import { UserContext } from '../../components/Context/UserContext';
 import {
     LoadingBlock,
     LoadingFlex,

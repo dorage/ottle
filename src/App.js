@@ -40,14 +40,14 @@ function App() {
     if (!isAuth) {
         return (
             <Routes>
+                <Route
+                    path={routes.ottleCreate()}
+                    element={<Navigate to={routes.profile()} />}
+                />
                 <Route path={routes.ottleDetail()} element={<OttleDetail />} />
                 <Route
                     path={routes.pageNotFound()}
                     element={<PageNotFound />}
-                />
-                <Route
-                    path='*'
-                    element={<Navigate to={routes.pageNotFound()} />}
                 />
                 <Route path={routes.main()} element={<HomeLayout />}>
                     <Route
@@ -57,6 +57,10 @@ function App() {
                     <Route path={routes.profile()} element={<SignIn />} />
                     <Route path={routes.user()} element={<Profile />} />
                 </Route>
+                <Route
+                    path='*'
+                    element={<Navigate to={routes.pageNotFound()} />}
+                />
             </Routes>
         );
     }
@@ -69,7 +73,6 @@ function App() {
             />
             <Route path={routes.ottleDetail()} element={<OttleDetail />} />
             <Route path={routes.pageNotFound()} element={<PageNotFound />} />
-            <Route path='*' element={<Navigate to={routes.pageNotFound()} />} />
             <Route path={routes.main()} element={<HomeLayout />}>
                 <Route
                     path={routes.main()}
@@ -81,6 +84,7 @@ function App() {
                 />
                 <Route path={routes.user()} element={<Profile />} />
             </Route>
+            <Route path='*' element={<Navigate to={routes.pageNotFound()} />} />
         </Routes>
     );
 }
