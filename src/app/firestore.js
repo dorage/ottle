@@ -66,7 +66,11 @@ export const getUserByUID = async (uid) => {
     const docRef = doc(firestore, C_USERS, uid);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
-        return { uid: docSnap.id, ...docSnap.data() };
+        return {
+            uid: docSnap.id,
+            ...docSnap.data(),
+            created_at: timestampToDate(docSnap.data().created_at),
+        };
     } else {
         return null;
     }
@@ -79,7 +83,12 @@ export const getUserByUsername = async (username) => {
     );
     const userSnap = await getDocs(userRef);
     if (!userSnap.docs.length) throw new Error('there has no user');
-    return { uid: userSnap.docs[0].id, ...userSnap.docs[0].data() };
+    const user = userSnap.docs[0];
+    return {
+        uid: user.id,
+        ...user.data(),
+        created_at: timestampToDate(user.data().created_at),
+    };
 };
 
 /**
