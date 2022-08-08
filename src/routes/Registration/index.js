@@ -77,7 +77,7 @@ export const Registration = () => {
     };
 
     const usernameValidator = async (value) => {
-        const match = value.match(/^[a-zA-Z_-]*$/g);
+        const match = value.match(/^[a-z_-]*$/g);
         if (!match) {
             setUsernameState({ ...usernameState, ...errors.valid });
             return false;
