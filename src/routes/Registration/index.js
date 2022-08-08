@@ -50,7 +50,7 @@ const errors = {
     exist: { error: true, message: '이미 사용중인 ID 입니다' },
     valid: {
         error: true,
-        message: '영문자 a-z A-Z 특수기호 _ - 만 사용가능합니다',
+        message: '영문자 a-z 특수기호 _ - 만 사용가능합니다',
     },
 };
 
@@ -100,7 +100,7 @@ export const Registration = () => {
         setUsernameState({ ...usernameState, error: false });
         if (validating) return;
         const name = nameState.value.slice(0, 15);
-        const username = nameState.value.toLowerCase().slice(0, 15);
+        const username = usernameState.value.toLowerCase().slice(0, 15);
         try {
             setValidating(true);
             if (
