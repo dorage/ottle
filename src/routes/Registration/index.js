@@ -68,7 +68,7 @@ export const Registration = () => {
     const [usernameState, setUsernameState] = useState(initialState({}));
 
     const nameValidator = async (value) => {
-        if (value.length < 2) {
+        if (value.length < 2 || value.length > 15) {
             setNameState({ ...nameState, ...errors.length(2, 15) });
             return false;
         }
@@ -82,7 +82,7 @@ export const Registration = () => {
             setUsernameState({ ...usernameState, ...errors.valid });
             return false;
         }
-        if (value.length < 4) {
+        if (value.length < 4 || value.length > 15) {
             setUsernameState({ ...usernameState, ...errors.length(4, 15) });
             return false;
         }
@@ -99,20 +99,22 @@ export const Registration = () => {
         setNameState({ ...nameState, error: false });
         setUsernameState({ ...usernameState, error: false });
         if (validating) return;
+        const name = nameState.value.slice(0, 15);
+        const username = nameState.value.toLowerCase().slice(0, 15);
         try {
             setValidating(true);
             if (
                 [
-                    await nameValidator(nameState.value),
-                    await usernameValidator(usernameState.value),
+                    await nameValidator(name),
+                    await usernameValidator(username),
                 ].some((e) => !e)
             ) {
                 setValidating(false);
                 return;
             }
             await setUserInfo(user.uid, {
-                name: nameState.value,
-                username: usernameState.value,
+                name,
+                username,
             });
             dispatch(loadUserAsyncAction({ uid: user.uid }));
         } catch (err) {
@@ -148,6 +150,7 @@ export const Registration = () => {
                                 value,
                             })
                         }
+                        lowercase={true}
                         maxLength={15}
                         blank={false}
                     />

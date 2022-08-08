@@ -37,11 +37,16 @@ export const InputField = ({
     setValue,
     error,
     message,
+    lowercase,
     blank,
     ...props
 }) => {
     const onChangeInput = (e) => {
-        setValue(e.currentTarget.value);
+        setValue(
+            lowercase
+                ? e.currentTarget.value.toLowerCase()
+                : e.currentTarget.value
+        );
     };
 
     const onKeyDown = (e) => {
