@@ -80,7 +80,7 @@ _.throttle = (func, ms) => {
 _.debouce = (func, ms) => {
     let timeOut;
     return (...args) => {
-        if (timeOut) clearTimeout(timeOut);
+        if (timeOut !== undefined) clearTimeout(timeOut);
         timeOut = setTimeout(() => func(...args), ms);
     };
 };
