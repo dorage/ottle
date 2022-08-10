@@ -19,6 +19,7 @@ const initialState = {
 
 const projectCategories = async (facet_count) => {
     const map = await getAllItemCategoryDocs();
+    console.log(map);
     const obj = [];
     for (const { value } of facet_count.counts) {
         obj.push(map[value]);
