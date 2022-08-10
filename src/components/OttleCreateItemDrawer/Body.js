@@ -30,8 +30,7 @@ const Container = styled.div`
 `;
 //#endregion
 
-export const ItemDrawerBody = () => {
-    const scrollRef = useRef();
+export const ItemDrawerBody = ({ scrollRef }) => {
     const dispatch = useDispatch();
     const { user } = useSelector(selectUser);
     const { path } = useSelector(selectItemDrawerCategory);

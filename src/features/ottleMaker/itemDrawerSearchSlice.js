@@ -83,7 +83,7 @@ export const itemDrawerSearchPagingAsyncAction = createAsyncThunk(
         const { path, page, term, lastPage } = selectItemDrawerSearch(
             getState()
         );
-        if (lastPage) return;
+        if (lastPage) return { items: [] };
         const {
             data: { hits },
         } = await searchItem(term, page + 1, [...path]);

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import styled from 'styled-components';
 import { FullScreenContainer } from '../Layout/Container';
 import { useDispatch, useSelector } from 'react-redux';
@@ -28,15 +28,18 @@ const Container = styled(FullScreenContainer)`
 
 export const OttleCreateItemDrawer = () => {
     const dispatch = useDispatch();
+    const scrollRef = useRef();
     const { isOpend } = useSelector(selectItemDrawer);
 
     const onClickBack = () => {
+        scrollRef.current.scrollTo(0, 0);
         dispatch(goBackItemDrawerCategory());
     };
     const onClickClose = () => {
         dispatch(closeItemDrawer());
     };
     const onClickSearchBack = () => {
+        scrollRef.current.scrollTo(0, 0);
         dispatch(itemDrawerSearchGoBack());
     };
 
@@ -48,7 +51,7 @@ export const OttleCreateItemDrawer = () => {
                 onClickSearchBack={onClickSearchBack}
             />
             <ItemDrawerSearchBar />
-            <ItemDrawerBody />
+            <ItemDrawerBody scrollRef={scrollRef} />
         </Container>
     );
 };
