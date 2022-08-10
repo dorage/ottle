@@ -64,10 +64,8 @@ export const OttleLikeContextProvier = ({ children }) => {
     const fetchSetLike = async () => {
         try {
             if (context.like) {
-                console.log('dislike');
                 await deleteOttleLike(user.uid, ottle.id);
             } else {
-                console.log('like');
                 await setOttleLike(user.uid, ottle.id);
             }
         } catch (err) {

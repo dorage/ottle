@@ -8,6 +8,7 @@ import {
     selectItemDrawerCategory,
 } from '../../features/ottleMaker/itemDrawerCategorySlice';
 import { LoadingBlock } from './LoadingItem';
+import { selectItemDrawerSearch } from '../../features/ottleMaker/itemDrawerSearchSlice';
 
 //#region styled-components
 const CategoryContainer = styled.div`
@@ -34,24 +35,20 @@ const CategoryContainer = styled.div`
 
     cursor: pointer;
 `;
+const Error = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    grid-column-start: 1;
+    grid-column-end: 5;
+
+    color: ${(props) => props.theme.color.black_400};
+    text-align: center;
+    font-weight: 700;
+`;
 //#endregion
 
-export const GridCategories = ({ scrollRef }) => {
-    const dispatch = useDispatch();
-    const { loading, data, error } = useSelector(selectItemDrawerCategory);
-
-    useEffect(() => {
-        dispatch(itemDrawerMainCategoryAsyncAction());
-    }, []);
-
-    const onClickCategory = (categoryId, name) => () => {
-        const { scrollTop } = scrollRef.current;
-        dispatch(
-            itemDrawerSubCategoryAsyncAction({ categoryId, name, scrollTop })
-        );
-        scrollRef.current.scrollTo(0, 0);
-    };
-
+const Categories = ({ loading, data, error, onClick }) => {
     if (loading) {
         return (
             <>
@@ -65,21 +62,43 @@ export const GridCategories = ({ scrollRef }) => {
     }
 
     if (error) {
-        return <>error</>;
+        return <Error>카테고리 정보를 가져올 수 없습니다</Error>;
     }
 
-    if (data) {
-        return (
-            <>
-                {data.map(({ name, id }) => (
-                    <CategoryContainer
-                        onClick={onClickCategory(id, name)}
-                        key={id}
-                    >
-                        {name}
-                    </CategoryContainer>
-                ))}
-            </>
-        );
-    }
+    return (
+        <>
+            {data.map((categeogry) => (
+                <CategoryContainer
+                    onClick={onClick(categeogry)}
+                    key={categeogry.id}
+                >
+                    {categeogry.name}
+                </CategoryContainer>
+            ))}
+        </>
+    );
+};
+
+export const ItemDrawerCategories = ({ onClick }) => {
+    const { loading, data, error } = useSelector(selectItemDrawerCategory);
+    return (
+        <Categories
+            loading={loading}
+            data={data}
+            error={error}
+            onClick={onClick}
+        />
+    );
+};
+
+export const ItemDrawerSearchCategory = ({ onClick }) => {
+    const { loading, categories, error } = useSelector(selectItemDrawerSearch);
+    return (
+        <Categories
+            loading={loading}
+            data={categories}
+            error={error}
+            onClick={onClick}
+        />
+    );
 };

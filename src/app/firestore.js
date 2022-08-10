@@ -1,3 +1,4 @@
+import { async } from '@firebase/util';
 import {
     collection,
     collectionGroup,
@@ -203,7 +204,7 @@ export const getLikedOttles = async (uid) => {
     return ottles;
 };
 
-const paginationHoC = (func) => {
+const memoizeHoC = (func) => {
     let lastRef = null;
     let context = {};
     const initRef = () => {
@@ -235,6 +236,13 @@ const paginationHoC = (func) => {
         context = { ...context, ...obj };
     };
     /**
+     * 컨텍스트에 정보를 저장합니다
+     * @param {*} keys
+     */
+    const deleteContext = (...keys) => {
+        keys.forEach((key) => context[key] && delete context[key]);
+    };
+    /**
      * 기타 페이징 관련 정보를 불러옵니다.
      * @returns
      */
@@ -246,6 +254,7 @@ const paginationHoC = (func) => {
         queryByRef,
         setContext,
         getContext,
+        deleteContext,
     });
 };
 
@@ -254,7 +263,7 @@ const paginationHoC = (func) => {
  * @param {*} uid
  * @returns
  */
-export const getOttlesByUID = paginationHoC(
+export const getOttlesByUID = memoizeHoC(
     ({ initRef, setRef, getRef, queryByRef }) => async (
         uid,
         firstPage = false
@@ -291,7 +300,7 @@ export const getOttlesByUID = paginationHoC(
  * @param {*} uid
  * @returns
  */
-export const getOttlesByUsername = paginationHoC(
+export const getOttlesByUsername = memoizeHoC(
     ({ initRef, setRef, getRef, queryByRef }) => async (
         username,
         firstPage = false
@@ -326,45 +335,24 @@ export const getOttlesByUsername = paginationHoC(
 );
 
 /**
- * 메인화면에 표시할 스레드들을 가져옵니다.
- * @returns
+ * 카테고리 ID를 키로 한 전체 카테고리 목록을 반환합니다
  */
-export const getMainThreadDocs = paginationHoC(
-    ({ setRef, getRef }) => async () => {
+export const getAllItemCategoryDocs = memoizeHoC(
+    ({ setContext, getContext }) => async () => {
         try {
-            const mainThreadQuery = getRef()
-                ? query(
-                      collection(firestore, C_OTTLES),
-                      orderBy('created_at', 'desc'),
-                      startAfter(getRef()),
-                      limit(PAGE_SMALL)
-                  )
-                : query(
-                      collection(firestore, C_OTTLES),
-                      orderBy('created_at', 'desc'),
-                      limit(PAGE_SMALL)
-                  );
-            const ottleSnapshot = await getDocs(mainThreadQuery);
-            setRef(_.getLastIndex(ottleSnapshot.docs));
-            const threads = [];
+            if (getContext().categories) return getContext().categories;
+            const categoriesRef = collectionGroup(firestore, C_ITEM_CATEGORIES);
+            const snapshot = await getDocs(categoriesRef);
+            const categories = {};
+            snapshot.forEach((doc) => {
+                categories[doc.id] = { id: doc.id, ...doc.data() };
+            });
+            setContext({ categories });
 
-            for (const ottleDoc of ottleSnapshot.docs) {
-                const { uid, created_at, items } = ottleDoc.data();
-                const user = await getUserByUID(uid);
-                const like = await getOttleLike(uid, ottleDoc.id);
-                threads.push({
-                    user,
-                    ottle: {
-                        id: ottleDoc.id,
-                        ...ottleDoc.data(),
-                        created_at: timestampToDate(created_at),
-                    },
-                    like,
-                });
-            }
-            return threads;
+            return categories;
         } catch (err) {
-            console.log(err);
+            console.error(err);
+            return [];
         }
     }
 );
@@ -373,48 +361,56 @@ export const getMainThreadDocs = paginationHoC(
  * 아이템 카테고리 최상위 documents 를 가져옵니다.
  * @returns
  */
-export const getMainItemCategoryDocs = async () => {
-    try {
-        const itemCategoriesQuery = query(
-            collection(firestore, C_ITEM_CATEGORIES),
-            orderBy('order')
-        );
-        const querySnapshot = await getDocs(itemCategoriesQuery);
-        const itemCategories = [];
-        querySnapshot.forEach((doc) =>
-            itemCategories.push({ id: doc.id, ...doc.data() })
-        );
-        return itemCategories;
-    } catch (err) {
-        console.error(err);
-        return [];
+export const getMainItemCategoryDocs = memoizeHoC(
+    ({ setContext, getContext }) => async () => {
+        try {
+            if (getContext().categories) return getContext().categories;
+            const itemCategoriesQuery = query(
+                collection(firestore, C_ITEM_CATEGORIES),
+                orderBy('order')
+            );
+            const querySnapshot = await getDocs(itemCategoriesQuery);
+            const categories = [];
+            querySnapshot.forEach((doc) =>
+                categories.push({ id: doc.id, ...doc.data() })
+            );
+            setContext({ categories });
+            return categories;
+        } catch (err) {
+            console.error(err);
+            return [];
+        }
     }
-};
+);
 /**
  * 해당 categoryId를 가진 카테고리의 서브카테고리 documents 를 가져옵니다
  * @param {String[]} path
  */
-export const getSubItemCategoryDocs = async (path) => {
-    try {
-        const pathString = path.reduce(
-            (acc, curr) => `${acc}/${curr}/${C_ITEM_CATEGORIES}`,
-            C_ITEM_CATEGORIES
-        );
-        const itemCategoriesQuery = query(
-            collection(firestore, pathString),
-            orderBy('order')
-        );
-        const querySnapshot = await getDocs(itemCategoriesQuery);
-        const itemCategories = [];
-        querySnapshot.forEach((doc) =>
-            itemCategories.push({ id: doc.id, ...doc.data() })
-        );
-        return itemCategories;
-    } catch (err) {
-        console.error(err);
-        return [];
+export const getSubItemCategoryDocs = memoizeHoC(
+    ({ setContext, getContext }) => async (path) => {
+        try {
+            if (getContext().path) return getContext().path;
+            const pathString = path.reduce(
+                (acc, curr) => `${acc}/${curr}/${C_ITEM_CATEGORIES}`,
+                C_ITEM_CATEGORIES
+            );
+            const itemCategoriesQuery = query(
+                collection(firestore, pathString),
+                orderBy('order')
+            );
+            const querySnapshot = await getDocs(itemCategoriesQuery);
+            const categories = [];
+            querySnapshot.forEach((doc) =>
+                categories.push({ id: doc.id, ...doc.data() })
+            );
+            setContext({ path: categories });
+            return categories;
+        } catch (err) {
+            console.error(err);
+            return [];
+        }
     }
-};
+);
 /**
  * itemIds에 포함된 아이템의 리스트를 가져옵니다.
  * @param {Array} itemIds
@@ -433,8 +429,8 @@ export const getItemsById = async (itemIds = []) => {
  * 카테고리 선정 이전에 표시될 아이템을 가져옵니다.
  * @returns
  */
-export const getItemsRecommend = paginationHoC(
-    ({ initRef, setRef, getRef, queryByRef }) => async (firstPage) => {
+export const getItemsRecommend = memoizeHoC(
+    ({ initRef, setRef, getRef, queryByRef }) => async (firstPage = false) => {
         if (firstPage) {
             initRef();
         }
@@ -458,7 +454,7 @@ export const getItemsRecommend = paginationHoC(
  * @param {*} categoryId
  * @returns
  */
-export const getItemsInCategory = paginationHoC(
+export const getItemsInCategory = memoizeHoC(
     ({ initRef, setRef, getRef, queryByRef, setContext, getContext }) => async (
         categoryId,
         firstPage = false
@@ -529,269 +525,3 @@ export const deleteOttleLike = async (uid, ottleId) => {
     snaps.forEach((doc) => promises.push(deleteDoc(doc.ref)));
     await Promise.all(promises);
 };
-
-// ██████████████████████████████████████████████████████████████
-//
-// 로컬 테스트 용도
-//
-// ██████████████████████████████████████████████████████████████
-
-if (process.env.NODE_ENV === 'development') {
-    const genCategory = (id, name, children = []) => ({
-        id,
-        name,
-        children,
-    });
-
-    const categories = [
-        genCategory('top', '상의', [
-            genCategory('short-sleeve', '반팔'),
-            genCategory('long-sleeve', '긴팔'),
-            genCategory('none-sleeve', '민소매'),
-            genCategory('sweat-shirt', '맨투맨'),
-            genCategory('knit', '니트'),
-            genCategory('shirts', '셔츠'),
-            genCategory('top-etc', '기타'),
-        ]),
-        genCategory('bottom', '하의', [
-            genCategory('denim', '데님'),
-            genCategory('cotton', '코튼'),
-            genCategory('slacks', '정장/슬랙스'),
-            genCategory('slacks', '스커트'),
-            genCategory('bottom-trainer', '트레이너'),
-            genCategory('shorts', '숏'),
-            genCategory('bottom-etc', '기타'),
-        ]),
-        genCategory('outer', '아우터', [
-            genCategory('hoodie-zipup', '후드집업'),
-            genCategory('cardigan', '가디건'),
-            genCategory('coat', '코트'),
-            genCategory('jacket', '자켓'),
-            genCategory('blazer', '블레이저'),
-            genCategory('puffer', '패딩'),
-            genCategory('outer-trainer', '트레이너'),
-            genCategory('outer-etc', '기타'),
-        ]),
-        genCategory('set', '세트', [
-            genCategory('set-trainer', '트레이너'),
-            genCategory('dress', '원피스'),
-            genCategory('suit', '정장/수트'),
-            genCategory('sweater', '점프슈트'),
-            genCategory('set-etc', '기타'),
-        ]),
-        genCategory('footwear', '신발', [
-            genCategory('sneaker', '운동화'),
-            genCategory('shoes', '구두'),
-            genCategory('canvas', '단화/캔버스'),
-            genCategory('boots', '부츠'),
-            genCategory('sandal', '샌달'),
-            genCategory('footwear-etc', '기타'),
-        ]),
-        genCategory('headwear', '모자', [
-            genCategory('cap', '야구모자'),
-            genCategory('bucket', '버킷햇'),
-            genCategory('fedora', '페도라'),
-            genCategory('beanie', '비니'),
-            genCategory('headwear-etc', '기타'),
-        ]),
-        genCategory('eyewear', '선글라스/안경테', [
-            genCategory('glasses', '안경'),
-            genCategory('sunglasses', '선글라스'),
-            genCategory('eyewear-etc', '기타'),
-        ]),
-        genCategory('bag', '가방', [
-            genCategory('backpack', '백팩'),
-            genCategory('messenger', '메신저'),
-            genCategory('waistback', '웨이스트'),
-            genCategory('tote', '토트'),
-            genCategory('clutch', '클러치'),
-            genCategory('pouch', '파우치'),
-            genCategory('luggage', '캐리어'),
-            genCategory('bag-etc', '기타'),
-        ]),
-        genCategory('bag-woman', '여성가방', [
-            genCategory('woman-backpack', '숄더'),
-            genCategory('woman-cross', '크로스'),
-            genCategory('woman-waist', '웨이스트'),
-            genCategory('woman-tote', '토트'),
-            genCategory('woman-clutch', '클러치'),
-            genCategory('woman-pouch', '파우치'),
-            genCategory('woman-etc', '기타'),
-        ]),
-        genCategory('accessory', '악세서리', [
-            genCategory('sock', '양말'),
-            genCategory('glove', '장갑'),
-            genCategory('scarf', '목도리/스카프'),
-            genCategory('wallet', '지갑'),
-            genCategory('watch', '시계'),
-        ]),
-        genCategory('jewerly', '쥬얼리', [
-            genCategory('necklace', '목걸이'),
-            genCategory('ring', '반지'),
-            genCategory('earring', '귀걸이'),
-            genCategory('bracelet', '팔찌/발찌'),
-        ]),
-    ];
-
-    const tempCategory = [
-        genCategory(0, 'top', '상의', [
-            genCategory(1, 'shirt', '셔츠'),
-            genCategory(1, 'tshirt', '티셔츠'),
-            genCategory(1, 'hoodie', '후드티'),
-            genCategory(1, 'sweater', '스웨터'),
-        ]),
-        genCategory(0, 'bottom', '하의', [
-            genCategory(1, 'denim', '데님팬츠'),
-            genCategory(1, 'cotton', '코튼팬츠'),
-            genCategory(1, 'slacks', '정장/슬랙스'),
-            genCategory(1, 'skirt', '스커트'),
-            genCategory(1, 'bottom-trainer', '트레이'),
-            genCategory(1, 'shorts', '숏팬츠'),
-        ]),
-        genCategory(0, 'outer', '아우터', [
-            genCategory(1, 'hoodie-zipup', '후드집업'),
-            genCategory(1, 'cardigan', '가디건'),
-            genCategory(1, 'coat', '코트'),
-            genCategory(1, 'jacket', '자켓'),
-            genCategory(1, 'blazer', '블레이저'),
-        ]),
-    ];
-
-    const writeCategoryData = async (categories) => {
-        console.log('start writting');
-        for (let i = 0; i < categories.length; i++) {
-            const main = categories[i];
-            const itemCategoriesRef = collection(firestore, C_ITEM_CATEGORIES);
-            await setDoc(doc(itemCategoriesRef, main.id), {
-                name: main.name,
-                order: i,
-                level: 0,
-            });
-            for (let j = 0; j < main.children.length; j++) {
-                const sub = main.children[j];
-                const subCategoriesRef = collection(
-                    firestore,
-                    `item_categories/${main.id}/item_categories`
-                );
-                await setDoc(doc(subCategoriesRef, sub.id), {
-                    name: sub.name,
-                    order: j,
-                    level: 1,
-                });
-            }
-        }
-        console.log('done writting');
-    };
-
-    const genItem = (category, brand, name, link, image) => ({
-        category,
-        brand,
-        name,
-        image: { original: image },
-        link,
-    });
-
-    const testItems = [
-        genItem(
-            ['top', 'shirt'],
-            'ENGINEERED GARMENTS',
-            '퍼펙트한 셔츠',
-            'www.naver.com',
-            'http://localhost:9199/v0/b/ottle-47f85.appspot.com/o/items%2Faccessories%2Faccessory.jpg?alt=media&token=5fcd4742-889b-459e-8a8c-23557cd0b186'
-        ),
-        genItem(
-            ['top', 'tshirt'],
-            'NEEDLES',
-            '겁나게 멋진 티샤쓰',
-            'www.naver.com',
-            'http://localhost:9199/v0/b/ottle-47f85.appspot.com/o/items%2Fbottoms%2Fpant.png?alt=media&token=bde997e5-9804-47bf-ad27-1e9151f34798'
-        ),
-        genItem(
-            ['bottom', 'denim'],
-            'NUDIE JEAN',
-            '누디진 옐로 스티치 데님 팬츠',
-            'www.naver.com',
-            'http://localhost:9199/v0/b/ottle-47f85.appspot.com/o/items%2Fshoes%2Fshoes.png?alt=media&token=020e1ef2-3d3c-459c-9bae-6eaad0269404'
-        ),
-        genItem(
-            ['bottom', 'cotton'],
-            'POLO RALPH LAUREN',
-            '폴로 된장 코튼 팬츠',
-            'www.naver.com',
-            'http://localhost:9199/v0/b/ottle-47f85.appspot.com/o/items%2Fstickers%2Fsticker.png?alt=media&token=c3dc1eeb-ddb8-4454-9f38-bda636fc4e6f'
-        ),
-        genItem(
-            ['outer', 'hoodie-zipup'],
-            'CANADA GOOSE',
-            '구스범스 방지 오리털 패딩',
-            'www.naver.com',
-            'http://localhost:9199/v0/b/ottle-47f85.appspot.com/o/items%2Ftops%2Ftop.png?alt=media&token=175cc349-485a-47b5-a27a-c754f62ec53d'
-        ),
-    ];
-
-    const writeItemData = async (items) => {
-        for (const item of items) {
-            const itemRef = collection(firestore, C_ITEMS);
-            await setDoc(doc(itemRef), item);
-        }
-    };
-
-    const genOttle = (uid, title, description, image) => ({
-        uid,
-        title,
-        description,
-        items: ['7NnBHVC1HkPKJSF8Pay2'],
-        image: {
-            original: image,
-        },
-    });
-
-    const testOttles = [
-        genOttle(
-            'ACa0Zv6C2lfmpUqeP5cpKhtpd2dy',
-            '2022 핫한 섬머룩 #1',
-            '',
-            'http://localhost:9199/v0/b/ottle-47f85.appspot.com/o/users%2FsnUitsNBCaFldTHfdP8gkWbUBSs9%2Fottles%2Ftester_2.jpg?alt=media&token=aaed0307-bc94-41f9-8610-4850d3f187f8'
-        ),
-        genOttle(
-            'ACa0Zv6C2lfmpUqeP5cpKhtpd2dy',
-            '2022 핫한 섬머룩 #2',
-            '',
-            'http://localhost:9199/v0/b/ottle-47f85.appspot.com/o/users%2FsnUitsNBCaFldTHfdP8gkWbUBSs9%2Fottles%2Ftester_1.jpg?alt=media&token=10388046-8200-4f12-943d-f6ad18fc0faf'
-        ),
-        genOttle(
-            'snUitsNBCaFldTHfdP8gkWbUBSs9',
-            '2학기에 이렇게만 입고 놀러가자',
-            'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-            'http://localhost:9199/v0/b/ottle-47f85.appspot.com/o/users%2FsnUitsNBCaFldTHfdP8gkWbUBSs9%2Fottles%2Flook.jpg?alt=media&token=34a7c79a-4720-4a37-a0ac-870d3eec72e8'
-        ),
-        genOttle(
-            'snUitsNBCaFldTHfdP8gkWbUBSs9',
-            '회사에서 패션으로 이름좀 떨치고 싶다면',
-            'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-            'http://localhost:9199/v0/b/ottle-47f85.appspot.com/o/users%2FsnUitsNBCaFldTHfdP8gkWbUBSs9%2Fottles%2F1658815405117?alt=media&token=4459b08e-b425-4f88-ae8e-1a143546a91b'
-        ),
-        genOttle(
-            'snUitsNBCaFldTHfdP8gkWbUBSs9',
-            '개강하면 동기들 기강잡는 룩',
-            'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-            'http://localhost:9199/v0/b/ottle-47f85.appspot.com/o/users%2FsnUitsNBCaFldTHfdP8gkWbUBSs9%2Fottles%2F1658815320974?alt=media&token=179fb772-d71c-4a4e-9698-3547fe285095'
-        ),
-    ];
-
-    const writeOttleData = async (ottles) => {
-        for (const ottle of ottles) {
-            const ottleRef = collection(firestore, C_OTTLES);
-            await setDoc(doc(ottleRef), {
-                ...ottle,
-                created_at: serverTimestamp(),
-            });
-        }
-        console.log('done! writeOttleData');
-    };
-    /*
-    Array(40)
-        .fill()
-        .forEach(() => writeOttleData([testOttles[4]]));
-    */
-}

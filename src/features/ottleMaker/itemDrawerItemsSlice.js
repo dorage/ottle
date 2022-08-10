@@ -5,6 +5,7 @@ import {
     PAGE,
 } from '../../app/firestore';
 import { _ } from '../../utils/fp';
+import { selectItemDrawerCategory } from './itemDrawerCategorySlice';
 
 const initialState = {
     scrollTop: 0,
@@ -51,11 +52,11 @@ export const itemDrawerRecommendItemsPagingAsyncAction = createAsyncThunk(
  */
 export const itemDrawerCategoryItemsAsyncAction = createAsyncThunk(
     'itemDrawerItems/fetch-category',
-    async ({ categoryId, scrollTop }) => {
+    async ({ category, scrollTop }) => {
         try {
             return {
                 scrollTop: scrollTop,
-                data: await getItemsInCategory(categoryId, true),
+                data: await getItemsInCategory(category.id, true),
             };
         } catch (err) {
             return err;
@@ -68,9 +69,10 @@ export const itemDrawerCategoryItemsAsyncAction = createAsyncThunk(
  */
 export const itemDrawerCategoryItemsPagingAsyncAction = createAsyncThunk(
     'itemDrawerItems/fetch-category-paging',
-    async ({ categoryId }) => {
+    async (__, { getState }) => {
+        const { path } = selectItemDrawerCategory(getState());
         try {
-            return { data: await getItemsInCategory(categoryId) };
+            return { data: await getItemsInCategory(_.getLastIndex(path).id) };
         } catch (err) {
             return err;
         }

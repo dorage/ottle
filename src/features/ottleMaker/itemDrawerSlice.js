@@ -1,4 +1,5 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
+import { _ } from '../../utils/fp';
 
 const initialState = {
     isOpend: false,
