@@ -19,7 +19,7 @@ const initialState = {
 
 const projectCategories = async (facet_count) => {
     const map = await getAllItemCategoryDocs();
-    console.log(map);
+
     const obj = [];
     for (const { value } of facet_count.counts) {
         obj.push(map[value]);
@@ -36,7 +36,7 @@ export const itemDrawerSearchAsyncAction = createAsyncThunk(
         } = await searchItem(term);
         const items = hits.map((e) => e.document);
         const mainCategory = await projectCategories(facet_counts[0]);
-        console.log(hits, facet_counts);
+
         return {
             isSearching: true,
             term,
