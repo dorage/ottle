@@ -29,8 +29,9 @@ const projectCategories = async (facet_count) => {
 
 export const itemDrawerSearchAsyncAction = createAsyncThunk(
     'itemDrawerSearch/fetch-search',
-    async ({ term }) => {
+    async ({ term }, { dispatch }) => {
         if (!term || !term.trim().length) return { isSearching: false };
+        dispatch(itemDrawerSearchSlice.actions.initialize());
         const {
             data: { hits, facet_counts },
         } = await searchItem(term);
@@ -98,6 +99,7 @@ const itemDrawerSearchSlice = createSlice({
     name: 'itemDrawerSearch',
     initialState,
     reducers: {
+        initialize: () => initialState,
         itemDrawerSerachClose: (state) => {
             state.isSearching = false;
         },
