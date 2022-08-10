@@ -119,6 +119,7 @@ const itemDrawerSearchSlice = createSlice({
     extraReducers(builder) {
         // 검색시 첫 결과
         builder.addCase(itemDrawerSearchAsyncAction.pending, (state) => {
+            state.isSearching = true;
             state.loading = true;
             state.error = false;
             state.lastPage = false;
