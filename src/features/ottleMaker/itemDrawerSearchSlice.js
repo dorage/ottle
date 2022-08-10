@@ -35,6 +35,7 @@ export const itemDrawerSearchAsyncAction = createAsyncThunk(
         } = await searchItem(term);
         const items = hits.map((e) => e.document);
         const mainCategory = await projectCategories(facet_counts[0]);
+        console.log(hits, facet_counts);
         return {
             isSearching: true,
             term,
