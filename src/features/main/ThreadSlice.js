@@ -1,11 +1,10 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { getMainThreadDocs, PAGE_SMALL } from '../../app/firestore';
+import { PAGE_SMALL } from '../../app/firestore';
 
 const initialState = { lastPage: false, data: [], loading: true, error: false };
 
 export const threadAsyncAction = createAsyncThunk('thread/fetch', async () => {
     try {
-        return await getMainThreadDocs();
     } catch (err) {
         return err;
     }

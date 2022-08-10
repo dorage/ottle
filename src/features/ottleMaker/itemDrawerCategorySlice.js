@@ -26,13 +26,14 @@ export const itemDrawerMainCategoryAsyncAction = createAsyncThunk(
 );
 export const itemDrawerSubCategoryAsyncAction = createAsyncThunk(
     'itemDrawerCategory/fetch-sub-category',
-    async ({ categoryId, name, scrollTop }, { dispatch, getState }) => {
+    async ({ category, scrollTop }, { dispatch, getState }) => {
+        const { id } = category;
         const { path } = selectItemDrawerCategory(getState());
 
-        dispatch(itemDrawerCategoryItemsAsyncAction({ categoryId, scrollTop }));
+        dispatch(itemDrawerCategoryItemsAsyncAction({ category, scrollTop }));
         return {
-            path: { id: categoryId, name },
-            data: await getSubItemCategoryDocs([...path, categoryId]),
+            path: category,
+            data: await getSubItemCategoryDocs([...path, id]),
         };
     }
 );

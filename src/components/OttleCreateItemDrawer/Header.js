@@ -5,6 +5,7 @@ import { HeaderContainer } from '../Layout/Header';
 import { IconButton } from '../Button/IconButton';
 import { HiChevronLeft, HiX } from 'react-icons/hi';
 import { selectItemDrawerCategory } from '../../features/ottleMaker/itemDrawerCategorySlice';
+import { selectItemDrawerSearch } from '../../features/ottleMaker/itemDrawerSearchSlice';
 
 //#region styled-components
 const Path = styled.div`
@@ -13,8 +14,30 @@ const Path = styled.div`
 `;
 //#endregion
 
-export const ItemDrawerHeader = ({ onClickBack, onClickClose }) => {
+export const ItemDrawerHeader = ({
+    onClickBack,
+    onClickSearchBack,
+    onClickClose,
+}) => {
     const { history, path } = useSelector(selectItemDrawerCategory);
+    const { isSearching, path: searchPath, term } = useSelector(
+        selectItemDrawerSearch
+    );
+
+    if (isSearching)
+        return (
+            <HeaderContainer>
+                <IconButton
+                    icon={<HiChevronLeft />}
+                    onClick={onClickSearchBack}
+                />
+                <Path>
+                    {searchPath.map((e) => e.name).join(' > ')} ({term})
+                </Path>
+                <IconButton icon={<HiX />} onClick={onClickClose} />
+            </HeaderContainer>
+        );
+
     return (
         <HeaderContainer>
             {history.length ? (

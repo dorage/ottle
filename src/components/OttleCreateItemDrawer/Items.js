@@ -10,6 +10,7 @@ import { Icon } from '../../components/Icon/icon';
 import { theme } from '../../assets/styles/GlobalStyles';
 import { selectItemDrawerCategory } from '../../features/ottleMaker/itemDrawerCategorySlice';
 import { addItem } from '../../features/ottleMaker/ottleItemSlice';
+import { selectItemDrawerSearch } from '../../features/ottleMaker/itemDrawerSearchSlice';
 
 //#region styled-components
 const Item = styled.div`
@@ -42,9 +43,6 @@ const Brand = styled.div`
 const Title = styled.div`
     font-size: ${(props) => props.theme.font.p14};
 `;
-const Price = styled.div`
-    font-size: ${(props) => props.theme.font.p12};
-`;
 const Added = styled.div`
     display: flex;
     flex-direction: column;
@@ -58,18 +56,17 @@ const Added = styled.div`
 `;
 //#endregion
 
-const GridItem = ({ data, ...props }) => {
+const ItemElement = ({ data, ...props }) => {
     const dispatch = useDispatch();
     const itemRef = useRef();
     const [active, setActive] = useState(false);
     const {
         brand,
-        id,
         image: { original },
         name,
     } = data;
 
-    const onClickItem = (id) => () => {
+    const onClickItem = () => {
         if (active) return;
         setActive(true);
         dispatch(addItem(data));
@@ -79,7 +76,7 @@ const GridItem = ({ data, ...props }) => {
     };
 
     return (
-        <Item ref={itemRef} onClick={onClickItem(id)} {...props}>
+        <Item ref={itemRef} onClick={onClickItem} {...props}>
             {active ? (
                 <Added>
                     <Icon
@@ -101,7 +98,7 @@ const GridItem = ({ data, ...props }) => {
     );
 };
 
-export const GridItems = () => {
+export const ItemDrawerItems = () => {
     const { lastPage, loading: itemLoading, data, error } = useSelector(
         selectItemDrawerItems
     );
@@ -113,8 +110,29 @@ export const GridItems = () => {
     return (
         <>
             {!categoryLoading &&
-                data.map((e, idx) => <GridItem key={idx} data={e} />)}
+                data.map((e, idx) => <ItemElement key={idx} data={e} />)}
             {(itemLoading || categoryLoading) &&
+                !lastPage &&
+                Array(12)
+                    .fill()
+                    .map((_, idx) => <LoadingBlock key={idx} />)}
+        </>
+    );
+};
+
+export const ItemDrawerSearchItems = () => {
+    const { lastPage, loading, items, error } = useSelector(
+        selectItemDrawerSearch
+    );
+
+    if (!loading && !items.length) return <GridNoItems />;
+
+    return (
+        <>
+            {items.map((e, idx) => (
+                <ItemElement key={idx} data={e} />
+            ))}
+            {loading &&
                 !lastPage &&
                 Array(12)
                     .fill()

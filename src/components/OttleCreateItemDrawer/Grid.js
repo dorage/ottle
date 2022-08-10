@@ -9,7 +9,6 @@ const Container = styled.div`
     width: 100%;
     padding-left: ${(props) => props.theme.gap.gap_16};
     padding-right: ${(props) => props.theme.gap.gap_16};
-    padding-top: ${(props) => props.theme.gap.gap_8};
     padding-bottom: ${(props) => props.theme.gap.gap_16};
 
     background-color: white;
@@ -30,22 +29,18 @@ const CategoryGrid = styled(Grid)`
 `;
 //#endregion
 
-export const ItemDrawerItemGrid = () => {
+export const ItemDrawerCategoryGrid = ({ children }) => {
     return (
         <Container>
-            <ItemGrid>
-                <GridItems />
-            </ItemGrid>
+            <CategoryGrid h={5}>{children}</CategoryGrid>
         </Container>
     );
 };
 
-export const ItemDrawerCategoryGrid = ({ scrollRef }) => {
+export const ItemDrawerItemGrid = ({ children }) => {
     return (
         <Container>
-            <CategoryGrid h={5}>
-                <GridCategories scrollRef={scrollRef} />
-            </CategoryGrid>
+            <ItemGrid>{children}</ItemGrid>
         </Container>
     );
 };

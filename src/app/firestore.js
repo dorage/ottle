@@ -1,3 +1,4 @@
+import { async } from '@firebase/util';
 import {
     collection,
     collectionGroup,
@@ -203,7 +204,7 @@ export const getLikedOttles = async (uid) => {
     return ottles;
 };
 
-const paginationHoC = (func) => {
+const memoizeHoC = (func) => {
     let lastRef = null;
     let context = {};
     const initRef = () => {
@@ -235,6 +236,13 @@ const paginationHoC = (func) => {
         context = { ...context, ...obj };
     };
     /**
+     * 컨텍스트에 정보를 저장합니다
+     * @param {*} keys
+     */
+    const deleteContext = (...keys) => {
+        keys.forEach((key) => context[key] && delete context[key]);
+    };
+    /**
      * 기타 페이징 관련 정보를 불러옵니다.
      * @returns
      */
@@ -246,6 +254,7 @@ const paginationHoC = (func) => {
         queryByRef,
         setContext,
         getContext,
+        deleteContext,
     });
 };
 
@@ -254,7 +263,7 @@ const paginationHoC = (func) => {
  * @param {*} uid
  * @returns
  */
-export const getOttlesByUID = paginationHoC(
+export const getOttlesByUID = memoizeHoC(
     ({ initRef, setRef, getRef, queryByRef }) => async (
         uid,
         firstPage = false
@@ -291,7 +300,7 @@ export const getOttlesByUID = paginationHoC(
  * @param {*} uid
  * @returns
  */
-export const getOttlesByUsername = paginationHoC(
+export const getOttlesByUsername = memoizeHoC(
     ({ initRef, setRef, getRef, queryByRef }) => async (
         username,
         firstPage = false
@@ -326,45 +335,24 @@ export const getOttlesByUsername = paginationHoC(
 );
 
 /**
- * 메인화면에 표시할 스레드들을 가져옵니다.
- * @returns
+ * 카테고리 ID를 키로 한 전체 카테고리 목록을 반환합니다
  */
-export const getMainThreadDocs = paginationHoC(
-    ({ setRef, getRef }) => async () => {
+export const getAllItemCategoryDocs = memoizeHoC(
+    ({ setContext, getContext }) => async () => {
         try {
-            const mainThreadQuery = getRef()
-                ? query(
-                      collection(firestore, C_OTTLES),
-                      orderBy('created_at', 'desc'),
-                      startAfter(getRef()),
-                      limit(PAGE_SMALL)
-                  )
-                : query(
-                      collection(firestore, C_OTTLES),
-                      orderBy('created_at', 'desc'),
-                      limit(PAGE_SMALL)
-                  );
-            const ottleSnapshot = await getDocs(mainThreadQuery);
-            setRef(_.getLastIndex(ottleSnapshot.docs));
-            const threads = [];
+            if (getContext().categories) return getContext().categories;
+            const categoriesRef = collectionGroup(firestore, C_ITEM_CATEGORIES);
+            const snapshot = await getDocs(categoriesRef);
+            const categories = {};
+            snapshot.forEach((doc) => {
+                categories[doc.id] = { id: doc.id, ...doc.data() };
+            });
+            setContext({ categories });
 
-            for (const ottleDoc of ottleSnapshot.docs) {
-                const { uid, created_at, items } = ottleDoc.data();
-                const user = await getUserByUID(uid);
-                const like = await getOttleLike(uid, ottleDoc.id);
-                threads.push({
-                    user,
-                    ottle: {
-                        id: ottleDoc.id,
-                        ...ottleDoc.data(),
-                        created_at: timestampToDate(created_at),
-                    },
-                    like,
-                });
-            }
-            return threads;
+            return categories;
         } catch (err) {
-            console.log(err);
+            console.error(err);
+            return [];
         }
     }
 );
@@ -373,48 +361,56 @@ export const getMainThreadDocs = paginationHoC(
  * 아이템 카테고리 최상위 documents 를 가져옵니다.
  * @returns
  */
-export const getMainItemCategoryDocs = async () => {
-    try {
-        const itemCategoriesQuery = query(
-            collection(firestore, C_ITEM_CATEGORIES),
-            orderBy('order')
-        );
-        const querySnapshot = await getDocs(itemCategoriesQuery);
-        const itemCategories = [];
-        querySnapshot.forEach((doc) =>
-            itemCategories.push({ id: doc.id, ...doc.data() })
-        );
-        return itemCategories;
-    } catch (err) {
-        console.error(err);
-        return [];
+export const getMainItemCategoryDocs = memoizeHoC(
+    ({ setContext, getContext }) => async () => {
+        try {
+            if (getContext().categories) return getContext().categories;
+            const itemCategoriesQuery = query(
+                collection(firestore, C_ITEM_CATEGORIES),
+                orderBy('order')
+            );
+            const querySnapshot = await getDocs(itemCategoriesQuery);
+            const categories = [];
+            querySnapshot.forEach((doc) =>
+                categories.push({ id: doc.id, ...doc.data() })
+            );
+            setContext({ categories });
+            return categories;
+        } catch (err) {
+            console.error(err);
+            return [];
+        }
     }
-};
+);
 /**
  * 해당 categoryId를 가진 카테고리의 서브카테고리 documents 를 가져옵니다
  * @param {String[]} path
  */
-export const getSubItemCategoryDocs = async (path) => {
-    try {
-        const pathString = path.reduce(
-            (acc, curr) => `${acc}/${curr}/${C_ITEM_CATEGORIES}`,
-            C_ITEM_CATEGORIES
-        );
-        const itemCategoriesQuery = query(
-            collection(firestore, pathString),
-            orderBy('order')
-        );
-        const querySnapshot = await getDocs(itemCategoriesQuery);
-        const itemCategories = [];
-        querySnapshot.forEach((doc) =>
-            itemCategories.push({ id: doc.id, ...doc.data() })
-        );
-        return itemCategories;
-    } catch (err) {
-        console.error(err);
-        return [];
+export const getSubItemCategoryDocs = memoizeHoC(
+    ({ setContext, getContext }) => async (path) => {
+        try {
+            if (getContext().path) return getContext().path;
+            const pathString = path.reduce(
+                (acc, curr) => `${acc}/${curr}/${C_ITEM_CATEGORIES}`,
+                C_ITEM_CATEGORIES
+            );
+            const itemCategoriesQuery = query(
+                collection(firestore, pathString),
+                orderBy('order')
+            );
+            const querySnapshot = await getDocs(itemCategoriesQuery);
+            const categories = [];
+            querySnapshot.forEach((doc) =>
+                categories.push({ id: doc.id, ...doc.data() })
+            );
+            setContext({ path: categories });
+            return categories;
+        } catch (err) {
+            console.error(err);
+            return [];
+        }
     }
-};
+);
 /**
  * itemIds에 포함된 아이템의 리스트를 가져옵니다.
  * @param {Array} itemIds
@@ -433,8 +429,8 @@ export const getItemsById = async (itemIds = []) => {
  * 카테고리 선정 이전에 표시될 아이템을 가져옵니다.
  * @returns
  */
-export const getItemsRecommend = paginationHoC(
-    ({ initRef, setRef, getRef, queryByRef }) => async (firstPage) => {
+export const getItemsRecommend = memoizeHoC(
+    ({ initRef, setRef, getRef, queryByRef }) => async (firstPage = false) => {
         if (firstPage) {
             initRef();
         }
@@ -458,7 +454,7 @@ export const getItemsRecommend = paginationHoC(
  * @param {*} categoryId
  * @returns
  */
-export const getItemsInCategory = paginationHoC(
+export const getItemsInCategory = memoizeHoC(
     ({ initRef, setRef, getRef, queryByRef, setContext, getContext }) => async (
         categoryId,
         firstPage = false

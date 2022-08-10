@@ -39,6 +39,7 @@ const SmallProfile = styled.div.attrs((props) => ({
     border-radius: 2rem;
     background-image: url(${(props) => props.src});
     background-size: contain;
+    background-position: center;
     background-repeat: no-repeat;
     aspect-ratio: 1/1;
 

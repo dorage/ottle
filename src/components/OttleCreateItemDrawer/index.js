@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import styled from 'styled-components';
 import { FullScreenContainer } from '../Layout/Container';
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,18 +7,11 @@ import {
     selectItemDrawer,
 } from '../../features/ottleMaker/itemDrawerSlice';
 import { ItemDrawerHeader } from './Header';
-import { InputField } from '../Input/InputField';
-import {
-    goBackItemDrawerCategory,
-    selectItemDrawerCategory,
-} from '../../features/ottleMaker/itemDrawerCategorySlice';
-import { ItemDrawerItemGrid, ItemDrawerCategoryGrid } from './Grid';
-import {
-    itemDrawerCategoryItemsPagingAsyncAction,
-    itemDrawerRecommendItemsPagingAsyncAction,
-    selectItemDrawerItems,
-} from '../../features/ottleMaker/itemDrawerItemsSlice';
+import { goBackItemDrawerCategory } from '../../features/ottleMaker/itemDrawerCategorySlice';
 import { _ } from '../../utils/fp';
+import { ItemDrawerSearchBar } from './Search';
+import { ItemDrawerBody } from './Body';
+import { itemDrawerSearchGoBack } from '../../features/ottleMaker/itemDrawerSearchSlice';
 
 //#region styled-components
 const Container = styled(FullScreenContainer)`
@@ -32,26 +24,11 @@ const Container = styled(FullScreenContainer)`
         transform: translateY(0);
     }
 `;
-const SearchBarContainer = styled.div`
-    display: flex;
-    justify-content: center;
-    margin-bottom: ${(props) => props.theme.gap.gap_4};
-`;
-const ScrollContainer = styled.div`
-    width: 100%;
-    height: 100%;
-    overflow: scroll;
-`;
 //#endregion
 
-let eventListener;
-
 export const OttleCreateItemDrawer = () => {
-    const scrollRef = useRef();
     const dispatch = useDispatch();
     const { isOpend } = useSelector(selectItemDrawer);
-    const { path } = useSelector(selectItemDrawerCategory);
-    const { scrollTop } = useSelector(selectItemDrawerItems);
 
     const onClickBack = () => {
         dispatch(goBackItemDrawerCategory());
@@ -59,59 +36,19 @@ export const OttleCreateItemDrawer = () => {
     const onClickClose = () => {
         dispatch(closeItemDrawer());
     };
-
-    // scroll Event를 등록하는 함수
-    const setOnScrollEvent = (event) => {
-        scrollRef.current.onscroll = event(scrollRef);
+    const onClickSearchBack = () => {
+        dispatch(itemDrawerSearchGoBack());
     };
-    const fetchRecommendItems = () => {
-        dispatch(itemDrawerRecommendItemsPagingAsyncAction());
-    };
-    const fetchCategoryItems = (categoryId) => {
-        dispatch(itemDrawerCategoryItemsPagingAsyncAction({ categoryId }));
-    };
-
-    // 일정 거리 이상 넘겼을때 실행할 쓰로틀링되는 fetch 함수 생성
-    const onOverThreshold = _.throttle((path) => {
-        if (!path.length) {
-            fetchRecommendItems();
-            return;
-        }
-        fetchCategoryItems(_.getLastIndex(path).id);
-    }, 1000);
-
-    useEffect(() => {
-        setOnScrollEvent((scrollRef) => () => {
-            if (
-                scrollRef.current.scrollHeight -
-                    (scrollRef.current.scrollTop +
-                        scrollRef.current.clientHeight) <=
-                10
-            ) {
-                onOverThreshold(path);
-            }
-        });
-    }, [path]);
-
-    useEffect(() => {
-        scrollRef.current.scrollTo(0, scrollTop);
-    }, [scrollTop]);
 
     return (
         <Container className={isOpend ? 'item-select-opend' : ''}>
             <ItemDrawerHeader
                 onClickBack={onClickBack}
                 onClickClose={onClickClose}
+                onClickSearchBack={onClickSearchBack}
             />
-            {/*
-            <SearchBarContainer>
-                <InputField placeholder='search brand, product' />
-            </SearchBarContainer>
-            */}
-            <ScrollContainer ref={scrollRef}>
-                <ItemDrawerCategoryGrid scrollRef={scrollRef} />
-                <ItemDrawerItemGrid />
-            </ScrollContainer>
+            <ItemDrawerSearchBar />
+            <ItemDrawerBody />
         </Container>
     );
 };
