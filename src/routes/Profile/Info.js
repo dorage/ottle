@@ -2,11 +2,11 @@ import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
-import { Portrait } from '../../components/Layout/Portrait';
 import { IconButton } from '../../components/Button/IconButton';
 import { BsCaretDownFill } from 'react-icons/bs';
+import { AiTwotoneAlert } from 'react-icons/ai';
 import { theme } from '../../assets/styles/GlobalStyles';
-import { selectUser, signOutAsyncAction } from '../../features/user/userSlice';
+import { signOutAsyncAction } from '../../features/user/userSlice';
 import { signOutFirebase } from '../../app/auth';
 import { ExLinkHoC } from '../../components/HOC/LinkHoC';
 import { CopyClipboardHoC } from '../../components/HOC/CopyClipboardHoC';
@@ -59,6 +59,22 @@ const PopOut = styled.div`
     position: relative;
     margin-left: ${(props) => props.theme.gap.gap_8};
 `;
+const Notice = styled.div`
+    padding-top: ${(props) => props.theme.gap.gap_8};
+    padding-bottom: ${(props) => props.theme.gap.gap_8};
+    padding-left: ${(props) => props.theme.gap.gap_16};
+    padding-right: ${(props) => props.theme.gap.gap_16};
+
+    border-radius: ${(props) => props.theme.gap.gap_8};
+    font-size: ${(props) => props.theme.font.p12};
+    color: ${(props) => props.theme.color.notice.text};
+    background-color: ${(props) => props.theme.color.notice.bg};
+`;
+const CenterRow = styled(Row)`
+    padding: ${(props) => props.theme.gap.gap_8} 0;
+    justify-content: center;
+    align-items: center;
+`;
 const CopyPopOut = CopyClipboardHoC(PopOut);
 const ExLinkPopOut = ExLinkHoC(PopOut);
 
@@ -96,6 +112,18 @@ export const ProfileInfo = () => {
     if (isMe)
         return (
             <Container className='pad'>
+                <CenterRow>
+                    <Notice>
+                        <AiTwotoneAlert /> 브랜드를 요청해주시면 빠르게
+                        추가해드리고 있어요{' '}
+                        <a
+                            href='https://open.kakao.com/me/Ottle'
+                            target='_blank'
+                        >
+                            바로가기 >
+                        </a>
+                    </Notice>
+                </CenterRow>
                 <Row>
                     <div>
                         <Name>{user.name || 'unnamed'}</Name>

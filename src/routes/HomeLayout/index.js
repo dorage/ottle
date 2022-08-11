@@ -14,7 +14,7 @@ const Page = styled.div`
 
 const ContentSection = styled.div`
     flex: 1;
-    padding-top: ${(props) => props.theme.gap.gap_32};
+    padding-top: ${(props) => props.theme.gap.gap_8};
     padding-bottom: ${(props) => props.theme.gap.gap_64};
 `;
 

@@ -105,6 +105,17 @@ export const OttleMaker = () => {
         const { x: mx, y: my } = moveTouch;
         const { x: px, y: py } = getElementCenter(selectedRef.current);
 
+        /*
+        const elem = document.createElement('div');
+        elem.style.width = '10px';
+        elem.style.height = '10px';
+        elem.style.left = `${px}px`;
+        elem.style.top = `${py}px`;
+        elem.style.backgroundColor = 'red';
+        elem.style.position = 'absolute';
+        selectedRef.current.parentElement.appendChild(elem);
+        */
+
         const startDist = distance(sx, sy, px, py);
         const movedDist = distance(mx, my, px, py);
         const dist = (movedDist - startDist) / artboardSize;
