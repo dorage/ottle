@@ -1,4 +1,7 @@
-import { createSlice, nanoid } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
+import { customAlphabet } from 'nanoid';
+
+const nanoid = customAlphabet('aceksxz234578', 6);
 
 const initialState = {
     isOpend: false,
@@ -6,7 +9,7 @@ const initialState = {
         title: '',
         description: '',
         saveAsImage: true,
-        nanoid: nanoid(6),
+        nanoid: nanoid(),
     },
 };
 

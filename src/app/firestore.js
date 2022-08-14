@@ -389,7 +389,8 @@ export const getMainItemCategoryDocs = memoizeHoC(
 export const getSubItemCategoryDocs = memoizeHoC(
     ({ setContext, getContext }) => async (path) => {
         try {
-            if (getContext().path) return getContext().path;
+            console.log(path);
+            if (getContext()[path]) return getContext()[path];
             const pathString = path.reduce(
                 (acc, curr) => `${acc}/${curr}/${C_ITEM_CATEGORIES}`,
                 C_ITEM_CATEGORIES
@@ -403,7 +404,7 @@ export const getSubItemCategoryDocs = memoizeHoC(
             querySnapshot.forEach((doc) =>
                 categories.push({ id: doc.id, ...doc.data() })
             );
-            setContext({ path: categories });
+            setContext({ [path]: categories });
             return categories;
         } catch (err) {
             console.error(err);
