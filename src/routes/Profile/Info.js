@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { IconButton } from '../../components/Button/IconButton';
 import { BsCaretDownFill } from 'react-icons/bs';
-import { AiTwotoneAlert } from 'react-icons/ai';
+import { AiTwotoneAlert, AiFillNotification } from 'react-icons/ai';
 import { theme } from '../../assets/styles/GlobalStyles';
 import { signOutAsyncAction } from '../../features/user/userSlice';
 import { signOutFirebase } from '../../app/auth';
@@ -60,17 +60,26 @@ const PopOut = styled.div`
     margin-left: ${(props) => props.theme.gap.gap_8};
 `;
 const Notice = styled.div`
+    width: 100%;
     padding-top: ${(props) => props.theme.gap.gap_8};
     padding-bottom: ${(props) => props.theme.gap.gap_8};
     padding-left: ${(props) => props.theme.gap.gap_16};
     padding-right: ${(props) => props.theme.gap.gap_16};
+    margin-bottom: ${(props) => props.theme.gap.gap_8};
 
+    &.warning {
+        color: ${(props) => props.theme.color.warning.text};
+        background-color: ${(props) => props.theme.color.warning.bg};
+    }
+    &.success {
+        color: ${(props) => props.theme.color.success.text};
+        background-color: ${(props) => props.theme.color.success.bg};
+    }
     border-radius: ${(props) => props.theme.gap.gap_8};
     font-size: ${(props) => props.theme.font.p12};
-    color: ${(props) => props.theme.color.notice.text};
-    background-color: ${(props) => props.theme.color.notice.bg};
 `;
-const CenterRow = styled(Row)`
+const Column = styled(Row)`
+    flex-direction: column;
     padding: ${(props) => props.theme.gap.gap_8} 0;
     justify-content: center;
     align-items: center;
@@ -112,8 +121,8 @@ export const ProfileInfo = () => {
     if (isMe)
         return (
             <Container className='pad'>
-                <CenterRow>
-                    <Notice>
+                <Column>
+                    <Notice className='warning'>
                         <AiTwotoneAlert /> 브랜드를 요청해주시면 빠르게
                         추가해드리고 있어요{' '}
                         <a
@@ -123,7 +132,17 @@ export const ProfileInfo = () => {
                             바로가기 >
                         </a>
                     </Notice>
-                </CenterRow>
+                    <Notice className='success'>
+                        <AiFillNotification /> 필요한 기능을 요청해주시면 검토
+                        후 추가해드려요.{' '}
+                        <a
+                            href='https://open.kakao.com/me/Ottle'
+                            target='_blank'
+                        >
+                            바로가기 >
+                        </a>
+                    </Notice>
+                </Column>
                 <Row>
                     <div>
                         <Name>{user.name || 'unnamed'}</Name>
