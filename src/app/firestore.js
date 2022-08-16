@@ -130,6 +130,22 @@ export const getOttleByNanoId = async (uid, nanoid) => {
     return ottles.shift();
 };
 
+export const getOttleForLanding = async () => {
+    const ottleRef = query(collection(firestore, C_OTTLES), limit(10));
+    const ottleSnap = await getDocs(ottleRef);
+
+    const ottles = [];
+    ottleSnap.forEach((doc) => {
+        const { created_at } = doc.data();
+        ottles.push({
+            id: doc.id,
+            ...doc.data(),
+            created_at: timestampToDate(created_at),
+        });
+    });
+    return ottles;
+};
+
 /**
  * 오뜰의 상세 정보를 가져옵니다
  * @param {*} username

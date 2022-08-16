@@ -51,7 +51,6 @@ export const SignIn = () => {
     return (
         <Container className='pad'>
             <h1>로그인 및 회원가입</h1>
-            {process.env.NODE_ENV === 'development' ? <EmailSignIn /> : <></>}
             <SocialSignIn
                 name='구글'
                 bg={theme.color.auth.google}

@@ -5,6 +5,7 @@ import { ExLinkedIconButton } from '../../components/Button/IconButton';
 import { HiOutlineLink } from 'react-icons/hi';
 import { logEventFirebase } from '../../app/analytics';
 import { LoadingBlock } from '../../components/OttleCreateItemDrawer/LoadingItem';
+import { unitNumber } from '../../configs/utils';
 
 //#region styled-components
 
@@ -36,6 +37,12 @@ const Name = styled.div`
     align-items: center;
     flex: 1;
     font-size: ${(props) => props.theme.font.p14};
+`;
+const Price = styled.div`
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+    font-size: ${(props) => props.theme.font.p12};
 `;
 const IconSection = styled.div`
     display: flex;
@@ -69,6 +76,7 @@ export const Item = ({ loading, item }) => {
         image: { original },
         name,
         brand,
+        price,
         link,
     } = item;
 
@@ -80,6 +88,7 @@ export const Item = ({ loading, item }) => {
             <InfoSection>
                 <Brand>{brand}</Brand>
                 <Name className={'text-overflow'}>{name}</Name>
+                <Price>{unitNumber(price)} 원</Price>
             </InfoSection>
             <IconSection>
                 <ExLinkedIconButton

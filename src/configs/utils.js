@@ -1,3 +1,6 @@
+import watermark from '../assets/images/ottle_logo_watermark.png';
+import { ARTBOARD_SIZE } from '../features/ottleMaker/artboardSlice';
+
 /**
  * 두 좌표 사이의 거리를 구합니다.
  * @param {Number} x1
@@ -101,4 +104,33 @@ export const isPlainObject = (o) => {
 
     // Most likely a plain Object
     return true;
+};
+
+export const randomI = (min, max) => {
+    return Math.floor(min + Math.random() * (max - min));
+};
+export const randomF = (min, max) => {
+    return min + Math.random() * (max - min);
+};
+
+export const unitNumber = (n) =>
+    [...String(n)]
+        .reverse()
+        .reduce(
+            (acc, curr, idx) =>
+                !(idx % 3) && idx ? `${curr},${acc}` : `${curr}${acc}`,
+            ''
+        );
+
+export const drawWatermark = async (ctx) => {
+    const img = await loadImage(watermark);
+    ctx.save();
+    ctx.drawImage(
+        img,
+        ARTBOARD_SIZE - img.width - 16,
+        ARTBOARD_SIZE - img.height - 16,
+        img.width,
+        img.height
+    );
+    ctx.restore();
 };

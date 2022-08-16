@@ -21,6 +21,7 @@ import { SignIn } from './routes/SignIn';
 import { Registration } from './routes/Registration';
 import { FullScreenContainer } from './components/Layout/Container';
 import { MobileScreenHoC } from './components/HOC/MobileScreenHoC';
+import { Landing } from './routes/Landing';
 
 function App() {
     const [isMobile, setIsMobile] = useState(false);
@@ -50,10 +51,7 @@ function App() {
                     element={<PageNotFound />}
                 />
                 <Route path={routes.main()} element={<HomeLayout />}>
-                    <Route
-                        path={routes.main()}
-                        element={<Navigate to={routes.profile()} />}
-                    />
+                    <Route path={routes.main()} element={<Landing />} />
                     <Route path={routes.profile()} element={<SignIn />} />
                     <Route path={routes.user()} element={<Profile />} />
                 </Route>
