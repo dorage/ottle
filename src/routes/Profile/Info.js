@@ -15,6 +15,7 @@ import {
     LoadingBlock,
     LoadingFlex,
 } from '../../components/OttleCreateItemDrawer/LoadingItem';
+import { ProfileNotice } from './Notice';
 
 //#region styled-components
 const Container = styled.div`
@@ -60,11 +61,12 @@ const PopOut = styled.div`
     margin-left: ${(props) => props.theme.gap.gap_8};
 `;
 const Notice = styled.div`
+    display: flex;
     width: 100%;
     padding-top: ${(props) => props.theme.gap.gap_8};
     padding-bottom: ${(props) => props.theme.gap.gap_8};
-    padding-left: ${(props) => props.theme.gap.gap_16};
-    padding-right: ${(props) => props.theme.gap.gap_16};
+    padding-left: ${(props) => props.theme.gap.gap_8};
+    padding-right: ${(props) => props.theme.gap.gap_8};
     margin-bottom: ${(props) => props.theme.gap.gap_8};
 
     &.warning {
@@ -122,26 +124,22 @@ export const ProfileInfo = () => {
         return (
             <Container className='pad'>
                 <Column>
-                    <Notice className='warning'>
-                        <AiTwotoneAlert /> 브랜드를 요청해주시면 빠르게
-                        추가해드리고 있어요{' '}
-                        <a
-                            href='https://open.kakao.com/me/Ottle'
-                            target='_blank'
-                        >
-                            바로가기 >
-                        </a>
-                    </Notice>
-                    <Notice className='success'>
-                        <AiFillNotification /> 필요한 기능을 요청해주시면 검토
-                        후 추가해드려요.{' '}
-                        <a
-                            href='https://open.kakao.com/me/Ottle'
-                            target='_blank'
-                        >
-                            바로가기 >
-                        </a>
-                    </Notice>
+                    <ProfileNotice
+                        icon={AiTwotoneAlert}
+                        text={
+                            '브랜드를 요청해주시면 빠르게 추가해드리고 있어요'
+                        }
+                        href={'https://open.kakao.com/me/Ottle'}
+                        color={'warning'}
+                    />
+                    <ProfileNotice
+                        icon={AiFillNotification}
+                        text={
+                            '필요한 기능을 요청해주시면 검토 후 추가해드려요.'
+                        }
+                        href={'https://open.kakao.com/me/Ottle'}
+                        color={'success'}
+                    />
                 </Column>
                 <Row>
                     <div>
