@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { logEventFirebase } from '../../app/analytics';
 import { ALERTS, broadcastAlert } from '../../features/alert/alertSlice';
 
-export const CopyClipboardHoC = (Component) => ({ url, ...props }) => {
+export const ShareHoC = (Component) => ({ url, ...props }) => {
     const dispatch = useDispatch();
 
     const copyUrl = () => {
@@ -15,15 +15,22 @@ export const CopyClipboardHoC = (Component) => ({ url, ...props }) => {
         document.body.removeChild(el);
     };
 
-    const onClickCopy = () => {
-        logEventFirebase('copy_link', { url });
-        copyUrl();
-        dispatch(broadcastAlert(ALERTS.ottleDetail.copied));
+    const onClickShare = () => {
+        if (navigator.share) {
+            navigator.share({
+                title: 'Ottle',
+                url: `https://${url}`,
+            });
+        } else {
+            logEventFirebase('copy_link', { url });
+            copyUrl();
+            dispatch(broadcastAlert(ALERTS.ottleDetail.copied));
+        }
     };
 
     return (
         <>
-            <Component onClick={onClickCopy} {...props} />
+            <Component onClick={onClickShare} {...props} />
         </>
     );
 };

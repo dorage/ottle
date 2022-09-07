@@ -9,7 +9,7 @@ import { theme } from '../../assets/styles/GlobalStyles';
 import { signOutAsyncAction } from '../../features/user/userSlice';
 import { signOutFirebase } from '../../app/auth';
 import { ExLinkHoC } from '../../components/HOC/LinkHoC';
-import { CopyClipboardHoC } from '../../components/HOC/CopyClipboardHoC';
+import { ShareHoC } from '../../components/HOC/ShareHoC';
 import { UserContext } from '../../components/Context/UserContext';
 import {
     LoadingBlock,
@@ -86,7 +86,7 @@ const Column = styled(Row)`
     justify-content: center;
     align-items: center;
 `;
-const CopyPopOut = CopyClipboardHoC(PopOut);
+const CopyPopOut = ShareHoC(PopOut);
 const ExLinkPopOut = ExLinkHoC(PopOut);
 
 //#endregion

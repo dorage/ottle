@@ -12,7 +12,7 @@ import { unitNumber } from '../../configs/utils';
 const Container = styled.div`
     display: flex;
     width: 100%;
-    height: calc(100vw / 8);
+    height: 10rem;
     margin-bottom: ${(props) => props.theme.gap.gap_16};
 
     overflow: hidden;
