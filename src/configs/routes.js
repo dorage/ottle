@@ -9,6 +9,10 @@ function getParamName(fn, n) {
     if (result === null) return result;
     return result[n];
 }
+/**
+ * path를 만들어서 반환
+ * @returns {String}
+ */
 const URL = function() {
     const tokens = [];
     for (const arg of arguments) {
@@ -16,9 +20,15 @@ const URL = function() {
     }
     return `/${tokens.join('/')}`;
 };
+/**
+ * parameter 토큰을 반환
+ * 만약 첫 번째 인자가 주어지지 않으면 :token 형식의 식별자를 반환
+ * @param {String} obj
+ * @returns {String}
+ */
 const param = (obj) => {
     const key = Object.keys(obj)[0];
-    return obj[key] === undefined ? `:${key}` : obj[key];
+    return obj[key] == null ? `:${key}` : obj[key];
 };
 /**
  * params 의 key와 value를 뒤집어서 반환합니다.

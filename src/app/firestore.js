@@ -233,7 +233,9 @@ const memoizeHoC = (func) => {
         return lastRef;
     };
     /**
-     *
+     * Ref가 있는지 없는지에 따라 query 방식을 다르게 합니다.
+     * initialQuery에 포함된 _ 가 기존에 쿼리했던 레퍼런스가 있다면
+     * pagingQuery로 교체되어 pagination 과정의 커서로 사용됩니다
      * @param {Array} initialQueries
      * @param {Query} pagingQuery
      * @returns
