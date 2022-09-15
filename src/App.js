@@ -38,6 +38,7 @@ function App() {
 
     if (isAuth && !user.is_registered) return <Registration />;
 
+    // 로그인 하지 않은 상태
     if (!isAuth) {
         return (
             <Routes>
@@ -62,7 +63,7 @@ function App() {
             </Routes>
         );
     }
-
+    // 로그인을 한 상태
     return (
         <Routes>
             <Route
