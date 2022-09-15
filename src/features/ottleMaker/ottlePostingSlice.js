@@ -1,15 +1,27 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { customAlphabet } from 'nanoid';
 
-const nanoid = customAlphabet('aceksxz234578', 6);
+// 가독성이 좋은 알파벳
+const legibleAlphabet = 'aceksxz234578';
+const nanoid = customAlphabet(legibleAlphabet, 6);
 
+/**
+ * @typedef {{
+ *  nanoid: string,
+ *  title: string,
+ *  description: string,
+ *  saveAsImage: boolean,
+ *  isVisible: boolean,
+ * }} PostingData
+ */
 const initialState = {
-    isOpend: false,
+    isOpend: true,
     form: {
         title: '',
         description: '',
         saveAsImage: true,
         nanoid: nanoid(),
+        isPrivate: false,
     },
 };
 

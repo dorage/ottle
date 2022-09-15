@@ -173,24 +173,22 @@ const countUpOttleOfUser = async (uid) => {
 
 /**
  * uid의 유저에 새로운 Ottle을 포스팅합니다.
- * @param {*} param0
+ * @param {string} uid
+ * @param {*} blob
+ * @param {object[]} items
+ * @param {import('../features/ottleMaker/ottlePostingSlice').PostingData} form
  */
-export const setOttleDoc = async (
-    uid,
-    blob,
-    { title, description, items, nanoid }
-) => {
+export const setOttleDoc = async (uid, blob, items, form) => {
     const ottleRef = collection(firestore, C_OTTLES);
     const { url } = await uploadOttleImage(uid, blob);
     await countUpOttleOfUser(uid);
+    console.log(form);
     await setDoc(doc(ottleRef), {
-        nanoid,
         uid,
-        title,
-        description,
         image: { original: url },
         items: items.map((e) => e.product.id),
         created_at: serverTimestamp(),
+        ...form,
     });
 };
 

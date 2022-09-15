@@ -69,18 +69,12 @@ export const OttleCreatePosting = () => {
     const onClickPublish = async () => {
         if (saving) return;
         setSaving(true);
-        const { title, description, nanoid } = form;
 
         // 이미지 DB에 저장
         await new Promise((resolve) => {
             canvasRef.current.toBlob(
                 async (blob) => {
-                    await setOttleDoc(user.uid, blob, {
-                        title,
-                        description,
-                        items,
-                        nanoid,
-                    });
+                    await setOttleDoc(user.uid, blob, items, form);
                     resolve();
                 },
                 'image/webp',
@@ -109,7 +103,7 @@ export const OttleCreatePosting = () => {
             />
             <OttleCreatePostingPreview canvasRef={canvasRef} />
             <ScrollRect className='pad flex-1'>
-                <OttleCreatePostingForm data={form} />
+                <OttleCreatePostingForm />
             </ScrollRect>
             <OttleCreatePostingFooter
                 onClickSave={onClickSave}

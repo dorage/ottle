@@ -38,7 +38,7 @@ const VisibleOption = styled.div`
 //#endregion
 
 export const ProfileOttleThumb = ({
-    ottle: { id, image, nanoid, visible: isVisible },
+    ottle: { id, image, nanoid, isPrivate },
 }) => {
     const navigation = useNavigate();
     const { username } = useParams();
@@ -51,7 +51,7 @@ export const ProfileOttleThumb = ({
     return (
         <Container onClick={onClickOttle(nanoid)}>
             <Thumb src={image.original} />
-            {isVisible === false && (
+            {isPrivate === true && (
                 <VisibleOption>
                     <AiFillEyeInvisible />
                 </VisibleOption>
