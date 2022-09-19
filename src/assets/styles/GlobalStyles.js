@@ -1,7 +1,7 @@
 import { normalize } from 'styled-normalize';
 import { createGlobalStyle } from 'styled-components';
 
-export const MAX_WIDTH_INT = 800;
+export const MAX_WIDTH_INT = 450;
 export const MAX_WIDTH_PX = `${MAX_WIDTH_INT}px`;
 
 const GlobalStyles = createGlobalStyle`

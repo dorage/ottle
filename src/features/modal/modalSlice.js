@@ -1,9 +1,35 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+/**
+ * @typedef {{
+ *  YES_OR_NO: string,
+ *  SIGN_IN : string
+ * }} MODAL_TYPE
+ */
+/**
+ * @type {MODAL_TYPE}
+ */
 export const MODAL_TYPE = {
     YES_OR_NO: 'modal-yes_or_no',
     SIGN_IN: 'modal-sign_in',
 };
+
+export const MODAL = {
+    HidePost: {
+        message: '',
+        type: MODAL_TYPE.YES_OR_NO,
+        yes: () => {},
+    },
+    ShowPost: {
+        message: '',
+        type: MODAL_TYPE.YES_OR_NO,
+    },
+    GoBack: {
+        message: '',
+        type: MODAL_TYPE.YES_OR_NO,
+    },
+};
+
 /**
  * ENUM 오브젝트 범위안의 값인지 확인합니다.
  * @param {*} ENUM
@@ -24,7 +50,7 @@ const modalSlice = createSlice({
     initialState,
     reducers: {
         openModal: (state, action) => {
-            const { type, message, onYesAction, onNoAction } = action.payload;
+            const { type, message } = action.payload;
             state.type = type;
             state.isOpend = true;
             state.message = message;
@@ -38,9 +64,16 @@ const modalSlice = createSlice({
 });
 
 /**
+ * @typedef {{
+ *  type: MODAL_TYPE,
+ *  message: string
+ * }} MODAL_PARAMETER
+ */
+/**
+ *
  * modal을 열 때 호출
  * type 값이 필수이며 MODAL_TYPE을 통해 전달
- * @param {*} param0
+ * @param {MODAL_PARAMETER} param0
  * @returns
  */
 export const openModal = ({ type, message }) => (dispatch) => {

@@ -8,25 +8,34 @@ import {
     MODAL_TYPE,
     selectModal,
 } from '../../features/modal/modalSlice';
+import { FullScreenContainer } from '../Layout/Container';
 
 //#region styled-components
-const Container = styled.div`
+const OuterContainer = styled.div`
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     display: flex;
-    flex-direction: column;
     justify-content: center;
-    align-items: center;
     width: 100vw;
     height: 100vh;
-    padding: 0 ${(props) => props.theme.gap.gap_64};
 
     background-color: rgba(99, 99, 99, 0.3);
     overflow: hidden;
     z-index: ${(props) => props.theme.zindex.modal};
+    box-sizing: border-box;
+`;
+
+const InnerContainer = styled(FullScreenContainer)`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0 ${(props) => props.theme.gap.gap_64};
+
+    background-color: transparent;
 `;
 
 const ModalContainer = styled.div`
@@ -36,9 +45,10 @@ const ModalContainer = styled.div`
     border-radius: ${(props) => props.theme.gap.gap_8};
     background-color: white;
 `;
+
 const Content = styled.div`
-    padding-top: ${(props) => props.theme.gap.gap_32};
-    padding-bottom: ${(props) => props.theme.gap.gap_32};
+    padding-top: ${(props) => props.theme.gap.gap_16};
+    padding-bottom: ${(props) => props.theme.gap.gap_16};
     padding-right: ${(props) => props.theme.gap.gap_16};
     padding-left: ${(props) => props.theme.gap.gap_16};
 
@@ -51,8 +61,8 @@ const ButtonRow = styled.div`
 `;
 const Button = styled.div`
     flex: 1;
-    padding-top: ${(props) => props.theme.gap.gap_16};
-    padding-bottom: ${(props) => props.theme.gap.gap_16};
+    padding-top: ${(props) => props.theme.gap.gap_8};
+    padding-bottom: ${(props) => props.theme.gap.gap_8};
     padding-right: ${(props) => props.theme.gap.gap_16};
     padding-left: ${(props) => props.theme.gap.gap_16};
 
@@ -70,9 +80,11 @@ export const Modal = () => {
     return (
         <ModalPortal>
             {isOpend && (
-                <Container>
-                    <ModalSwitcher />
-                </Container>
+                <OuterContainer>
+                    <InnerContainer>
+                        <ModalSwitcher />
+                    </InnerContainer>
+                </OuterContainer>
             )}
         </ModalPortal>
     );
