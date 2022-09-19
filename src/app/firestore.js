@@ -162,6 +162,9 @@ export const getOttleDetail = async (username, ottleId) => {
     return { user, ottle, items, like };
 };
 
+export const hideOttle = async () => {};
+export const deleteOttle = async () => {};
+
 /**
  * 오뜰 개수 추가
  * @param {*} uid

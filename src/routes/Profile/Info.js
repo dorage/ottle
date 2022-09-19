@@ -1,9 +1,6 @@
 import React, { useContext, useState } from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
-import { IconButton } from '../../components/Button/IconButton';
-import { BsCaretDownFill } from 'react-icons/bs';
+import { useDispatch } from 'react-redux';
 import { AiTwotoneAlert, AiFillNotification } from 'react-icons/ai';
 import { theme } from '../../assets/styles/GlobalStyles';
 import { signOutAsyncAction } from '../../features/user/userSlice';
@@ -16,6 +13,8 @@ import {
     LoadingFlex,
 } from '../../components/OttleCreateItemDrawer/LoadingItem';
 import { ProfileNotice } from './Notice';
+import { CS_URL } from '../../vars/urls';
+import { ActionBar, ActionBarItem } from '../../components/ActionBar';
 
 //#region styled-components
 const Container = styled.div`
@@ -35,70 +34,20 @@ const Name = styled.span`
 const Username = styled.span`
     font-size: ${(props) => props.theme.font.p10};
 `;
-const ActionBar = styled.div`
-    display: flex;
-    align-items: center;
-`;
-const ActionButton = styled(IconButton)`
-    transform: rotate(0deg);
-    transition: 0.3s linear;
-    &.open {
-        transform: rotate(90deg);
-    }
-`;
-const Actions = styled.div`
-    display: flex;
-    opacity: 0;
-    transition: 0.3s linear;
-    transform: translateX(30%);
-    &.open {
-        opacity: 1;
-        transform: translateX(0);
-    }
-`;
-const PopOut = styled.div`
-    position: relative;
-    margin-left: ${(props) => props.theme.gap.gap_8};
-`;
-const Notice = styled.div`
-    display: flex;
-    width: 100%;
-    padding-top: ${(props) => props.theme.gap.gap_8};
-    padding-bottom: ${(props) => props.theme.gap.gap_8};
-    padding-left: ${(props) => props.theme.gap.gap_8};
-    padding-right: ${(props) => props.theme.gap.gap_8};
-    margin-bottom: ${(props) => props.theme.gap.gap_8};
-
-    &.warning {
-        color: ${(props) => props.theme.color.warning.text};
-        background-color: ${(props) => props.theme.color.warning.bg};
-    }
-    &.success {
-        color: ${(props) => props.theme.color.success.text};
-        background-color: ${(props) => props.theme.color.success.bg};
-    }
-    border-radius: ${(props) => props.theme.gap.gap_8};
-    font-size: ${(props) => props.theme.font.p12};
-`;
 const Column = styled(Row)`
     flex-direction: column;
     padding: ${(props) => props.theme.gap.gap_8} 0;
     justify-content: center;
     align-items: center;
 `;
-const CopyPopOut = ShareHoC(PopOut);
-const ExLinkPopOut = ExLinkHoC(PopOut);
+const CopyActionBarItem = ShareHoC(ActionBarItem);
+const ExLinkActionBarItem = ExLinkHoC(ActionBarItem);
 
 //#endregion
 
 export const ProfileInfo = () => {
     const dispatch = useDispatch();
-    const [actionBar, setActionBar] = useState(false);
     const { isMe, loading, user, error } = useContext(UserContext);
-
-    const onClickActionBar = () => {
-        setActionBar(!actionBar);
-    };
 
     const onSignOut = () => {
         dispatch(signOutAsyncAction(signOutFirebase()));
@@ -129,7 +78,7 @@ export const ProfileInfo = () => {
                         text={
                             '브랜드를 요청해주시면 빠르게 추가해드리고 있어요'
                         }
-                        href={'https://open.kakao.com/me/Ottle'}
+                        href={CS_URL.KAKAO}
                         color={'warning'}
                     />
                     <ProfileNotice
@@ -137,7 +86,7 @@ export const ProfileInfo = () => {
                         text={
                             '필요한 기능을 요청해주시면 검토 후 추가해드려요.'
                         }
-                        href={'https://open.kakao.com/me/Ottle'}
+                        href={CS_URL.KAKAO}
                         color={'success'}
                     />
                 </Column>
@@ -148,24 +97,17 @@ export const ProfileInfo = () => {
                         <Username>{user.username}</Username>
                     </div>
                     <ActionBar>
-                        <Actions className={actionBar && 'open'}>
-                            <PopOut onClick={onSignOut}>로그아웃</PopOut>
-                            <CopyPopOut
-                                url={`${window.location.host}/${user.username}`}
-                            >
-                                공유하기
-                            </CopyPopOut>
-                            <ExLinkPopOut to='https://dorage.notion.site/1b9b37e0b0804e0b98fd9580c1b9797f'>
-                                도움말
-                            </ExLinkPopOut>
-                        </Actions>
-                        <ActionButton
-                            className={actionBar && 'open'}
-                            h={theme.font.p16}
-                            active={true}
-                            icon={<BsCaretDownFill />}
-                            onClick={onClickActionBar}
-                        />
+                        <ActionBarItem onClick={onSignOut}>
+                            로그아웃
+                        </ActionBarItem>
+                        <CopyActionBarItem
+                            url={`${window.location.host}/${user.username}`}
+                        >
+                            공유하기
+                        </CopyActionBarItem>
+                        <ExLinkActionBarItem to='https://dorage.notion.site/1b9b37e0b0804e0b98fd9580c1b9797f'>
+                            도움말
+                        </ExLinkActionBarItem>
                     </ActionBar>
                 </Row>
             </Container>
@@ -181,23 +123,14 @@ export const ProfileInfo = () => {
                         <Username>{user.username}</Username>
                     </div>
                     <ActionBar>
-                        <Actions className={actionBar && 'open'}>
-                            <CopyPopOut
-                                url={`${window.location.host}/${user.username}`}
-                            >
-                                공유하기
-                            </CopyPopOut>
-                            <ExLinkPopOut to='https://dorage.notion.site/1b9b37e0b0804e0b98fd9580c1b9797f'>
-                                도움말
-                            </ExLinkPopOut>
-                        </Actions>
-                        <ActionButton
-                            className={actionBar && 'open'}
-                            h={theme.font.p16}
-                            active={true}
-                            icon={<BsCaretDownFill />}
-                            onClick={onClickActionBar}
-                        />
+                        <CopyActionBarItem
+                            url={`${window.location.host}/${user.username}`}
+                        >
+                            공유하기
+                        </CopyActionBarItem>
+                        <ExLinkActionBarItem to='https://dorage.notion.site/1b9b37e0b0804e0b98fd9580c1b9797f'>
+                            도움말
+                        </ExLinkActionBarItem>
                     </ActionBar>
                 </Row>
             </Container>
