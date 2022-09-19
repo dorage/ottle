@@ -37,17 +37,17 @@ import { FullScreenContainer } from '../../components/Layout/Container';
 import { theme } from '../../assets/styles/GlobalStyles';
 import { OttleCreatePosting } from '../../components/OttleCreatePosting';
 import { OttleCreateItemDrawer } from '../../components/OttleCreateItemDrawer';
-import { selectScreen } from '../../features/screen/screenSlice';
 import { initialize as initItemDrawerItemsSlice } from '../../features/ottleMaker/itemDrawerItemsSlice';
 import { initialize as initItemDrawerCategorySlice } from '../../features/ottleMaker/itemDrawerCategorySlice';
 import { initialize as initItemDrawerSlice } from '../../features/ottleMaker/itemDrawerSlice';
-import { logEvent } from 'firebase/analytics';
-import { logEventFirebase } from '../../app/analytics';
+import { useNavigate, useParams } from 'react-router-dom';
+import { selectUser } from '../../features/user/userSlice';
 
 //#region styled-components
 //#endregion
 
 export const OttleMaker = () => {
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const {
         size: artboardSize,
@@ -65,6 +65,8 @@ export const OttleMaker = () => {
         rotatePivot,
     } = useSelector(selectOttleAction);
     const selectedRef = useRef();
+    const { user } = useSelector(selectUser);
+    const { username } = useParams();
 
     /**
      * ottleCreate에서 사용하는 모든 redux의 상태를 초기화 시킵니다
@@ -80,7 +82,8 @@ export const OttleMaker = () => {
     };
 
     useEffect(() => {
-        logEventFirebase('start_create_ottle');
+        if (user.username !== username)
+            navigate(routes.ottleCreate(user.username));
         initializeOttleCreateRedux();
     }, []);
 
@@ -218,6 +221,24 @@ export const OttleMaker = () => {
     //#endregion
     //#endregion
 
+    const onCancle = () => {
+        dispatch(
+            openModal({
+                type: MODAL_TYPE.YES_OR_NO,
+                message: '그만 만드실건가요?',
+                onYesAction: () => {},
+            })
+        );
+    };
+
+    const onSubmit = () => {
+        if (process.env.NODE_ENV === 'production' && items.length < 2) {
+            dispatch(broadcastAlert(ALERTS.ottleCreate.noItem));
+            return;
+        }
+        dispatch(openPosting());
+    };
+
     return (
         <FullScreenContainer
             zindex={theme.zindex.ottleCreate.normal}
@@ -225,27 +246,7 @@ export const OttleMaker = () => {
             onTouchEnd={onTouchEnd}
             onTouchCancel={onTouchCancel}
         >
-            <OttleCreateHeader
-                onCancle={() => {
-                    dispatch(
-                        openModal({
-                            type: MODAL_TYPE.YES_OR_NO,
-                            message: '그만 만드실건가요?',
-                            onYesAction: () => {},
-                        })
-                    );
-                }}
-                onSubmit={() => {
-                    if (
-                        process.env.NODE_ENV === 'production' &&
-                        items.length < 2
-                    ) {
-                        dispatch(broadcastAlert(ALERTS.ottleCreate.noItem));
-                        return;
-                    }
-                    dispatch(openPosting());
-                }}
-            />
+            <OttleCreateHeader onCancle={onCancle} onSubmit={onSubmit} />
             <Canvas selectedRef={selectedRef} onTouchStart={onTouchStart} />
             <Inspector />
             <OttleCreateItemDrawer />

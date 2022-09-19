@@ -15,7 +15,7 @@ const nanoid = customAlphabet(legibleAlphabet, 6);
  * }} PostingData
  */
 const initialState = {
-    isOpend: true,
+    isOpend: false,
     form: {
         title: '',
         description: '',
