@@ -75,7 +75,7 @@ export const OttleLikeContextProvier = ({ children }) => {
 
     useEffect(() => {
         if (ottleLoading) return;
-        if (!isAuth) return;
+        if (!isAuth) setContext(createContext({ ...context, loading: false }));
         fetchGetLike();
     }, [ottleLoading]);
 
