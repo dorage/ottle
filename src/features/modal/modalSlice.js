@@ -2,6 +2,16 @@ import { createSlice } from '@reduxjs/toolkit';
 
 /**
  * @typedef {{
+ *  AUTH: {
+ *   NOT_SIGN_IN: string,
+ *  },
+ *  OTTLE: {
+ *   DELETE: string,
+ *   HIDE: string,
+ *  },
+ *  OTTLE_CREATE: {
+ *   GO_BACK: string,
+ *  },
  *  YES_OR_NO: string,
  *  SIGN_IN : string
  * }} MODAL_TYPE
@@ -10,24 +20,18 @@ import { createSlice } from '@reduxjs/toolkit';
  * @type {MODAL_TYPE}
  */
 export const MODAL_TYPE = {
+    AUTH: {
+        NOT_SIGN_IN: 'modal-auth-not_sign_in',
+    },
+    OTTLE: {
+        DELETE: 'modal-ottle-delete',
+        HIDE: 'modal-ottle-hide',
+    },
+    OTTLE_CREATE: {
+        GO_BACK: 'modal-ottle_create-go_back',
+    },
     YES_OR_NO: 'modal-yes_or_no',
     SIGN_IN: 'modal-sign_in',
-};
-
-export const MODAL = {
-    HidePost: {
-        message: '',
-        type: MODAL_TYPE.YES_OR_NO,
-        yes: () => {},
-    },
-    ShowPost: {
-        message: '',
-        type: MODAL_TYPE.YES_OR_NO,
-    },
-    GoBack: {
-        message: '',
-        type: MODAL_TYPE.YES_OR_NO,
-    },
 };
 
 /**
@@ -76,7 +80,9 @@ const modalSlice = createSlice({
  * @param {MODAL_PARAMETER} param0
  * @returns
  */
-export const openModal = ({ type, message }) => (dispatch) => {
+export const openModal = ({ type, message }) => (dispatch, getState) => {
+    const { isOpend } = selectModal(getState());
+    if (isOpend) throw Error('모달이 이미 열려 있습니다.');
     if (!type) throw Error('타입은 필수입니다.');
     if (!enumValidate(MODAL_TYPE, type))
         throw Error('MODAL_TYPE의 값으로 전달해주세요');

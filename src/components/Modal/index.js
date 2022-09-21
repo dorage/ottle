@@ -95,6 +95,14 @@ const ModalSwitcher = () => {
     const { type, message } = useSelector(selectModal);
 
     switch (type) {
+        case MODAL_TYPE.AUTH.NOT_SIGN_IN:
+            break;
+        case MODAL_TYPE.OTTLE.DELETE:
+            break;
+        case MODAL_TYPE.OTTLE.HIDE:
+            break;
+        case MODAL_TYPE.OTTLE_CREATE.GO_BACK:
+            break;
         case MODAL_TYPE.YES_OR_NO:
             return <ModalYesOrNo message={message} />;
         case MODAL_TYPE.SIGN_IN:

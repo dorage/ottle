@@ -28,7 +28,6 @@ export const NoItem = () => {
     const { isAuth } = useSelector(selectUser);
 
     if (!isAuth) return <Container></Container>;
-
     return (
         <Container>
             <Mention>
