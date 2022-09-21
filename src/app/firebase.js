@@ -27,12 +27,16 @@ export const auth = getAuth(app);
 export const firestore = getFirestore(app);
 export const storage = getStorage(app);
 export const functions = getFunctions(app, process.env.REACT_APP_FB_region);
-export const appCheck = initializeAppCheck(app, {
-    provider: new ReCaptchaV3Provider(
-        process.env.REACT_APP_FB_recaptchaProvider
-    ),
-    isTokenAutoRefreshEnabled: true,
-});
+export const appCheck =
+    process.env.NODE_ENV === 'development'
+        ? null
+        : initializeAppCheck(app, {
+              provider: new ReCaptchaV3Provider(
+                  process.env.REACT_APP_FB_recaptchaProvider
+              ),
+              isTokenAutoRefreshEnabled: true,
+          });
+
 if (process.env.NODE_ENV === 'development') {
     connectAuthEmulator(auth, 'http://localhost:9099');
     connectFirestoreEmulator(firestore, 'localhost', `8080`);
