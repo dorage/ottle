@@ -26,7 +26,9 @@ const Mention = styled.div`
 export const NoItem = () => {
     const { username } = useParams();
     const { isAuth } = useSelector(selectUser);
+
     if (!isAuth) return <Container></Container>;
+
     return (
         <Container>
             <Mention>
