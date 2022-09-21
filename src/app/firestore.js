@@ -292,6 +292,7 @@ export const getOttlesByUID = memoizeHoC(
             [
                 collection(firestore, C_OTTLES),
                 where('uid', '==', uid),
+                where('isPrivate', '==', false),
                 orderBy('created_at', 'desc'),
                 _,
                 limit(PAGE),
@@ -314,6 +315,45 @@ export const getOttlesByUID = memoizeHoC(
         return ottles;
     }
 );
+
+/**
+ * uid 를 가진 유저의 모든 Ottle을 가져옵니다.
+ * @param {*} uid
+ * @returns
+ */
+export const getMyOttles = memoizeHoC(
+    ({ initRef, setRef, getRef, queryByRef }) => async (
+        uid,
+        firstPage = false
+    ) => {
+        if (firstPage) initRef();
+        const querySnapshot = await queryByRef(
+            [
+                collection(firestore, C_OTTLES),
+                where('uid', '==', uid),
+                orderBy('created_at', 'desc'),
+                _,
+                limit(PAGE),
+            ],
+            startAfter(getRef())
+        );
+
+        if (querySnapshot.empty) return [];
+        setRef(_.getLastIndex(querySnapshot.docs));
+
+        const ottles = [];
+        querySnapshot.forEach((doc) => {
+            const { created_at } = doc.data();
+            ottles.push({
+                id: doc.id,
+                ...doc.data(),
+                created_at: timestampToDate(created_at),
+            });
+        });
+        return ottles;
+    }
+);
+
 /**
  * uid 를 가진 유저의 모든 Ottle을 가져옵니다.
  * @param {*} uid
