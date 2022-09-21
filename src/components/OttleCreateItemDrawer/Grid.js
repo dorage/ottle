@@ -1,8 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import styled from 'styled-components';
-import { GridCategories } from './Categories';
-import { GridItems } from './Items';
 import { MAX_WIDTH_PX } from '../../assets/styles/GlobalStyles';
 
 //#region styled-components
