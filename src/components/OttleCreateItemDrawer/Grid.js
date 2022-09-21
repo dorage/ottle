@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { GridCategories } from './Categories';
 import { GridItems } from './Items';
+import { MAX_WIDTH_PX } from '../../assets/styles/GlobalStyles';
 
 //#region styled-components
 const Container = styled.div`
@@ -21,7 +22,7 @@ const Grid = styled.div`
 `;
 const ItemGrid = styled(Grid)`
     grid-template-columns: repeat(3, 1fr);
-    grid-auto-rows: calc((100vw - 3.2rem) / 3 + 4rem);
+    grid-auto-rows: calc((${MAX_WIDTH_PX} - 3.2rem) / 3 + 4rem);
 `;
 const CategoryGrid = styled(Grid)`
     grid-template-columns: repeat(4, 1fr);
