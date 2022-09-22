@@ -7,6 +7,7 @@ import { IconButton } from '../../components/Button/IconButton';
 import { HiChevronLeft } from 'react-icons/hi';
 import { UserContext } from '../../components/Context/UserContext';
 import { LoadingBlock } from '../../components/OttleCreateItemDrawer/LoadingItem';
+import { theme } from '../../assets/styles/GlobalStyles';
 
 //#region styled-components
 const Container = styled(HeaderContainer)`
@@ -40,7 +41,11 @@ export const OttleDetailHeader = () => {
     if (loading) {
         return (
             <Container>
-                <IconButton icon={<HiChevronLeft />} onClick={onClickBack} />
+                <IconButton
+                    icon={<HiChevronLeft />}
+                    normalColor={theme.color.black_100}
+                    onClick={onClickBack}
+                />
                 <TitleSection>
                     <LoadingBlock />
                 </TitleSection>
@@ -51,7 +56,11 @@ export const OttleDetailHeader = () => {
 
     return (
         <Container>
-            <IconButton icon={<HiChevronLeft />} onClick={onClickBack} />
+            <IconButton
+                icon={<HiChevronLeft />}
+                normalColor={theme.color.black_100}
+                onClick={onClickBack}
+            />
             <TitleSection>
                 <Pagename>
                     <b>{user.name}</b> 님의 옷뜰
