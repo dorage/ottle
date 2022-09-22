@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { RiGhostSmileLine, RiGhostSmileFill } from 'react-icons/ri';
-import { BiExit } from 'react-icons/bi';
 import { IconButton } from '../../components/Button/IconButton';
 import { LinkedTextButton } from '../../components/Button/TextButton';
 import { routes } from '../../configs/routes';
+import { FullScreenContainer } from '../../components/Layout/Container';
 
-const Container = styled.div`
+const Container = styled(FullScreenContainer)`
     display: flex;
     flex-direction: column;
     justify-content: center;
