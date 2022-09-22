@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { LoadingBlock } from '../OttleCreateItemDrawer/LoadingItem';
 import { ActionBar, ActionBarItem } from '../ActionBar';
@@ -24,9 +23,9 @@ const Username = styled.div`
 
 //#endregion
 
-export const OttleHeader = ({ loading, ottle, user }) => {
+export const OttleHeader = ({ loading, user }) => {
     const dispatch = useDispatch();
-    const { username, nanoid } = useParams();
+    const { username } = useParams();
     const { isAuth } = useSelector(selectUser);
 
     const onClickHide = () => {

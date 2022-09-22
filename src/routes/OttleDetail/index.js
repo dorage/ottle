@@ -12,7 +12,6 @@ import {
 import { OttleItemsContextProvierHoC } from '../../components/Context/OttleItemsContext';
 import {
     UserContext,
-    UserContextProvider,
     UserContextProviderHoC,
 } from '../../components/Context/UserContext';
 
@@ -40,16 +39,14 @@ const Component = () => {
 
     return (
         <FullScreenContainer>
-            <UserContextProvider>
-                <Container>
-                    <OttleDetailHeader />
-                    <OttleSection className='pad'>
-                        <Ottle loading={loading} user={user} ottle={ottle} />
-                    </OttleSection>
-                    <h1 className='pad'>Items</h1>
-                    <OttleItems />
-                </Container>
-            </UserContextProvider>
+            <Container>
+                <OttleDetailHeader />
+                <OttleSection className='pad'>
+                    <Ottle loading={loading} user={user} ottle={ottle} />
+                </OttleSection>
+                <h1 className='pad'>Items</h1>
+                <OttleItems />
+            </Container>
         </FullScreenContainer>
     );
 };

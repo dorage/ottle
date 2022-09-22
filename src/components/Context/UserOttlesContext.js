@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { UserContext } from './UserContext';
 import { _ } from '../../utils/fp';
-import { getOttlesByUID, PAGE } from '../../app/firestore';
-import { useOutletContext } from 'react-router-dom';
+import { getMyOttles, getOttlesByUID, PAGE } from '../../app/firestore';
+import { useOutletContext, useParams } from 'react-router-dom';
 
 export const contextUtility = (object) => {
     const initialContext = object;
@@ -29,7 +29,7 @@ export const UserOttlesContext = React.createContext(initialContext);
 export const UserOttlesContextProvider = ({ children }) => {
     const [context, setContext] = useState(initialContext);
     const { setOnScrollEvent } = useOutletContext();
-    const { loading: userLoading, user } = useContext(UserContext);
+    const { loading: userLoading, isMe, user } = useContext(UserContext);
 
     const fetchOttles = async (context, firstPage) => {
         if (context.lastPage) return;
@@ -38,7 +38,9 @@ export const UserOttlesContextProvider = ({ children }) => {
             setContext(
                 createContext({ ...context, loading: true, error: false })
             );
-            const data = await getOttlesByUID(user.uid, firstPage);
+            const data = isMe
+                ? await getMyOttles(user.uid, firstPage)
+                : await getOttlesByUID(user.uid, firstPage);
             // fulfilled
             setContext(
                 createContext({

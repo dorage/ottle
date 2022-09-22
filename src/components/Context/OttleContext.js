@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getOttleByNanoId } from '../../app/firestore';
+import { getMyOttleByNanoId, getOttleByNanoId } from '../../app/firestore';
 import { UserContext } from './UserContext';
 
 const initialContext = {
@@ -20,13 +20,15 @@ export const OttleContext = React.createContext(initialContext);
 export const OttleContextProvier = ({ children }) => {
     const [context, setContext] = useState(initialContext);
     const { nanoid } = useParams();
-    const { loading: userloading, user } = useContext(UserContext);
+    const { loading: userloading, isMe, user } = useContext(UserContext);
 
     const fetchOttle = async () => {
         try {
             // loading
             setContext(initialContext);
-            const data = await getOttleByNanoId(user.uid, nanoid);
+            const data = isMe
+                ? await getMyOttleByNanoId(user.uid, nanoid)
+                : await getOttleByNanoId(user.uid, nanoid);
             // fulfilled
             setContext(
                 createContext({ ...context, loading: false, ottle: data })

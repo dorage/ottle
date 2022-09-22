@@ -44,7 +44,6 @@ export const ProfileOttleThumb = ({
     const { username } = useParams();
 
     const onClickOttle = (ottleId) => () => {
-        console.log('ho');
         navigation(routes.ottleDetail(username, ottleId));
     };
 

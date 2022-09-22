@@ -112,6 +112,34 @@ export const getOttleByNanoId = async (uid, nanoid) => {
     const ottleRef = query(
         collection(firestore, C_OTTLES),
         where('uid', '==', uid),
+        where('isPrivate', '==', false),
+        where('nanoid', '==', nanoid)
+    );
+    const ottleSnap = await getDocs(ottleRef);
+
+    if (ottleSnap.empty) return null;
+
+    const ottles = [];
+    ottleSnap.forEach((doc) => {
+        const { created_at } = doc.data();
+        ottles.push({
+            id: doc.id,
+            ...doc.data(),
+            created_at: timestampToDate(created_at),
+        });
+    });
+    return ottles.shift();
+};
+/**
+ * nanoId와 uid로 ottle의 정보를 가져옵니다.
+ * @param {*} uid
+ * @param {*} nanoId
+ * @returns
+ */
+export const getMyOttleByNanoId = async (uid, nanoid) => {
+    const ottleRef = query(
+        collection(firestore, C_OTTLES),
+        where('uid', '==', uid),
         where('nanoid', '==', nanoid)
     );
     const ottleSnap = await getDocs(ottleRef);
@@ -185,7 +213,7 @@ export const setOttleDoc = async (uid, blob, items, form) => {
     const ottleRef = collection(firestore, C_OTTLES);
     const { url } = await uploadOttleImage(uid, blob);
     await countUpOttleOfUser(uid);
-    console.log(form);
+
     await setDoc(doc(ottleRef), {
         uid,
         image: { original: url },
@@ -448,7 +476,6 @@ export const getMainItemCategoryDocs = memoizeHoC(
 export const getSubItemCategoryDocs = memoizeHoC(
     ({ setContext, getContext }) => async (path) => {
         try {
-            console.log(path);
             if (getContext()[path]) return getContext()[path];
             const pathString = path.reduce(
                 (acc, curr) => `${acc}/${curr}/${C_ITEM_CATEGORIES}`,

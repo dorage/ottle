@@ -100,7 +100,7 @@ export const Landing = () => {
         error: false,
     });
     const { w } = useSelector(selectScreen);
-    console.log(clamp(w, 0, 800));
+
     const fetchOttles = async () => {
         try {
             setOttles({ ...ottles, loading: true, error: false });
