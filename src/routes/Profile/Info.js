@@ -1,7 +1,6 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
-import { AiTwotoneAlert, AiFillNotification } from 'react-icons/ai';
 import { theme } from '../../assets/styles/GlobalStyles';
 import { signOutAsyncAction } from '../../features/user/userSlice';
 import { signOutFirebase } from '../../app/auth';
@@ -12,8 +11,6 @@ import {
     LoadingBlock,
     LoadingFlex,
 } from '../../components/OttleCreateItemDrawer/LoadingItem';
-import { ProfileNotice } from './Notice';
-import { CS_URL } from '../../vars/urls';
 import { ActionBar, ActionBarItem } from '../../components/ActionBar';
 
 //#region styled-components
@@ -34,12 +31,6 @@ const Name = styled.span`
 const Username = styled.span`
     font-size: ${(props) => props.theme.font.p10};
 `;
-const Column = styled(Row)`
-    flex-direction: column;
-    padding: ${(props) => props.theme.gap.gap_8} 0;
-    justify-content: center;
-    align-items: center;
-`;
 const CopyActionBarItem = ShareHoC(ActionBarItem);
 const ExLinkActionBarItem = ExLinkHoC(ActionBarItem);
 
@@ -47,12 +38,11 @@ const ExLinkActionBarItem = ExLinkHoC(ActionBarItem);
 
 export const ProfileInfo = () => {
     const dispatch = useDispatch();
-    const { isMe, loading, user, error } = useContext(UserContext);
+    const { isMe, loading, user } = useContext(UserContext);
 
     const onSignOut = () => {
         dispatch(signOutAsyncAction(signOutFirebase()));
     };
-
     if (loading)
         return (
             <Container className='pad'>
@@ -69,72 +59,32 @@ export const ProfileInfo = () => {
             </Container>
         );
 
-    if (isMe)
-        return (
-            <Container className='pad'>
-                <Column>
-                    <ProfileNotice
-                        icon={AiTwotoneAlert}
-                        text={
-                            '브랜드를 요청해주시면 빠르게 추가해드리고 있어요'
-                        }
-                        href={CS_URL.KAKAO}
-                        color={'warning'}
-                    />
-                    <ProfileNotice
-                        icon={AiFillNotification}
-                        text={
-                            '필요한 기능을 요청해주시면 검토 후 추가해드려요.'
-                        }
-                        href={CS_URL.KAKAO}
-                        color={'success'}
-                    />
-                </Column>
-                <Row>
-                    <div>
-                        <Name>{user.name || 'unnamed'}</Name>
-                        <br></br>
-                        <Username>{user.username}</Username>
-                    </div>
-                    <ActionBar>
+    return (
+        <Container className='pad'>
+            <Row>
+                <div>
+                    <Name>{user.name || 'unnamed'}</Name>
+                    <br></br>
+                    <Username>{user.username}</Username>
+                </div>
+                <ActionBar>
+                    {isMe ? (
                         <ActionBarItem onClick={onSignOut}>
                             로그아웃
                         </ActionBarItem>
-                        <CopyActionBarItem
-                            url={`${window.location.host}/${user.username}`}
-                        >
-                            공유하기
-                        </CopyActionBarItem>
-                        <ExLinkActionBarItem to='https://dorage.notion.site/1b9b37e0b0804e0b98fd9580c1b9797f'>
-                            도움말
-                        </ExLinkActionBarItem>
-                    </ActionBar>
-                </Row>
-            </Container>
-        );
-
-    if (user)
-        return (
-            <Container className='pad'>
-                <Row>
-                    <div>
-                        <Name>{user.name || 'unnamed'}</Name>
-                        <br></br>
-                        <Username>{user.username}</Username>
-                    </div>
-                    <ActionBar>
-                        <CopyActionBarItem
-                            url={`${window.location.host}/${user.username}`}
-                        >
-                            공유하기
-                        </CopyActionBarItem>
-                        <ExLinkActionBarItem to='https://dorage.notion.site/1b9b37e0b0804e0b98fd9580c1b9797f'>
-                            도움말
-                        </ExLinkActionBarItem>
-                    </ActionBar>
-                </Row>
-            </Container>
-        );
-
-    if (error) return <></>;
+                    ) : (
+                        <></>
+                    )}
+                    <CopyActionBarItem
+                        url={`${window.location.host}/${user.username}`}
+                    >
+                        공유하기
+                    </CopyActionBarItem>
+                    <ExLinkActionBarItem to='https://dorage.notion.site/1b9b37e0b0804e0b98fd9580c1b9797f'>
+                        도움말
+                    </ExLinkActionBarItem>
+                </ActionBar>
+            </Row>
+        </Container>
+    );
 };
