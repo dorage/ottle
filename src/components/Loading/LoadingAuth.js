@@ -1,7 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { FullScreenContainer } from '../Layout/Container';
 import OttleSymbol from '../../assets/images/ottle_eng_black_512.png';
 
 //#region styled-components
@@ -26,10 +24,8 @@ const Symbol = styled.div`
 
 export const LoadingAuth = () => {
     return (
-        <FullScreenContainer>
-            <Center>
-                <Symbol src={OttleSymbol} />
-            </Center>
-        </FullScreenContainer>
+        <Center>
+            <Symbol src={OttleSymbol} />
+        </Center>
     );
 };
