@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useNavigate, useParams } from 'react-router-dom';
 import { ModalPortal } from '../Portal';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -46,8 +45,9 @@ const InnerContainer = styled(FullScreenContainer)`
 `;
 //#endregion
 
-export const Modal = () => {
+export const Modal = ({}) => {
     const { isOpend } = useSelector(selectModal);
+
     return (
         <ModalPortal>
             {isOpend && (

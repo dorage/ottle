@@ -31,6 +31,75 @@ export const C_ITEMLIKES = 'item_likes';
 export const PAGE_SMALL = 4;
 export const PAGE = 24;
 
+// ████████████████████████████████████████████████
+
+// HoC
+
+// ████████████████████████████████████████████████
+
+const memoizeHoC = (func) => {
+    let lastRef = null;
+    let context = {};
+    const initRef = () => {
+        lastRef = null;
+    };
+    const setRef = (docRef) => {
+        lastRef = docRef;
+    };
+    const getRef = () => {
+        return lastRef;
+    };
+    /**
+     * Ref가 있는지 없는지에 따라 query 방식을 다르게 합니다.
+     * initialQuery에 포함된 _ 가 기존에 쿼리했던 레퍼런스가 있다면
+     * pagingQuery로 교체되어 pagination 과정의 커서로 사용됩니다
+     * @param {Array} initialQueries
+     * @param {Query} pagingQuery
+     * @returns
+     */
+    const queryByRef = (initialQueries, pagingQuery) => {
+        return getDocs(
+            query(..._.conditionalArray(initialQueries, getRef(), pagingQuery))
+        );
+    };
+    /**
+     * 기타 페이징 관련 정보를 저장합니다.
+     * @param {*} obj
+     */
+    const setContext = (obj) => {
+        if (typeof obj !== 'object') return;
+        context = { ...context, ...obj };
+    };
+    /**
+     * 컨텍스트에 정보를 저장합니다
+     * @param {*} keys
+     */
+    const deleteContext = (...keys) => {
+        keys.forEach((key) => context[key] && delete context[key]);
+    };
+    /**
+     * 기타 페이징 관련 정보를 불러옵니다.
+     * @returns
+     */
+    const getContext = () => ({ ...context });
+
+    return func({
+        initRef,
+        setRef,
+        getRef,
+        queryByRef,
+        setContext,
+        getContext,
+        deleteContext,
+    });
+};
+
+// ████████████████████████████████████████████████
+
+// DATE
+
+// ████████████████████████████████████████████████
+
 const timestampToDate = (timestamp) => {
     if (timestamp === null || timestamp === undefined) return `방금 전`;
     const date = timestamp.toDate();
@@ -191,8 +260,8 @@ export const getOttleDetail = async (username, ottleId) => {
  * Ottle의 isPrivate을 false로 변경
  * @param {*} ottleId
  */
-export const showOttle = async (nanoId) => {
-    const ottle = await getOttleByNanoId(nanoId);
+export const showOttle = async (uid, nanoId) => {
+    const ottle = await getMyOttleByNanoId(uid, nanoId);
     const ottleRef = doc(firestore, C_OTTLES, ottle.id);
     await updateDoc(ottleRef, { isPrivate: false });
 };
@@ -200,8 +269,8 @@ export const showOttle = async (nanoId) => {
  * Ottle의 isPrivate을 true로 변경
  * @param {*} ottleId
  */
-export const hideOttle = async (nanoId) => {
-    const ottle = await getOttleByNanoId(nanoId);
+export const hideOttle = async (uid, nanoId) => {
+    const ottle = await getMyOttleByNanoId(uid, nanoId);
     const ottleRef = doc(firestore, C_OTTLES, ottle.id);
     await updateDoc(ottleRef, { isPrivate: true });
 };
@@ -209,8 +278,8 @@ export const hideOttle = async (nanoId) => {
  * Ottle을 삭제합니다.
  * @param {*} ottleId
  */
-export const deleteOttle = async (nanoId) => {
-    const ottle = await getOttleByNanoId(nanoId);
+export const deleteOttle = async (uid, nanoId) => {
+    const ottle = await getMyOttleByNanoId(uid, nanoId);
     const ottleRef = doc(firestore, C_OTTLES, ottle.id);
     await deleteDoc(ottleRef);
 };
@@ -269,62 +338,6 @@ export const getLikedOttles = async (uid) => {
     });
 
     return ottles;
-};
-
-const memoizeHoC = (func) => {
-    let lastRef = null;
-    let context = {};
-    const initRef = () => {
-        lastRef = null;
-    };
-    const setRef = (docRef) => {
-        lastRef = docRef;
-    };
-    const getRef = () => {
-        return lastRef;
-    };
-    /**
-     * Ref가 있는지 없는지에 따라 query 방식을 다르게 합니다.
-     * initialQuery에 포함된 _ 가 기존에 쿼리했던 레퍼런스가 있다면
-     * pagingQuery로 교체되어 pagination 과정의 커서로 사용됩니다
-     * @param {Array} initialQueries
-     * @param {Query} pagingQuery
-     * @returns
-     */
-    const queryByRef = (initialQueries, pagingQuery) => {
-        return getDocs(
-            query(..._.conditionalArray(initialQueries, getRef(), pagingQuery))
-        );
-    };
-    /**
-     * 기타 페이징 관련 정보를 저장합니다.
-     * @param {*} obj
-     */
-    const setContext = (obj) => {
-        if (typeof obj !== 'object') return;
-        context = { ...context, ...obj };
-    };
-    /**
-     * 컨텍스트에 정보를 저장합니다
-     * @param {*} keys
-     */
-    const deleteContext = (...keys) => {
-        keys.forEach((key) => context[key] && delete context[key]);
-    };
-    /**
-     * 기타 페이징 관련 정보를 불러옵니다.
-     * @returns
-     */
-    const getContext = () => ({ ...context });
-    return func({
-        initRef,
-        setRef,
-        getRef,
-        queryByRef,
-        setContext,
-        getContext,
-        deleteContext,
-    });
 };
 
 /**
