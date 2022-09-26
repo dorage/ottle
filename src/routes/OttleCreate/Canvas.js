@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { Editable, SelectIndicator } from './Editable';
@@ -7,8 +7,6 @@ import {
     itemHasSelected,
     selectOttleItem,
 } from '../../features/ottleMaker/ottleItemSlice';
-
-const [multipleMin, multipleMax] = [0.5, 2.5];
 
 const getWidth = (ref) => {
     return ref.current.clientWidth;

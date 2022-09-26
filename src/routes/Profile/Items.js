@@ -1,7 +1,5 @@
 import React, { useContext } from 'react';
-import { routes } from '../../configs/routes';
 import styled from 'styled-components';
-import { useNavigate, useParams } from 'react-router-dom';
 import { NoItem } from './NoItem';
 import { UserOttlesContext } from '../../components/Context/UserOttlesContext';
 import { ProfileOttleThumb } from './Thumb';

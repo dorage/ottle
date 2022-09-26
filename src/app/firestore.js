@@ -1,4 +1,3 @@
-import { async } from '@firebase/util';
 import {
     collection,
     collectionGroup,
@@ -13,9 +12,7 @@ import {
     Timestamp,
     where,
     orderBy,
-    startAt,
     startAfter,
-    endBefore,
     limit,
     serverTimestamp,
     documentId,
@@ -190,8 +187,33 @@ export const getOttleDetail = async (username, ottleId) => {
     return { user, ottle, items, like };
 };
 
-export const hideOttle = async () => {};
-export const deleteOttle = async () => {};
+/**
+ * Ottle의 isPrivate을 false로 변경
+ * @param {*} ottleId
+ */
+export const showOttle = async (nanoId) => {
+    const ottle = await getOttleByNanoId(nanoId);
+    const ottleRef = doc(firestore, C_OTTLES, ottle.id);
+    await updateDoc(ottleRef, { isPrivate: false });
+};
+/**
+ * Ottle의 isPrivate을 true로 변경
+ * @param {*} ottleId
+ */
+export const hideOttle = async (nanoId) => {
+    const ottle = await getOttleByNanoId(nanoId);
+    const ottleRef = doc(firestore, C_OTTLES, ottle.id);
+    await updateDoc(ottleRef, { isPrivate: true });
+};
+/**
+ * Ottle을 삭제합니다.
+ * @param {*} ottleId
+ */
+export const deleteOttle = async (nanoId) => {
+    const ottle = await getOttleByNanoId(nanoId);
+    const ottleRef = doc(firestore, C_OTTLES, ottle.id);
+    await deleteDoc(ottleRef);
+};
 
 /**
  * 오뜰 개수 추가

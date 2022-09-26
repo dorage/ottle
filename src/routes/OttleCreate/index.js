@@ -1,13 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Canvas } from './Canvas';
 import { Inspector } from './Inspector';
 import {
     initialize as initArtboardSlice,
     onMoveArtboard,
-    onResizeArtboard,
     selectArtboard,
-    updatePosition,
 } from '../../features/ottleMaker/artboardSlice';
 import {
     initialize as initOttleItemSlice,

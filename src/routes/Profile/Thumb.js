@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { useNavigate, useParams } from 'react-router-dom';
 import { routes } from '../../configs/routes';
@@ -37,9 +36,7 @@ const VisibleOption = styled.div`
 `;
 //#endregion
 
-export const ProfileOttleThumb = ({
-    ottle: { id, image, nanoid, isPrivate },
-}) => {
+export const ProfileOttleThumb = ({ ottle: { image, nanoid, isPrivate } }) => {
     const navigation = useNavigate();
     const { username } = useParams();
 

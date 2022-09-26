@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { signInAsyncAction } from '../../features/user/userSlice';
 import { signInWithFacebook, signInWithGoogle } from '../../app/auth';
@@ -6,7 +6,6 @@ import { useDispatch } from 'react-redux';
 import { ImGoogle2, ImFacebook2 } from 'react-icons/im';
 import { SemiRoundButton } from '../../components/Button/RoundButton';
 import { theme } from '../../assets/styles/GlobalStyles';
-import { EmailSignIn } from '../../components/devs/EmailSignIn';
 
 //#region styled-components
 const Container = styled.div``;

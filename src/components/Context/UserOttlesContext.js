@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { UserContext } from './UserContext';
 import { _ } from '../../utils/fp';
 import { getMyOttles, getOttlesByUID, PAGE } from '../../app/firestore';
-import { useOutletContext, useParams } from 'react-router-dom';
+import { useOutletContext } from 'react-router-dom';
 
 export const contextUtility = (object) => {
     const initialContext = object;
@@ -72,10 +72,6 @@ export const UserOttlesContextProvider = ({ children }) => {
         // 첫번째 ottle 데이터 불러오기
         fetchOttles(initialContext, true);
     }, [user, isMe]);
-
-    useEffect(() => {
-        console.log(context.ottles);
-    }, [context.ottles]);
 
     // context가 변경될 때 마다 새로운 context를 담은 scroll event 저장
     useEffect(() => {

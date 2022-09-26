@@ -8,7 +8,6 @@ import {
 } from '../../features/ottleMaker/itemDrawerSlice';
 import { ItemDrawerHeader } from './Header';
 import { goBackItemDrawerCategory } from '../../features/ottleMaker/itemDrawerCategorySlice';
-import { _ } from '../../utils/fp';
 import { ItemDrawerSearchBar } from './Search';
 import { ItemDrawerBody } from './Body';
 import { itemDrawerSearchGoBack } from '../../features/ottleMaker/itemDrawerSearchSlice';

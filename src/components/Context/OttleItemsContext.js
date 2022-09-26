@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import { getItemsById } from '../../app/firestore';
 import { OttleContext } from './OttleContext';
 

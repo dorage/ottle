@@ -1,20 +1,13 @@
-import React, { useRef, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { FullScreenContainer } from '../../components/Layout/Container';
 import { InputField } from '../../components/Input/InputField';
-import {
-    loadUserAsyncAction,
-    selectUser,
-    signOutAsyncAction,
-} from '../../features/user/userSlice';
+import { loadUserAsyncAction, selectUser } from '../../features/user/userSlice';
 import { GradientSemiRoundButton } from '../../components/Button/GradientButton';
 import { FooterContainer } from '../../components/Layout/Footer';
 import { SemiRoundButton } from '../../components/Button/RoundButton';
 import { checkUsername, setUserInfo } from '../../app/firestore';
-import { useNavigate } from 'react-router-dom';
-import { signOutFirebase } from '../../app/auth';
 
 //#region styled-components
 const Container = styled(FullScreenContainer)`

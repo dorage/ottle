@@ -8,6 +8,7 @@ import { YesNoModal } from '../Modals';
 export const OttleDeleteModal = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
     return (
         <YesNoModal
             message={'옷뜰을 삭제할까요?'}

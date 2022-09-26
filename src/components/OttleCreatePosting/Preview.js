@@ -1,5 +1,4 @@
-import React, { useEffect, useRef } from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 import { selectOttleItem } from '../../features/ottleMaker/ottleItemSlice';
