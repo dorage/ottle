@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import PropTypes from 'prop-types';
-import styled, { keyframes } from 'styled-components';
+import React, { useState, useRef } from 'react';
+import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectItemDrawerItems } from '../../features/ottleMaker/itemDrawerItemsSlice';
 import { LoadingBlock } from './LoadingItem';

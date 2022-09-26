@@ -1,9 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { LinkedRoundButton } from '../../components/Button/RoundButton';
 import { routes } from '../../configs/routes';
 import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../../features/user/userSlice';
 
 //#region styled-components
 const Container = styled.div`
@@ -23,6 +24,9 @@ const Mention = styled.div`
 
 export const NoItem = () => {
     const { username } = useParams();
+    const { isAuth } = useSelector(selectUser);
+
+    if (!isAuth) return <Container></Container>;
     return (
         <Container>
             <Mention>

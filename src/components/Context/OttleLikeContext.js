@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
 import {
     deleteOttleLike,
     getItemsById,
@@ -75,7 +74,10 @@ export const OttleLikeContextProvier = ({ children }) => {
 
     useEffect(() => {
         if (ottleLoading) return;
-        if (!isAuth) return;
+        if (!isAuth) {
+            setContext(createContext({ ...context, loading: false }));
+            return;
+        }
         fetchGetLike();
     }, [ottleLoading]);
 

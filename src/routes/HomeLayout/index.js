@@ -1,9 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import styled from 'styled-components';
 import { Outlet } from 'react-router-dom';
 import { FullScreenContainer } from '../../components/Layout/Container';
 import { HomeLayoutHeader } from './Header';
-import { HomeLayoutFooter } from './Footer';
 
 const Page = styled.div`
     display: flex;

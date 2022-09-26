@@ -14,6 +14,8 @@ import {
     UserContext,
     UserContextProviderHoC,
 } from '../../components/Context/UserContext';
+import { Navigate } from 'react-router-dom';
+import { routes } from '../../configs/routes';
 
 //#region styled-components
 const Container = styled.div`
@@ -37,6 +39,10 @@ const Component = () => {
         logEventFirebase('watch_ottle_detail', { isMe: false });
     }, []);
 
+    if (!loading && !ottle) {
+        return <Navigate to={routes.pageNotFound()} />;
+    }
+
     return (
         <FullScreenContainer>
             <Container>
@@ -44,7 +50,6 @@ const Component = () => {
                 <OttleSection className='pad'>
                     <Ottle loading={loading} user={user} ottle={ottle} />
                 </OttleSection>
-
                 <h1 className='pad'>Items</h1>
                 <OttleItems />
             </Container>

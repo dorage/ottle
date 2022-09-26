@@ -1,12 +1,7 @@
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import styled from 'styled-components';
-import { useSelector, useDispatch } from 'react-redux';
-import {
-    itemDrawerMainCategoryAsyncAction,
-    itemDrawerSubCategoryAsyncAction,
-    selectItemDrawerCategory,
-} from '../../features/ottleMaker/itemDrawerCategorySlice';
+import { useSelector } from 'react-redux';
+import { selectItemDrawerCategory } from '../../features/ottleMaker/itemDrawerCategorySlice';
 import { LoadingBlock } from './LoadingItem';
 import { selectItemDrawerSearch } from '../../features/ottleMaker/itemDrawerSearchSlice';
 

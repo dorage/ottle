@@ -40,7 +40,7 @@ const Component = ({ loading, ottle, user }) => {
 
     return (
         <Container>
-            <OttleHeader user={user} />
+            <OttleHeader user={user} ottle={ottle} />
             <ImageSection>
                 <Image src={ottle.image.original} />
             </ImageSection>

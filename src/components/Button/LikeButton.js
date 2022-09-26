@@ -23,7 +23,7 @@ export const LikeButton = ({ ...props }) => {
         else logEventFirebase('unlike_ottle');
 
         if (!isAuth) {
-            dispatch(openModal({ type: MODAL_TYPE.SIGN_IN }));
+            dispatch(openModal({ type: MODAL_TYPE.AUTH.NOT_SIGN_IN }));
             return;
         }
 

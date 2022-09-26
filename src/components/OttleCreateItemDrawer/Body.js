@@ -1,11 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { ItemDrawerCategoryGrid, ItemDrawerItemGrid } from './Grid';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     itemDrawerCategoryItemsPagingAsyncAction,
     itemDrawerRecommendItemsPagingAsyncAction,
-    selectItemDrawerItems,
 } from '../../features/ottleMaker/itemDrawerItemsSlice';
 import { _ } from '../../utils/fp';
 import { selectUser } from '../../features/user/userSlice';
@@ -15,7 +14,6 @@ import {
     selectItemDrawerCategory,
 } from '../../features/ottleMaker/itemDrawerCategorySlice';
 import {
-    itemDrawerSearchAsyncAction,
     itemDrawerSearchCategoryAsyncAction,
     itemDrawerSearchPagingAsyncAction,
     selectItemDrawerSearch,

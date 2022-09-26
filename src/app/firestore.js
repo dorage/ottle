@@ -1,4 +1,3 @@
-import { async } from '@firebase/util';
 import {
     collection,
     collectionGroup,
@@ -13,9 +12,7 @@ import {
     Timestamp,
     where,
     orderBy,
-    startAt,
     startAfter,
-    endBefore,
     limit,
     serverTimestamp,
     documentId,
@@ -33,6 +30,75 @@ export const C_ITEMLIKES = 'item_likes';
 
 export const PAGE_SMALL = 4;
 export const PAGE = 24;
+
+// ████████████████████████████████████████████████
+
+// HoC
+
+// ████████████████████████████████████████████████
+
+const memoizeHoC = (func) => {
+    let lastRef = null;
+    let context = {};
+    const initRef = () => {
+        lastRef = null;
+    };
+    const setRef = (docRef) => {
+        lastRef = docRef;
+    };
+    const getRef = () => {
+        return lastRef;
+    };
+    /**
+     * Ref가 있는지 없는지에 따라 query 방식을 다르게 합니다.
+     * initialQuery에 포함된 _ 가 기존에 쿼리했던 레퍼런스가 있다면
+     * pagingQuery로 교체되어 pagination 과정의 커서로 사용됩니다
+     * @param {Array} initialQueries
+     * @param {Query} pagingQuery
+     * @returns
+     */
+    const queryByRef = (initialQueries, pagingQuery) => {
+        return getDocs(
+            query(..._.conditionalArray(initialQueries, getRef(), pagingQuery))
+        );
+    };
+    /**
+     * 기타 페이징 관련 정보를 저장합니다.
+     * @param {*} obj
+     */
+    const setContext = (obj) => {
+        if (typeof obj !== 'object') return;
+        context = { ...context, ...obj };
+    };
+    /**
+     * 컨텍스트에 정보를 저장합니다
+     * @param {*} keys
+     */
+    const deleteContext = (...keys) => {
+        keys.forEach((key) => context[key] && delete context[key]);
+    };
+    /**
+     * 기타 페이징 관련 정보를 불러옵니다.
+     * @returns
+     */
+    const getContext = () => ({ ...context });
+
+    return func({
+        initRef,
+        setRef,
+        getRef,
+        queryByRef,
+        setContext,
+        getContext,
+        deleteContext,
+    });
+};
+
+// ████████████████████████████████████████████████
+
+// DATE
+
+// ████████████████████████████████████████████████
 
 const timestampToDate = (timestamp) => {
     if (timestamp === null || timestamp === undefined) return `방금 전`;
@@ -112,6 +178,34 @@ export const getOttleByNanoId = async (uid, nanoid) => {
     const ottleRef = query(
         collection(firestore, C_OTTLES),
         where('uid', '==', uid),
+        where('isPrivate', '==', false),
+        where('nanoid', '==', nanoid)
+    );
+    const ottleSnap = await getDocs(ottleRef);
+
+    if (ottleSnap.empty) return null;
+
+    const ottles = [];
+    ottleSnap.forEach((doc) => {
+        const { created_at } = doc.data();
+        ottles.push({
+            id: doc.id,
+            ...doc.data(),
+            created_at: timestampToDate(created_at),
+        });
+    });
+    return ottles.shift();
+};
+/**
+ * nanoId와 uid로 ottle의 정보를 가져옵니다.
+ * @param {*} uid
+ * @param {*} nanoId
+ * @returns
+ */
+export const getMyOttleByNanoId = async (uid, nanoid) => {
+    const ottleRef = query(
+        collection(firestore, C_OTTLES),
+        where('uid', '==', uid),
         where('nanoid', '==', nanoid)
     );
     const ottleSnap = await getDocs(ottleRef);
@@ -163,6 +257,34 @@ export const getOttleDetail = async (username, ottleId) => {
 };
 
 /**
+ * Ottle의 isPrivate을 false로 변경
+ * @param {*} ottleId
+ */
+export const showOttle = async (uid, nanoId) => {
+    const ottle = await getMyOttleByNanoId(uid, nanoId);
+    const ottleRef = doc(firestore, C_OTTLES, ottle.id);
+    await updateDoc(ottleRef, { isPrivate: false });
+};
+/**
+ * Ottle의 isPrivate을 true로 변경
+ * @param {*} ottleId
+ */
+export const hideOttle = async (uid, nanoId) => {
+    const ottle = await getMyOttleByNanoId(uid, nanoId);
+    const ottleRef = doc(firestore, C_OTTLES, ottle.id);
+    await updateDoc(ottleRef, { isPrivate: true });
+};
+/**
+ * Ottle을 삭제합니다.
+ * @param {*} ottleId
+ */
+export const deleteOttle = async (uid, nanoId) => {
+    const ottle = await getMyOttleByNanoId(uid, nanoId);
+    const ottleRef = doc(firestore, C_OTTLES, ottle.id);
+    await deleteDoc(ottleRef);
+};
+
+/**
  * 오뜰 개수 추가
  * @param {*} uid
  */
@@ -173,24 +295,22 @@ const countUpOttleOfUser = async (uid) => {
 
 /**
  * uid의 유저에 새로운 Ottle을 포스팅합니다.
- * @param {*} param0
+ * @param {string} uid
+ * @param {*} blob
+ * @param {object[]} items
+ * @param {import('../features/ottleMaker/ottlePostingSlice').PostingData} form
  */
-export const setOttleDoc = async (
-    uid,
-    blob,
-    { title, description, items, nanoid }
-) => {
+export const setOttleDoc = async (uid, blob, items, form) => {
     const ottleRef = collection(firestore, C_OTTLES);
     const { url } = await uploadOttleImage(uid, blob);
     await countUpOttleOfUser(uid);
+
     await setDoc(doc(ottleRef), {
-        nanoid,
         uid,
-        title,
-        description,
         image: { original: url },
         items: items.map((e) => e.product.id),
         created_at: serverTimestamp(),
+        ...form,
     });
 };
 
@@ -220,66 +340,51 @@ export const getLikedOttles = async (uid) => {
     return ottles;
 };
 
-const memoizeHoC = (func) => {
-    let lastRef = null;
-    let context = {};
-    const initRef = () => {
-        lastRef = null;
-    };
-    const setRef = (docRef) => {
-        lastRef = docRef;
-    };
-    const getRef = () => {
-        return lastRef;
-    };
-    /**
-     *
-     * @param {Array} initialQueries
-     * @param {Query} pagingQuery
-     * @returns
-     */
-    const queryByRef = (initialQueries, pagingQuery) => {
-        return getDocs(
-            query(..._.conditionalArray(initialQueries, getRef(), pagingQuery))
-        );
-    };
-    /**
-     * 기타 페이징 관련 정보를 저장합니다.
-     * @param {*} obj
-     */
-    const setContext = (obj) => {
-        if (typeof obj !== 'object') return;
-        context = { ...context, ...obj };
-    };
-    /**
-     * 컨텍스트에 정보를 저장합니다
-     * @param {*} keys
-     */
-    const deleteContext = (...keys) => {
-        keys.forEach((key) => context[key] && delete context[key]);
-    };
-    /**
-     * 기타 페이징 관련 정보를 불러옵니다.
-     * @returns
-     */
-    const getContext = () => ({ ...context });
-    return func({
-        initRef,
-        setRef,
-        getRef,
-        queryByRef,
-        setContext,
-        getContext,
-        deleteContext,
-    });
-};
-
 /**
  * uid 를 가진 유저의 모든 Ottle을 가져옵니다.
  * @param {*} uid
  * @returns
  */
 export const getOttlesByUID = memoizeHoC(
+    ({ initRef, setRef, getRef, queryByRef }) => async (
+        uid,
+        firstPage = false
+    ) => {
+        if (firstPage) initRef();
+        const querySnapshot = await queryByRef(
+            [
+                collection(firestore, C_OTTLES),
+                where('uid', '==', uid),
+                where('isPrivate', '==', false),
+                orderBy('created_at', 'desc'),
+                _,
+                limit(PAGE),
+            ],
+            startAfter(getRef())
+        );
+
+        if (querySnapshot.empty) return [];
+        setRef(_.getLastIndex(querySnapshot.docs));
+
+        const ottles = [];
+        querySnapshot.forEach((doc) => {
+            const { created_at } = doc.data();
+            ottles.push({
+                id: doc.id,
+                ...doc.data(),
+                created_at: timestampToDate(created_at),
+            });
+        });
+        return ottles;
+    }
+);
+
+/**
+ * uid 를 가진 유저의 모든 Ottle을 가져옵니다.
+ * @param {*} uid
+ * @returns
+ */
+export const getMyOttles = memoizeHoC(
     ({ initRef, setRef, getRef, queryByRef }) => async (
         uid,
         firstPage = false
@@ -311,6 +416,7 @@ export const getOttlesByUID = memoizeHoC(
         return ottles;
     }
 );
+
 /**
  * uid 를 가진 유저의 모든 Ottle을 가져옵니다.
  * @param {*} uid
@@ -405,7 +511,6 @@ export const getMainItemCategoryDocs = memoizeHoC(
 export const getSubItemCategoryDocs = memoizeHoC(
     ({ setContext, getContext }) => async (path) => {
         try {
-            console.log(path);
             if (getContext()[path]) return getContext()[path];
             const pathString = path.reduce(
                 (acc, curr) => `${acc}/${curr}/${C_ITEM_CATEGORIES}`,

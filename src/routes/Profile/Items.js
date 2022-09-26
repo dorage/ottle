@@ -1,24 +1,14 @@
 import React, { useContext } from 'react';
-import { routes } from '../../configs/routes';
 import styled from 'styled-components';
-import { useNavigate, useParams } from 'react-router-dom';
 import { NoItem } from './NoItem';
 import { UserOttlesContext } from '../../components/Context/UserOttlesContext';
+import { ProfileOttleThumb } from './Thumb';
 
 //#region styled-components
 const Container = styled.div`
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-gap: ${(props) => props.theme.gap.gap_4};
-`;
-const OttleThumb = styled.div`
-    width: 100%;
-    aspect-ratio: 1/1;
-
-    background-color: ${(props) => props.theme.color.black_600};
-    background-image: url(${(props) => props.src});
-    background-size: contain;
-    background-position: center;
 `;
 const LoadingThumb = styled.div`
     width: 100%;
@@ -28,13 +18,7 @@ const LoadingThumb = styled.div`
 //#endregion
 
 export const ProfileItems = () => {
-    const navigation = useNavigate();
-    const { username } = useParams();
     const { lastPage, loading, ottles, error } = useContext(UserOttlesContext);
-
-    const onClickOttle = (ottleId) => () => {
-        navigation(routes.ottleDetail(username, ottleId));
-    };
 
     if (!lastPage && loading && !ottles.length)
         return (
@@ -50,14 +34,8 @@ export const ProfileItems = () => {
     if (ottles.length)
         return (
             <Container className='pad'>
-                {ottles.map(({ id, image, nanoid }) => {
-                    return (
-                        <OttleThumb
-                            key={id}
-                            src={image.original}
-                            onClick={onClickOttle(nanoid)}
-                        />
-                    );
+                {ottles.map((ottle) => {
+                    return <ProfileOttleThumb key={ottle.id} ottle={ottle} />;
                 })}
                 {!lastPage && loading && (
                     <>

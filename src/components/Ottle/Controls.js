@@ -9,10 +9,9 @@ import { TextButton } from '../Button/TextButton';
 import { LoadingBlock } from '../OttleCreateItemDrawer/LoadingItem';
 import { theme } from '../../assets/styles/GlobalStyles';
 import { LikeButton } from '../Button/LikeButton';
-import { CopyClipboardHoC } from '../HOC/CopyClipboardHoC';
+import { ShareHoC } from '../HOC/ShareHoC';
 import { routes } from '../../configs/routes';
 import { loadImage, drawWatermark } from '../../configs/utils';
-import { async } from '@firebase/util';
 
 //#region styled-components
 const Container = styled.div`
@@ -22,7 +21,7 @@ const Container = styled.div`
 
     margin-bottom: ${(props) => props.theme.gap.gap_8};
 `;
-const CopyTextButton = CopyClipboardHoC(TextButton);
+const CopyTextButton = ShareHoC(TextButton);
 //#endregion
 
 const Component = ({ ottle, user }) => {

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { UserContext } from './UserContext';
 import { _ } from '../../utils/fp';
-import { getOttlesByUID, PAGE } from '../../app/firestore';
+import { getMyOttles, getOttlesByUID, PAGE } from '../../app/firestore';
 import { useOutletContext } from 'react-router-dom';
 
 export const contextUtility = (object) => {
@@ -29,16 +29,18 @@ export const UserOttlesContext = React.createContext(initialContext);
 export const UserOttlesContextProvider = ({ children }) => {
     const [context, setContext] = useState(initialContext);
     const { setOnScrollEvent } = useOutletContext();
-    const { loading: userLoading, user } = useContext(UserContext);
+    const { loading: userLoading, isMe, user } = useContext(UserContext);
 
     const fetchOttles = async (context, firstPage) => {
-        if (context.lastPage) return;
+        if (!firstPage && context.lastPage) return;
         try {
             // loading
             setContext(
                 createContext({ ...context, loading: true, error: false })
             );
-            const data = await getOttlesByUID(user.uid, firstPage);
+            const data = isMe
+                ? await getMyOttles(user.uid, firstPage)
+                : await getOttlesByUID(user.uid, firstPage);
             // fulfilled
             setContext(
                 createContext({
@@ -66,9 +68,10 @@ export const UserOttlesContextProvider = ({ children }) => {
     useEffect(() => {
         // loading 중인 경우
         if (userLoading) return;
+        setContext(initialContext);
         // 첫번째 ottle 데이터 불러오기
-        fetchOttles(context, true);
-    }, [user]);
+        fetchOttles(initialContext, true);
+    }, [user, isMe]);
 
     // context가 변경될 때 마다 새로운 context를 담은 scroll event 저장
     useEffect(() => {
