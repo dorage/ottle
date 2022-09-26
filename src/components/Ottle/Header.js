@@ -23,16 +23,23 @@ const Username = styled.div`
 
 //#endregion
 
-export const OttleHeader = ({ loading, user }) => {
+export const OttleHeader = ({ loading, ottle, user }) => {
     const dispatch = useDispatch();
     const { username } = useParams();
     const { isAuth } = useSelector(selectUser);
 
+    const onClickShow = () => {
+        dispatch(
+            openModal({
+                type: MODAL_TYPE.OTTLE.SHOW,
+            })
+        );
+    };
+
     const onClickHide = () => {
         dispatch(
             openModal({
-                type: MODAL_TYPE.YES_OR_NO,
-                message: '게시물을 숨길까요?',
+                type: MODAL_TYPE.OTTLE.HIDE,
             })
         );
     };
@@ -40,8 +47,7 @@ export const OttleHeader = ({ loading, user }) => {
     const onClickDelete = () => {
         dispatch(
             openModal({
-                type: MODAL_TYPE.YES_OR_NO,
-                message: '게시물을 삭제할까요?',
+                type: MODAL_TYPE.OTTLE.DELETE,
             })
         );
     };
@@ -65,6 +71,7 @@ export const OttleHeader = ({ loading, user }) => {
                 )}
             </Container>
         );
+
     return (
         <Container>
             <div>
@@ -73,7 +80,15 @@ export const OttleHeader = ({ loading, user }) => {
             </div>
             {isAuth && user.username === username && (
                 <ActionBar>
-                    <ActionBarItem onClick={onClickHide}>숨기기</ActionBarItem>
+                    {ottle.isPrivate ? (
+                        <ActionBarItem onClick={onClickShow}>
+                            공개하기
+                        </ActionBarItem>
+                    ) : (
+                        <ActionBarItem onClick={onClickHide}>
+                            숨기기
+                        </ActionBarItem>
+                    )}
                     <ActionBarItem onClick={onClickDelete}>
                         삭제하기
                     </ActionBarItem>

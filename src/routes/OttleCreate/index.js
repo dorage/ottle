@@ -224,9 +224,7 @@ export const OttleMaker = () => {
     const onCancle = () => {
         dispatch(
             openModal({
-                type: MODAL_TYPE.YES_OR_NO,
-                message: '그만 만드실건가요?',
-                onYesAction: () => {},
+                type: MODAL_TYPE.OTTLE_CREATE.GO_BACK,
             })
         );
     };

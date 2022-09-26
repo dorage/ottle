@@ -9,6 +9,13 @@ import {
     selectModal,
 } from '../../features/modal/modalSlice';
 import { FullScreenContainer } from '../Layout/Container';
+import {
+    OttleDeleteModal,
+    OttleHideModal,
+    OttleShowModal,
+} from './Variants/Ottle';
+import { OttleCreateGoBackModal } from './Variants/OttleCreate';
+import { AuthNotSignInModal } from './Variants/Auth';
 
 //#region styled-components
 const OuterContainer = styled.div`
@@ -92,63 +99,21 @@ export const Modal = () => {
 
 const ModalSwitcher = () => {
     const dispatch = useDispatch();
-    const { type, message } = useSelector(selectModal);
+    const { type } = useSelector(selectModal);
 
     switch (type) {
         case MODAL_TYPE.AUTH.NOT_SIGN_IN:
-            break;
+            return <AuthNotSignInModal />;
         case MODAL_TYPE.OTTLE.DELETE:
-            break;
+            return <OttleDeleteModal />;
+        case MODAL_TYPE.OTTLE.SHOW:
+            return <OttleShowModal />;
         case MODAL_TYPE.OTTLE.HIDE:
-            break;
+            return <OttleHideModal />;
         case MODAL_TYPE.OTTLE_CREATE.GO_BACK:
-            break;
-        case MODAL_TYPE.YES_OR_NO:
-            return <ModalYesOrNo message={message} />;
-        case MODAL_TYPE.SIGN_IN:
-            return <ModalSignIn />;
+            return <OttleCreateGoBackModal />;
         default:
             dispatch(closeModal());
             return <></>;
     }
-};
-
-const ModalSignIn = () => {
-    const dispatch = useDispatch();
-
-    const onClickYes = async () => {
-        dispatch(closeModal());
-    };
-
-    return (
-        <ModalContainer>
-            <Content>로그인 후 '좋아요'가 가능합니다</Content>
-            <ButtonRow>
-                <Button onClick={onClickYes}>OK</Button>
-            </ButtonRow>
-        </ModalContainer>
-    );
-};
-
-const ModalYesOrNo = ({ message }) => {
-    const dispatch = useDispatch();
-    const navigator = useNavigate();
-
-    const onClickNo = async () => {
-        dispatch(closeModal());
-    };
-    const onClickYes = async () => {
-        navigator(-1);
-        dispatch(closeModal());
-    };
-
-    return (
-        <ModalContainer>
-            <Content>{message}</Content>
-            <ButtonRow>
-                <Button onClick={onClickYes}>예</Button>
-                <Button onClick={onClickNo}>아니요</Button>
-            </ButtonRow>
-        </ModalContainer>
-    );
 };

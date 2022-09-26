@@ -1,15 +1,15 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 //#region styled-components
-const Container = styled.div`
+const ModalContainer = styled.div`
     width: 100%;
 
     border: 1px solid ${(props) => props.theme.color.black_600};
     border-radius: ${(props) => props.theme.gap.gap_8};
     background-color: white;
 `;
+
 const Content = styled.div`
     padding-top: ${(props) => props.theme.gap.gap_16};
     padding-bottom: ${(props) => props.theme.gap.gap_16};
@@ -38,14 +38,21 @@ const Button = styled.div`
 `;
 //#endregion
 
-export const YesNoModal = ({ message, onClickYes, onClickNo }) => {
-    return (
-        <Container>
-            <Content>{message}</Content>
-            <ButtonRow>
-                <Button onClick={onClickYes}>예</Button>
-                <Button onClick={onClickNo}>아니요</Button>
-            </ButtonRow>
-        </Container>
-    );
-};
+export const YesNoModal = ({ message, onClickYes, onClickNo }) => (
+    <ModalContainer>
+        <Content>{message}</Content>
+        <ButtonRow>
+            <Button onClick={onClickYes}>예</Button>
+            <Button onClick={onClickNo}>아니요</Button>
+        </ButtonRow>
+    </ModalContainer>
+);
+
+export const OkModal = ({ message, onClickOk }) => (
+    <ModalContainer>
+        <Content>{message}</Content>
+        <ButtonRow>
+            <Button onClick={onClickOk}>확인</Button>
+        </ButtonRow>
+    </ModalContainer>
+);
